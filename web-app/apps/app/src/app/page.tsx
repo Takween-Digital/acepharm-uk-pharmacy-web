@@ -18,6 +18,7 @@ import { AppHeader } from '@/components/app-header';
 import { useAuth } from '@/lib/auth-context';
 import { apiClient } from '@/lib/api-client';
 import { getAccessToken } from '@/lib/auth-client';
+import { QUESTION_INVENTORY } from '@acepharm/preferences';
 import { 
   Play, 
   Target, 
@@ -52,7 +53,18 @@ export default function StudentDashboardPage() {
   const [selectedResetCategory, setSelectedResetCategory] = useState<{ id: string; name: string; count: number } | null>(null);
   const [showCancellationModal, setShowCancellationModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
-  const [categoriesOverview, setCategoriesOverview] = useState<CategoryItem[]>([]);
+  const [categoriesOverview, setCategoriesOverview] = useState<CategoryItem[]>(() =>
+    QUESTION_INVENTORY.categories
+      .filter((c) => c.count > 0)
+      .map((c) => ({
+        id: c.id,
+        name: c.name,
+        total: c.count,
+        attempted: 0,
+        accuracy: 0,
+        status: 'Not started',
+      }))
+  );
   const [streakMetrics, setStreakMetrics] = useState<{
     currentStreak: number;
     longestStreak: number;
@@ -75,14 +87,14 @@ export default function StudentDashboardPage() {
     explanation: string;
     estimatedAccuracy: number;
   }>({
-    topicName: 'Respiratory medicines',
-    subtopicName: 'Asthma and COPD',
-    targetCount: 15,
-    explanation: 'Based on your recent practice: we recommend a focused drill on clinical guidelines and inhaler technique.',
+    topicName: 'Diagnostic Assessment',
+    subtopicName: 'Curriculum Baseline',
+    targetCount: 10,
+    explanation: 'Recommended starting point: completing this 10-question assessment allows AcePharm to calibrate your initial strengths and revision priorities.',
     estimatedAccuracy: 50,
   });
   const [dailyGoal, setDailyGoal] = useState({
-    answeredToday: 12,
+    answeredToday: 0,
     dailyTarget: 20,
   });
   const [loading, setLoading] = useState(true);
@@ -96,19 +108,21 @@ export default function StudentDashboardPage() {
         try {
           const data = await apiClient.get('/api/v1/curriculum/tree');
           const pathway = data?.pathways?.[0];
+          const inventoryMap = new Map(QUESTION_INVENTORY.categories.map((c) => [c.id, c.count]));
           if (pathway && pathway.categories) {
-            const baseCategories: CategoryItem[] = pathway.categories.map((cat: any) => {
-              const subCount = cat.subtopics?.length || 1;
-              const totalEst = subCount * 5;
-              return {
-                id: cat.id,
-                name: cat.name,
-                total: totalEst,
-                attempted: 0,
-                accuracy: 0,
-                status: 'Not started',
-              };
-            });
+            const baseCategories: CategoryItem[] = pathway.categories
+              .filter((cat: any) => (inventoryMap.get(cat.id) ?? 0) > 0)
+              .map((cat: any) => {
+                const verifiedTotal = inventoryMap.get(cat.id) || 0;
+                return {
+                  id: cat.id,
+                  name: cat.name,
+                  total: verifiedTotal,
+                  attempted: 0,
+                  accuracy: 0,
+                  status: 'Not started',
+                };
+              });
             setCategoriesOverview(baseCategories);
           }
         } catch (curriculumErr) {
@@ -202,6 +216,9 @@ export default function StudentDashboardPage() {
     loadLiveData();
   }, [user]);
 
+  const totalAttempted = categoriesOverview.reduce((sum, cat) => sum + (cat.attempted || 0), 0);
+  const isNewLearner = totalAttempted === 0;
+
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-canvas">
       {/* Responsive Unified Navigation Header */}
@@ -217,6 +234,59 @@ export default function StudentDashboardPage() {
                 <HeroRecommendationSkeleton />
               </div>
               <StreakTrackerSkeleton />
+            </>
+          ) : isNewLearner ? (
+            <>
+              {/* Dedicated New-Learner Empty State (ACE-19) */}
+              <Card className="p-6 lg:col-span-2 bg-surface border-indigo/30 ring-1 ring-indigo/10 shadow-sm flex flex-col justify-between space-y-5">
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <Badge variant="default" className="text-xs font-semibold bg-indigo-wash text-indigo border border-indigo-200">
+                      <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> Getting Started
+                    </Badge>
+                    <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold border border-teal/20 whitespace-nowrap shrink-0">
+                      {profile?.displayName ? `Welcome, ${profile.displayName.split(' ')[0]}` : 'New Learner'}
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-ink leading-tight">
+                    Let's build your starting point
+                  </h2>
+                  <p className="text-slate text-xs sm:text-sm mt-2 leading-relaxed">
+                    Complete a ten-question session and AcePharm will begin creating your progress overview. We'll identify your baseline strengths and calibrate high-yield areas for focused revision.
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-border flex flex-wrap items-center gap-3">
+                  <Button
+                    variant="primary"
+                    size="md"
+                    onClick={() => { window.location.href = '/session/new?mode=diagnostic&count=10'; }}
+                    className="flex items-center gap-2 text-xs font-bold shadow-md"
+                  >
+                    <Play className="w-4 h-4 fill-current" /> Take your first 10-question assessment
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="md"
+                    onClick={() => { window.location.href = '/session/new'; }}
+                    className="text-xs font-semibold flex items-center gap-1.5"
+                  >
+                    <SlidersHorizontal className="w-4 h-4 text-indigo" /> Custom Session Builder
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Meaningful Session Streak Widget with Placeholder 14-day Chart */}
+              <StreakTracker 
+                currentStreak={streakMetrics.currentStreak} 
+                longestStreak={streakMetrics.longestStreak} 
+                isMeaningfulToday={streakMetrics.isMeaningfulToday} 
+                todayQuestionsCount={streakMetrics.todayQuestionsCount} 
+                todayActiveMinutes={streakMetrics.todayActiveMinutes}
+                dailyGoalTarget={dailyGoal.dailyTarget}
+                streakHistory={streakMetrics.streakHistory}
+                isNewLearner={true}
+              />
             </>
           ) : (
             <>
@@ -267,6 +337,7 @@ export default function StudentDashboardPage() {
                 todayActiveMinutes={streakMetrics.todayActiveMinutes}
                 dailyGoalTarget={dailyGoal.dailyTarget}
                 streakHistory={streakMetrics.streakHistory}
+                isNewLearner={false}
               />
             </>
           )}
@@ -280,7 +351,10 @@ export default function StudentDashboardPage() {
                 <Layers className="w-5 h-5 text-indigo" /> GPhC Therapeutic Systems & Practice Status
               </h2>
               <p className="text-xs text-slate mt-0.5">
-                First-attempt baselines stay permanent. Reset individual categories anytime to refresh your practice pool.
+                {isNewLearner
+                  ? "All 19 high-yield therapeutic systems ready. Take your first assessment to begin establishing your baseline."
+                  : "First-attempt baselines stay permanent. Reset individual categories anytime to refresh your practice pool."
+                }
               </p>
             </div>
 

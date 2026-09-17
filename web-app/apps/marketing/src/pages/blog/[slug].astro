@@ -4,6 +4,10 @@ import { Button, MarkdownRenderer } from '@acepharm/ui';
 
 const { slug } = Astro.params;
 
+if (slug === 'passmed-vs-quesmed-vs-acepharm-uk-pharmacy-comparison') {
+  return Astro.redirect('/blog/evaluating-pharmacy-revision-tools-methodology-guide', 301);
+}
+
 // Fetch dynamically from API worker / fallback default
 let post = null;
 const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.acepharmexams.co.uk';
@@ -18,7 +22,8 @@ try {
   console.warn('Failed fetching post from API, using SSR fallback:', err);
 }
 
-if (!post) {
+// Omit future scheduled posts from direct public access unless published
+if (!post || (post.publishedAt && new Date(post.publishedAt) > new Date())) {
   return Astro.redirect('/blog');
 }
 

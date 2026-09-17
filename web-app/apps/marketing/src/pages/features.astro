@@ -16,7 +16,8 @@ import { Button, Card } from '@acepharm/ui';
     url: 'https://acepharmexams.co.uk/features'
   })} />
 
-  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4" style="background-image: url('/assets/backgrounds/hero-gradient.svg'); background-size: cover; background-position: center;">
+  {/* Hero Section */}
+  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4 sm:px-6 lg:px-8" style="background-image: url('/assets/backgrounds/hero-gradient.svg'); background-size: cover; background-position: center;">
     <div class="max-w-4xl mx-auto">
       <div class="inline-block mb-4">
         <span class="px-3.5 py-1 rounded-full bg-indigo-wash text-indigo text-xs font-semibold uppercase tracking-wider border border-indigo-200">
@@ -37,36 +38,277 @@ import { Button, Card } from '@acepharm/ui';
     </div>
   </section>
 
-  {/* Feature 1: The Revision Engine */}
-  <section class="py-20 max-w-5xl mx-auto px-4" style="background-image: url('/assets/backgrounds/feature-grid.svg'); background-size: cover; background-position: center;">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div class="space-y-6">
-        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Active Recall Engine</span>
-        <h2 class="text-3xl font-bold text-ink">Exam-standard questions designed for deep understanding.</h2>
-        <p class="text-sm text-slate leading-relaxed">
-          Single best answer scenarios and clinical calculations written to match modern GPhC assessment frameworks. Rate your confidence before submitting to highlight uncalibrated knowledge.
+  {/* Section 1: Learn through questions */}
+  <section class="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-border">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-5">
+        <div class="inline-flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-indigo-wash text-indigo text-xs font-bold flex items-center justify-center border border-indigo/20">1</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Active Recall</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+          Learn through questions
+        </h2>
+        <p class="text-base text-slate leading-relaxed">
+          Build custom sessions or let AcePharm select a balanced mixture from your weak and unseen content.
         </p>
-    {/* Feature 3 */}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-      <div class="space-y-4">
-        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Progress & Calibration</span>
-        <h2 class="text-2xl sm:text-3xl font-bold text-ink">See more than a percentage.</h2>
-        <p class="text-sm text-slate leading-relaxed">
-          Isolated first-attempt analytics ensure repeat practice tests never inflate your true readiness. Identify blind spots where high confidence resulted in incorrect answers.
-        </p>
+        <ul class="space-y-3 pt-2 text-sm text-slate">
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Target high-yield categories aligned with GPhC assessment blueprint weightings.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Focus drills on unseen questions before re-testing previously attempted items.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Seamless integration of single best answer scenarios and pharmaceutical calculations.</span>
+          </li>
+        </ul>
       </div>
-      <Card className="p-6 bg-surface border border-border rounded-card shadow-xs space-y-3">
-        <div class="p-3 bg-canvas border border-border/50 rounded-btn text-xs text-slate font-medium">Isolated first-attempt accuracy vs practice recall</div>
-        <div class="p-3 bg-canvas border border-border/50 rounded-btn text-xs text-slate font-medium">Calibration matrix (High confidence vs accuracy)</div>
-        <div class="p-3 bg-canvas border border-border/50 rounded-btn text-xs text-slate font-medium">Curriculum coverage by BNF chapter & weighting</div>
+
+      <Card className="p-7 bg-surface border border-border rounded-card shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-border/60">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate">Session Configurator</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-[11px] font-semibold">Custom Mix</span>
+        </div>
+        <div class="space-y-2.5 text-xs">
+          <div class="p-3 rounded-lg bg-canvas border border-border/60 flex items-center justify-between">
+            <span class="font-medium text-ink">Cardiovascular System</span>
+            <span class="text-indigo font-bold">160 Questions Live</span>
+          </div>
+          <div class="p-3 rounded-lg bg-canvas border border-border/60 flex items-center justify-between">
+            <span class="font-medium text-ink">Pharmaceutical Calculations</span>
+            <span class="text-indigo font-bold">180 Questions Live</span>
+          </div>
+          <div class="p-3 rounded-lg bg-canvas border border-border/60 flex items-center justify-between">
+            <span class="font-medium text-ink">Infections & Antimicrobial Stewardship</span>
+            <span class="text-indigo font-bold">145 Questions Live</span>
+          </div>
+        </div>
+        <div class="pt-2 flex gap-2 text-[11px] font-medium text-slate">
+          <span class="px-2.5 py-1 rounded bg-indigo/10 text-indigo font-semibold">Smart Mix: Enabled</span>
+          <span class="px-2.5 py-1 rounded bg-surface border border-border">Confidence Rating: Active</span>
+        </div>
       </Card>
     </div>
+  </section>
 
-    {/* Bottom CTA */}
-    <div class="text-center pt-8 border-t border-border">
+  {/* Section 2: Review with purpose */}
+  <section class="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-border bg-canvas/40">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <Card className="p-7 bg-surface border border-border rounded-card shadow-xs space-y-4 order-2 lg:order-1">
+        <div class="flex items-center justify-between pb-3 border-b border-border/60">
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">4-Stage Clinical Rationale</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 text-[11px] font-semibold border border-teal-200/60">Verified</span>
+        </div>
+        <div class="space-y-3 text-xs">
+          <div class="p-3 rounded-lg bg-emerald-50/50 border border-emerald-200/60">
+            <div class="font-bold text-emerald-800 mb-1">1. Takeaway Point</div>
+            <p class="text-slate leading-relaxed">ACE inhibitors are first-line for hypertension in patients aged under 55 or with type 2 diabetes.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-canvas border border-border/60">
+            <div class="font-bold text-ink mb-1">2. Option-by-Option Breakdown</div>
+            <p class="text-slate leading-relaxed">Option B is second-line; Option C is contraindicated given bilateral renal artery stenosis.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-indigo-wash/40 border border-indigo/20">
+            <div class="font-bold text-indigo mb-1">3. Guideline Citations</div>
+            <p class="text-slate text-[11px]">NICE NG136 (Hypertension in adults) · BNF Chapter 2.5</p>
+          </div>
+        </div>
+      </Card>
+
+      <div class="space-y-5 order-1 lg:order-2">
+        <div class="inline-flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-teal-50 text-teal-700 text-xs font-bold flex items-center justify-center border border-teal-200/60">2</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Evidence-Led Learning</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+          Review with purpose
+        </h2>
+        <p class="text-base text-slate leading-relaxed">
+          Move beyond correct and incorrect. See the reasoning, option-by-option analysis, learning points and references.
+        </p>
+        <ul class="space-y-3 pt-2 text-sm text-slate">
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Deep explanations for every distractor explaining why incorrect choices fail.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Direct grounding in current NICE guidelines, the BNF, and MHRA Drug Safety Updates.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-teal-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Step-by-step formula breakdowns for Paper 1 pharmaceutical calculation scenarios.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* Section 3: Understand your progress */}
+  <section id="progress" class="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-border">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="space-y-5">
+        <div class="inline-flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-indigo-wash text-indigo text-xs font-bold flex items-center justify-center border border-indigo/20">3</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Progress & Calibration</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+          Understand your progress
+        </h2>
+        <p class="text-base text-slate leading-relaxed">
+          Track first attempts, repeated attempts, confidence, timing and curriculum coverage.
+        </p>
+        <ul class="space-y-3 pt-2 text-sm text-slate">
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Separate first-attempt diagnostic scores from repeat drills to prevent false confidence.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Identify uncalibrated knowledge where high confidence resulted in incorrect answers.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-indigo shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Clear visibility over syllabus coverage across all 19 GPhC categories.</span>
+          </li>
+        </ul>
+      </div>
+
+      <Card className="p-7 bg-surface border border-border rounded-card shadow-xs space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-border/60">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate">Performance Dashboard</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200/60">Synchronised</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-center">
+          <div class="p-3.5 bg-canvas rounded-lg border border-border/60">
+            <div class="text-2xl font-bold text-ink">78%</div>
+            <div class="text-[11px] font-medium text-slate mt-0.5">First-attempt accuracy</div>
+          </div>
+          <div class="p-3.5 bg-canvas rounded-lg border border-border/60">
+            <div class="text-2xl font-bold text-teal-700">89%</div>
+            <div class="text-[11px] font-medium text-slate mt-0.5">Confidence calibration</div>
+          </div>
+          <div class="p-3.5 bg-canvas rounded-lg border border-border/60">
+            <div class="text-2xl font-bold text-indigo">19 / 19</div>
+            <div class="text-[11px] font-medium text-slate mt-0.5">GPhC Categories covered</div>
+          </div>
+          <div class="p-3.5 bg-canvas rounded-lg border border-border/60">
+            <div class="text-2xl font-bold text-ink">52s</div>
+            <div class="text-[11px] font-medium text-slate mt-0.5">Average time / question</div>
+          </div>
+        </div>
+        <div class="p-3 rounded-lg bg-indigo-wash/30 border border-indigo/20 text-xs text-indigo">
+          <span class="font-semibold">Next recommendation:</span> 15 questions in Respiratory medicines to reinforce high-confidence blind spots.
+        </div>
+      </Card>
+    </div>
+  </section>
+
+  {/* Section 4: Prepare under pressure */}
+  <section class="py-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-border bg-canvas/40">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <Card className="p-7 bg-surface border border-border rounded-card shadow-xs space-y-4 order-2 lg:order-1">
+        <div class="flex items-center justify-between pb-3 border-b border-border/60">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-slate">Mock Exam Simulation</span>
+          </div>
+          <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[11px] font-semibold border border-rose-200/60">01:42:15 remaining</span>
+        </div>
+        <div class="space-y-3 text-xs">
+          <div class="p-3 rounded-lg bg-canvas border border-border/60">
+            <div class="flex justify-between text-slate text-[11px] mb-1.5">
+              <span>Progress: 42 of 120 questions</span>
+              <span class="font-semibold text-ink">35%</span>
+            </div>
+            <div class="w-full bg-border rounded-full h-1.5">
+              <div class="bg-indigo h-1.5 rounded-full" style="width: 35%"></div>
+            </div>
+          </div>
+          <div class="p-3 rounded-lg bg-surface border border-border/60 space-y-2">
+            <div class="text-[11px] text-slate font-medium">Flagged for Review: 3 questions</div>
+            <div class="flex gap-2">
+              <span class="px-2 py-0.5 rounded bg-amber-light text-amber text-[10px] font-bold border border-amber/20">Q14 (Renal)</span>
+              <span class="px-2 py-0.5 rounded bg-amber-light text-amber text-[10px] font-bold border border-amber/20">Q28 (MEP)</span>
+              <span class="px-2 py-0.5 rounded bg-amber-light text-amber text-[10px] font-bold border border-amber/20">Q39 (Dose)</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <div class="space-y-5 order-1 lg:order-2">
+        <div class="inline-flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-rose-50 text-rose-700 text-xs font-bold flex items-center justify-center border border-rose-200/60">4</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Exam Conditions</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+          Prepare under pressure
+        </h2>
+        <p class="text-base text-slate leading-relaxed">
+          Use timed sessions when you are ready to test performance.
+        </p>
+        <ul class="space-y-3 pt-2 text-sm text-slate">
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Simulate Pearson VUE interface conditions, strict countdown timers, and question flagging.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Accurate time-per-question pacing telemetry to build realistic exam stamina.</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Full post-session breakdown with option-by-option analysis and peer benchmarking.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {/* Final CTA */}
+  <section class="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style="background-image: url('/assets/backgrounds/final-cta.svg'); background-size: cover; background-position: center;">
+    <h2 class="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
+      Your next revision session is already waiting.
+    </h2>
+    <p class="text-base text-slate max-w-xl mx-auto mt-4 leading-relaxed">
+      Create your free account, choose your learning goal and begin with a focused set of pharmacy questions.
+    </p>
+    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
       <a href="https://app.acepharmexams.co.uk/auth/register">
-        <Button size="lg" variant="primary">Start revising free</Button>
+        <Button size="lg" variant="primary">Build your first session</Button>
+      </a>
+      <a href="/pricing">
+        <Button size="lg" variant="outline">View pricing</Button>
       </a>
     </div>
+    <p class="text-xs text-slate-light mt-3">No card required for free access.</p>
   </section>
 </BaseLayout>

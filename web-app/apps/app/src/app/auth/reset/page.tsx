@@ -102,16 +102,16 @@ function ResetPasswordContent() {
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <Badge variant="teal" className="text-xs">Security Updated</Badge>
-            <h2 className="text-xl font-bold text-ink">Password Updated!</h2>
+            <h2 className="text-xl font-bold text-ink">Password updated</h2>
             <p className="text-xs sm:text-sm text-slate leading-relaxed">
-              Your password has been changed successfully. You can now log in with your new credentials.
+              You can now log in using your new password.
             </p>
             <Button
               variant="primary"
               onClick={() => { window.location.href = '/auth/login'; }}
               className="w-full mt-4 flex items-center justify-center gap-1.5 text-xs font-bold shadow-sm"
             >
-              Log In with New Password
+              Log In
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
@@ -122,9 +122,9 @@ function ResetPasswordContent() {
                 <KeyRound className="w-6 h-6" />
               </div>
               <Badge variant="outline" className="text-[11px] mb-2 font-mono">Security Portal</Badge>
-              <h2 className="text-xl font-bold text-ink">Create New Password</h2>
+              <h2 className="text-xl font-bold text-ink">Set a new password.</h2>
               <p className="text-xs text-slate mt-1">
-                Enter your new credentials for AcePharm revision access.
+                Choose a password with at least 8 characters.
               </p>
             </div>
 
@@ -221,10 +221,10 @@ function ResetPasswordContent() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Updating Password...
+                    Updating password...
                   </>
                 ) : (
-                  'Reset Password & Sign In'
+                  'Update password'
                 )}
               </Button>
             </form>
@@ -233,7 +233,7 @@ function ResetPasswordContent() {
 
         <div className="mt-6 pt-4 border-t border-border text-center text-xs text-slate flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-teal" />
-          <span>GPhC Assessment Revision Platform &bull; UK Secure Auth</span>
+          <span>Independent UK Revision &bull; MPharm &amp; OSPAP Blueprint &bull; GDPR Compliant</span>
         </div>
       </Card>
     </div>

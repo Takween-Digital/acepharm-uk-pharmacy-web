@@ -7,7 +7,9 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:generate-1905": "tsx src/seed-generator-1905.ts",
+    "seed:d1": "tsx src/seed-d1-runner.ts"
   },
   "dependencies": {
     "@acepharm/design-tokens": "workspace:*",

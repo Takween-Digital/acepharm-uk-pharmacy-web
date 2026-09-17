@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Badge, Card } from '@acepharm/ui';
 import { apiClient } from '@/lib/api-client';
+import { QUESTION_INVENTORY } from '@acepharm/preferences';
 import { 
   Play, 
   Timer, 
@@ -25,73 +26,18 @@ interface CategoryOption {
   subtopics: { id: string; name: string; count: number }[];
 }
 
-const CATEGORIES_DATA: CategoryOption[] = [
-  {
-    id: 'cat-cv',
-    name: 'Cardiovascular System',
-    count: 28,
-    subtopics: [
-      { id: 'sub-htn', name: 'Hypertension (NICE NG136)', count: 12 },
-      { id: 'sub-hf', name: 'Heart Failure HFrEF', count: 6 },
-      { id: 'sub-af', name: 'Atrial Fibrillation & Anticoagulation', count: 6 },
-      { id: 'sub-lipid', name: 'Lipid Modification & Statins', count: 4 },
-    ],
-  },
-  {
-    id: 'cat-resp',
-    name: 'Respiratory System',
-    count: 20,
-    subtopics: [
-      { id: 'sub-asthma-adult', name: 'Adult Asthma Management (BTS/SIGN)', count: 12 },
-      { id: 'sub-copd', name: 'COPD Protocol & Inhalers', count: 8 },
-    ],
-  },
-  {
-    id: 'cat-endocrine',
-    name: 'Endocrine System',
-    count: 18,
-    subtopics: [
-      { id: 'sub-t2dm', name: 'Type 2 Diabetes Pharmacotherapy', count: 10 },
-      { id: 'sub-insulin', name: 'Insulin Regimens & Sick Day Rules', count: 8 },
-    ],
-  },
-  {
-    id: 'cat-calc',
-    name: 'Pharmaceutical Calculations (Paper 1)',
-    count: 25,
-    subtopics: [
-      { id: 'sub-crcl', name: 'Cockcroft-Gault & Renal Dosing', count: 15 },
-      { id: 'sub-infusions', name: 'IV Infusions & Displacements', count: 10 },
-    ],
-  },
-  {
-    id: 'cat-infections',
-    name: 'Infections & Antimicrobials',
-    count: 16,
-    subtopics: [
-      { id: 'sub-uti', name: 'Urinary Tract Infections (UKHSA)', count: 8 },
-      { id: 'sub-cap', name: 'Community-Acquired Pneumonia (CURB-65)', count: 8 },
-    ],
-  },
-  {
-    id: 'cat-cns',
-    name: 'Central Nervous System',
-    count: 14,
-    subtopics: [
-      { id: 'sub-epilepsy', name: 'Antiepileptics & Valproate Rules', count: 8 },
-      { id: 'sub-depression', name: 'Antidepressants & Serotonin Syndrome', count: 6 },
-    ],
-  },
-  {
-    id: 'cat-law',
-    name: 'Pharmacy Law & Ethics',
-    count: 14,
-    subtopics: [
-      { id: 'sub-cd-law', name: 'Controlled Drugs Schedules', count: 8 },
-      { id: 'sub-rp-duties', name: 'Responsible Pharmacist Absence (2hr)', count: 6 },
-    ],
-  },
-];
+const CATEGORIES_DATA: CategoryOption[] = QUESTION_INVENTORY.categories
+  .filter((c) => c.count > 0)
+  .map((c) => ({
+    id: c.id,
+    name: c.name,
+    count: c.count,
+    subtopics: (c.subtopics || []).map((s) => ({
+      id: s.id,
+      name: s.name,
+      count: s.count,
+    })),
+  }));
 
 export function SessionBuilder() {
   const [categories, setCategories] = useState<CategoryOption[]>(CATEGORIES_DATA);
@@ -110,24 +56,45 @@ export function SessionBuilder() {
         const res = await fetch(`${API_URL}/api/v1/curriculum/tree`);
         const searchParams = new URLSearchParams(window.location.search);
         const preselectedCat = searchParams.get('categoryId');
+        const countParam = searchParams.get('count');
+        const modeParam = searchParams.get('mode');
+
+        if (countParam && !isNaN(Number(countParam))) {
+          setQuestionCount(Number(countParam));
+        }
+        if (modeParam === 'diagnostic') {
+          setStatusFilter('unattempted');
+        }
 
         if (res.ok) {
           const data = await res.json();
           const pathway = data.pathways?.[0];
+          const inventoryMap = new Map(QUESTION_INVENTORY.categories.map((c) => [c.id, c]));
           if (pathway && pathway.categories && pathway.categories.length > 0) {
-            const mapped: CategoryOption[] = pathway.categories.map((c: any) => ({
-              id: c.id,
-              name: c.name,
-              count: (c.subtopics?.length || 1) * 5,
-              subtopics: (c.subtopics || []).map((sub: any) => ({
-                id: sub.id,
-                name: sub.name,
-                count: 5,
-              })),
-            }));
+            const mapped: CategoryOption[] = pathway.categories
+              .filter((c: any) => (inventoryMap.get(c.id)?.count ?? 0) > 0)
+              .map((c: any) => {
+                const inv = inventoryMap.get(c.id);
+                return {
+                  id: c.id,
+                  name: c.name,
+                  count: inv?.count || (c.subtopics?.length || 1) * 5,
+                  subtopics: (c.subtopics || []).map((sub: any) => {
+                    const subMatch = inv?.subtopics?.find((s) => s.id === sub.id);
+                    return {
+                      id: sub.id,
+                      name: sub.name,
+                      count: subMatch?.count || 5,
+                    };
+                  }),
+                };
+              });
             setCategories(mapped);
             if (preselectedCat && mapped.some((m) => m.id === preselectedCat)) {
               setSelectedCategoryIds([preselectedCat]);
+            } else if (modeParam === 'diagnostic') {
+              // For diagnostic baseline, select top therapeutic categories
+              setSelectedCategoryIds(mapped.slice(0, 5).map((c) => c.id));
             } else if (mapped.length > 0) {
               setSelectedCategoryIds(mapped.slice(0, 2).map((c) => c.id));
             }
@@ -212,7 +179,7 @@ export function SessionBuilder() {
 
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="font-mono text-xs">
-            135 Seed Questions Live
+            {QUESTION_INVENTORY.totalLiveCount} Questions Live
           </Badge>
         </div>
       </div>

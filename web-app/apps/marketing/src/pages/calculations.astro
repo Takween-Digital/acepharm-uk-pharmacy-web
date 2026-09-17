@@ -1,0 +1,127 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Button, Card } from '@acepharm/ui';
+import { QUESTION_INVENTORY } from '@acepharm/preferences';
+
+const calcCategory = QUESTION_INVENTORY.categories.find((c) => c.code === 'calculations');
+const calcCount = calcCategory?.count || 180;
+---
+
+<BaseLayout
+  title="Pharmaceutical Calculations (Paper 1) — AcePharm"
+  description="Master GPhC Paper 1 calculations with step-by-step working, built-in Pearson VUE on-screen calculator simulator, and diagnostic error analysis."
+>
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'AcePharm Pharmaceutical Calculations — Paper 1 Engine',
+    description: 'Master GPhC Paper 1 pharmaceutical calculations with step-by-step working and Pearson VUE calculator practice.',
+    url: 'https://acepharmexams.co.uk/calculations'
+  })} />
+
+  {/* Hero Section */}
+  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4" style="background-image: url('/assets/backgrounds/hero-gradient.svg'); background-size: cover; background-position: center;">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-block mb-4">
+        <span class="px-3.5 py-1 rounded-full bg-indigo-wash text-indigo text-xs font-semibold uppercase tracking-wider border border-indigo-200">
+          GPhC Paper 1 Preparation
+        </span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-ink">
+        Pharmaceutical calculations without the guesswork.
+      </h1>
+      <p class="mt-6 text-lg sm:text-xl text-slate max-w-2xl mx-auto leading-relaxed">
+        {calcCount} exam-standard calculation scenarios with line-by-line formula breakdowns, tolerance scoring, and full Pearson VUE test interface simulation.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://app.acepharmexams.co.uk/auth/register">
+          <Button size="lg" variant="primary">Start practising calculations free</Button>
+        </a>
+        <a href="#topics">
+          <Button size="lg" variant="outline">Browse calculation types</Button>
+        </a>
+      </div>
+      <p class="mt-3 text-xs text-slate-light">No credit card required. Free sample calculations included.</p>
+    </div>
+  </section>
+
+  {/* Core Features Grid */}
+  <section class="py-20 max-w-5xl mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <Card className="p-6 bg-surface border border-border rounded-card shadow-xs space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-wash text-indigo flex items-center justify-center font-bold text-base border border-indigo/20">
+          1
+        </div>
+        <h3 class="text-base font-bold text-ink">Line-by-Line Working</h3>
+        <p class="text-xs text-slate leading-relaxed">
+          Every item provides step-by-step mathematical working and dimensional analysis so you can isolate exactly where your method diverged.
+        </p>
+      </Card>
+
+      <Card className="p-6 bg-surface border border-border rounded-card shadow-xs space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-teal-light text-teal flex items-center justify-center font-bold text-base border border-teal/20">
+          2
+        </div>
+        <h3 class="text-base font-bold text-ink">Pearson VUE Interface</h3>
+        <p class="text-xs text-slate leading-relaxed">
+          Practise with the authentic built-in on-screen calculator layout, reference units, and numerical entry fields used on GPhC exam day.
+        </p>
+      </Card>
+
+      <Card className="p-6 bg-surface border border-border rounded-card shadow-xs space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-light text-amber flex items-center justify-center font-bold text-base border border-amber/20">
+          3
+        </div>
+        <h3 class="text-base font-bold text-ink">Tolerance Scoring</h3>
+        <p class="text-xs text-slate leading-relaxed">
+          Calibrated numerical tolerance checks accept valid decimal rounding variations while penalising premature rounding errors.
+        </p>
+      </Card>
+    </div>
+
+    {/* Paper 1 Syllabus Subtopics */}
+    <div id="topics" class="mt-20 space-y-8">
+      <div class="text-center max-w-2xl mx-auto space-y-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-ink">Paper 1 Calculation Syllabus Coverage</h2>
+        <p class="text-xs sm:text-sm text-slate">
+          Directly aligned with GPhC assessment framework calculations standards.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {(calcCategory?.subtopics || [
+          { id: 'sub-crcl', name: 'Cockcroft-Gault Creatinine Clearance', count: 45 },
+          { id: 'sub-infusions', name: 'IV Infusions & Drop Rates', count: 40 },
+          { id: 'sub-disp-vol', name: 'Displacement Volumes & Reconstitution', count: 35 },
+          { id: 'sub-dilutions', name: 'Dilutions, Alligations & Parts', count: 35 },
+          { id: 'sub-paed-bsa', name: 'Paediatric & BSA-Based Dosing', count: 25 },
+        ]).map((sub) => (
+          <Card className="p-5 bg-surface border border-border rounded-card shadow-xs flex items-center justify-between">
+            <div class="space-y-1">
+              <h3 class="text-sm font-bold text-ink">{sub.name}</h3>
+              <p class="text-xs text-slate">Exam-level numerical stems with full diagnostic working</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-indigo bg-indigo-wash px-2.5 py-1 rounded-full border border-indigo/20">
+              {sub.count} Qs
+            </span>
+          </Card>
+        ))}
+      </div>
+    </div>
+
+    {/* CTA Banner */}
+    <div class="mt-20 p-8 sm:p-12 bg-gradient-to-r from-indigo to-indigo-deep rounded-card text-white text-center space-y-4 shadow-md">
+      <h2 class="text-2xl sm:text-3xl font-bold">Build confidence before Paper 1 exam day.</h2>
+      <p class="text-sm text-indigo-100 max-w-xl mx-auto leading-relaxed">
+        Start with free sample calculations or unlock the complete {calcCount}-scenario bank with detailed Ace AI working breakdowns.
+      </p>
+      <div class="pt-2">
+        <a href="https://app.acepharmexams.co.uk/auth/register">
+          <Button size="lg" variant="secondary" className="font-bold">
+            Start revising free
+          </Button>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

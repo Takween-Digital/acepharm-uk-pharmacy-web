@@ -1,24 +1,29 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { TopicFilter } from '@acepharm/ui';
 
-// Fetch dynamically from D1 API worker with fallback
-const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.acepharmexams.co.uk';
-let articles: Array<{
+interface BlogArticle {
   slug: string;
   title: string;
   category: string;
   date: string;
+  publishedAt?: string;
   readTime: string;
   excerpt: string;
-}> = [];
+}
 
-const DEFAULT_ARTICLES = [
+// Fetch dynamically from D1 API worker with fallback
+const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.acepharmexams.co.uk';
+const now = new Date();
+let articles: BlogArticle[] = [];
+
+const DEFAULT_ARTICLES: BlogArticle[] = [
   {
     slug: 'gphc-calculations-essential-methods',
     title: 'GPhC Calculations: 10 High-Yield Pitfalls, Infusion Formulas, and Paediatric Dosing',
     category: 'Calculations',
     date: '18 September 2026',
+    publishedAt: '2026-09-18T09:00:00Z',
     readTime: '12 min read',
     excerpt: 'The definitive Paper 1 blueprint: displacement volumes, paediatric mg/kg body weight scaling, infusion rate conversions, and molecular weight shifts.',
   },
@@ -27,6 +32,7 @@ const DEFAULT_ARTICLES = [
     title: 'NICE CKS vs BNF 87/88: Mastering the High-Weighting Therapeutic Clinical Scenarios',
     category: 'Clinical Revision',
     date: '12 September 2026',
+    publishedAt: '2026-09-12T09:00:00Z',
     readTime: '11 min read',
     excerpt: 'Step-by-step decision algorithms for Hypertension (NG136), Asthma (BTS/SIGN vs NICE NG80), and Type 2 Diabetes (NG28) for GPhC Paper 2.',
   },
@@ -35,22 +41,25 @@ const DEFAULT_ARTICLES = [
     title: 'High-Risk Medicines in UK Pharmacy: Monitoring, Toxicities, and MHRA Alerts',
     category: 'Registration Assessment',
     date: '28 August 2026',
+    publishedAt: '2026-08-28T09:00:00Z',
     readTime: '10 min read',
     excerpt: 'Complete clinical safety guide for Lithium, Methotrexate, Amiodarone, Digoxin, and Gentamicin. Target serum ranges, sampling times, and red flags.',
   },
   {
-    slug: 'passmed-vs-quesmed-vs-acepharm-uk-pharmacy-comparison',
-    title: 'Passmed vs Quesmed vs AcePharm: Choosing the Best UK Revision Platform (2026)',
+    slug: 'evaluating-pharmacy-revision-tools-methodology-guide',
+    title: 'Evaluating Pharmacy Revision Tools: Methodology, Evidence Grounding, and Clinical Practice (2026)',
     category: 'MPharm Study',
     date: '1 September 2026',
+    publishedAt: '2026-09-01T09:00:00Z',
     readTime: '9 min read',
-    excerpt: 'A deep comparative review of UK healthcare question banks: why medical question banks fall short for pharmacy students and how AcePharm fills the gap.',
+    excerpt: 'How to evaluate pharmacy revision resources: why curriculum specificity, calculation depth, and active clinical decision-making matter for UK pharmacy assessments.',
   },
   {
     slug: 'oriel-pharmacy-sjt-foundation-training-guide',
     title: 'Oriel Pharmacy Recruitment: Master the Situational Judgement Test (SJT) and Foundation Posts',
     category: 'Registration Assessment',
     date: '20 August 2026',
+    publishedAt: '2026-08-20T09:00:00Z',
     readTime: '10 min read',
     excerpt: 'A step-by-step masterclass on scoring in the top decile for Oriel pharmacy SJT, ranking NHS and community placements, and handling ethical dilemmas.',
   },
@@ -61,18 +70,25 @@ try {
   if (res.ok) {
     const data = await res.json();
     if (data.posts && data.posts.length > 0) {
-      articles = data.posts.map((p: any) => {
-        const tags = p.tagsJson ? JSON.parse(p.tagsJson) : [];
-        const primaryCat = tags[0] || 'Clinical Revision';
-        return {
-          slug: p.slug,
-          title: p.title,
-          category: primaryCat,
-          date: p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Recent',
-          readTime: `${p.readingTimeMinutes || 5} min read`,
-          excerpt: p.summary,
-        };
-      });
+      articles = data.posts
+        .filter((p: any) => {
+          // Publication filter: post.publishedAt <= new Date() to omit future scheduled posts from public index
+          if (!p.publishedAt) return true;
+          return new Date(p.publishedAt) <= now;
+        })
+        .map((p: any) => {
+          const tags = p.tagsJson ? JSON.parse(p.tagsJson) : [];
+          const primaryCat = tags[0] || 'Clinical Revision';
+          return {
+            slug: p.slug,
+            title: p.title,
+            category: primaryCat,
+            date: p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Recent',
+            publishedAt: p.publishedAt,
+            readTime: `${p.readingTimeMinutes || 5} min read`,
+            excerpt: p.summary,
+          };
+        });
     }
   }
 } catch (e) {
@@ -80,7 +96,11 @@ try {
 }
 
 if (articles.length === 0) {
-  articles = DEFAULT_ARTICLES;
+  // Publication filter: post.publishedAt <= new Date() to omit future scheduled posts
+  articles = DEFAULT_ARTICLES.filter((post) => {
+    if (!post.publishedAt) return true;
+    return new Date(post.publishedAt) <= now;
+  });
 }
 
 const CATEGORIES = [

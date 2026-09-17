@@ -1,0 +1,106 @@
+---
+import { MarketingAuthNav, MobileNav } from '@acepharm/ui';
+import { SITE_NAVIGATION } from '@acepharm/preferences';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+---
+
+<header class="border-b border-border bg-surface/90 backdrop-blur-md sticky top-0 z-50 transition-all">
+  <div class="max-w-container-max mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    {/* Brand Logo */}
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo to-teal flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:opacity-90 transition-opacity">
+        A
+      </div>
+      <span class="text-xl font-bold tracking-tight text-ink group-hover:text-indigo transition-colors">AcePharm</span>
+    </a>
+    
+    {/* Desktop Navigation */}
+    <nav class="hidden md:flex items-center gap-1 text-sm font-medium text-slate">
+      {/* Product Dropdown */}
+      <div class="relative group">
+        <a
+          href="/features"
+          class={`px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors flex items-center gap-1 ${
+            currentPath === '/features' ? 'text-indigo font-bold bg-indigo-wash' : ''
+          }`}
+        >
+          <span>Product</span>
+          <svg class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </a>
+        <div class="absolute top-full left-0 mt-1 w-56 bg-surface border border-border rounded-xl shadow-xl p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+          {SITE_NAVIGATION.productDropdown.map((item) => (
+            <a
+              href={item.href}
+              class={`block px-3 py-2 text-xs rounded-lg transition-colors ${
+                item.href === '/features' ? 'font-semibold text-ink hover:bg-canvas' : 'text-slate hover:text-ink hover:bg-canvas'
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Primary Links */}
+      {SITE_NAVIGATION.primary.map((item) => (
+        <a 
+          href={item.href} 
+          class={`px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors ${
+            currentPath === item.href ? 'text-indigo font-bold bg-indigo-wash' : ''
+          }`}
+        >
+          {item.label}
+        </a>
+      ))}
+      
+      {/* Resources Dropdown Group */}
+      <div class="relative group">
+        <button
+          type="button"
+          class="px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors flex items-center gap-1 text-slate font-medium"
+        >
+          <span>Resources</span>
+          <svg class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div class="absolute top-full right-0 mt-1 w-56 bg-surface border border-border rounded-xl shadow-xl p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+          {SITE_NAVIGATION.resourcesDropdown.map((item) => (
+            <a
+              href={item.href}
+              class={`block px-3 py-2 text-xs rounded-lg transition-colors ${
+                item.href === '/blog' ? 'font-semibold text-ink hover:bg-canvas' : 'text-slate hover:text-ink hover:bg-canvas'
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+          <div class="border-t border-border/60 my-1"></div>
+          {SITE_NAVIGATION.company.map((item) => (
+            <a
+              href={item.href}
+              class="block px-3 py-2 text-xs text-slate hover:text-ink hover:bg-canvas rounded-lg transition-colors"
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    </nav>
+
+    {/* Desktop Auth Actions & Mobile Hamburger */}
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center">
+        <MarketingAuthNav client:load />
+      </div>
+      <MobileNav client:idle currentPath={currentPath} />
+    </div>
+  </div>
+</header>

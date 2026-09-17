@@ -1,0 +1,80 @@
+---
+import { SITE_NAVIGATION } from '@acepharm/preferences';
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-border bg-surface py-16 mt-20 text-sm text-slate">
+  <div class="max-w-container-max mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+      {/* Product Column */}
+      <div>
+        <h4 class="font-bold text-ink text-xs uppercase tracking-wider mb-3">Product</h4>
+        <ul class="space-y-1 text-xs">
+          {SITE_NAVIGATION.productDropdown.filter(item => item.href !== '/features').map((item) => (
+            <li>
+              <a href={item.href} class="inline-block py-1.5 hover:text-ink transition-colors">
+                {item.shortLabel || item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Resources Column */}
+      <div>
+        <h4 class="font-bold text-ink text-xs uppercase tracking-wider mb-3">Resources</h4>
+        <ul class="space-y-1 text-xs">
+          {SITE_NAVIGATION.resourcesDropdown.filter(item => item.href !== '/faq').map((item) => (
+            <li>
+              <a href={item.href} class="inline-block py-1.5 hover:text-ink transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Company Column */}
+      <div>
+        <h4 class="font-bold text-ink text-xs uppercase tracking-wider mb-3">Company</h4>
+        <ul class="space-y-1 text-xs">
+          {SITE_NAVIGATION.company.map((item) => (
+            <li>
+              <a href={item.href} class="inline-block py-1.5 hover:text-ink transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Legal Column */}
+      <div>
+        <h4 class="font-bold text-ink text-xs uppercase tracking-wider mb-3">Legal</h4>
+        <ul class="space-y-1 text-xs">
+          {SITE_NAVIGATION.legal.map((item) => (
+            <li>
+              <a href={item.href} class="inline-block py-1.5 hover:text-ink transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    {/* Disclaimers & Copyright */}
+    <div id="disclaimer" class="border-t border-border pt-8 space-y-3">
+      <p class="text-xs text-slate-light leading-relaxed">
+        <strong>Independence disclaimer:</strong> AcePharm is an independent educational platform. It is not affiliated with or endorsed by the General Pharmaceutical Council, universities, NICE, the NHS or any other organisation unless explicitly stated.
+      </p>
+      <p class="text-xs text-slate-light leading-relaxed">
+        <strong>Educational disclaimer:</strong> AcePharm is an educational resource. It does not provide patient-specific medical advice and does not replace official guidance, university teaching, professional supervision, clinical judgement or local policies.
+      </p>
+      <p class="text-xs text-slate-light pt-2">
+        © {currentYear} AcePharm. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>

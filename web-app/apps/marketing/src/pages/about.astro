@@ -1,48 +1,53 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Button, Card } from '@acepharm/ui';
+import { Button } from '@acepharm/ui';
 ---
 
 <BaseLayout
   title="About — AcePharm"
   description="Pharmacy education deserves better digital tools. AcePharm exists to make pharmacy revision clearer, more focused and easier to sustain."
 >
-  <section class="py-16 sm:py-24 bg-gradient-to-b from-primary-50/40 to-canvas border-b border-border-subtle text-center px-4" style="background-image: url('/assets/backgrounds/about.svg'); background-size: cover; background-position: center;">
+  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4" style="background-image: url('/assets/backgrounds/hero-gradient.svg'); background-size: cover; background-position: center;">
     <div class="max-w-4xl mx-auto">
+      <div class="inline-block mb-4">
+        <span class="px-3.5 py-1 rounded-full bg-indigo-wash text-indigo text-xs font-semibold uppercase tracking-wider border border-indigo-200">
+          Our Direction
+        </span>
+      </div>
       <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-ink">
         Pharmacy education deserves better digital tools.
       </h1>
-      <p class="mt-6 text-lg sm:text-xl text-ink-muted max-w-2xl mx-auto leading-relaxed">
+      <p class="mt-6 text-lg sm:text-xl text-slate max-w-2xl mx-auto leading-relaxed">
         AcePharm exists to make pharmacy revision clearer, more focused and easier to sustain.
       </p>
     </div>
   </section>
 
-  <section class="py-20 max-w-4xl mx-auto px-4 space-y-12">
-    <div>
-      <h2 class="text-2xl font-bold text-ink mb-4">Our Mission</h2>
-      <p class="text-base text-ink-muted leading-relaxed">
+  <section class="py-20 max-w-4xl mx-auto px-4 space-y-10">
+    <div class="bg-surface border border-border rounded-card p-8 sm:p-10 shadow-xs">
+      <h2 class="text-2xl font-bold text-ink mb-3">Founder</h2>
+      <p class="text-base text-slate leading-relaxed">
         AcePharm was founded by a UK pharmacist with experience of pharmacy education and the realities of progressing through pharmacy training. The platform is being built around the resources, explanations and learning support pharmacy students should have had all along.
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-bold text-ink mb-4">Philosophy</h2>
-      <p class="text-base text-ink-muted leading-relaxed">
-        We believe students learn best when high-quality content, useful feedback and clear direction are brought together. Generic question banks that output raw percentages do not help learners understand their clinical blind spots.
+    <div class="bg-surface border border-border rounded-card p-8 sm:p-10 shadow-xs">
+      <h2 class="text-2xl font-bold text-ink mb-3">Philosophy</h2>
+      <p class="text-base text-slate leading-relaxed">
+        We believe students learn best when high-quality content, useful feedback and clear direction are brought together.
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-bold text-ink mb-4">Vision</h2>
-      <p class="text-base text-ink-muted leading-relaxed">
+    <div class="bg-surface border border-border rounded-card p-8 sm:p-10 shadow-xs">
+      <h2 class="text-2xl font-bold text-ink mb-3">Vision</h2>
+      <p class="text-base text-slate leading-relaxed">
         Our long-term ambition is to build the UK’s most useful learning platform for pharmacy students and pharmacists, from the first year of the MPharm degree through registration, prescribing and continued professional development.
       </p>
     </div>
 
-    <div class="mt-8">
-      <a href="https://app.acepharmexams.co.uk/auth/register">
-        <Button size="lg" variant="primary">Start revising free</Button>
+    <div class="pt-4 text-center sm:text-left">
+      <a href="/question-bank">
+        <Button size="lg" variant="primary">Explore AcePharm</Button>
       </a>
     </div>
   </section>

@@ -1,0 +1,73 @@
+{
+  "totalQuestions": 1905,
+  "totalStatements": 17234,
+  "generatedAt": "2026-09-17T14:34:56.792Z",
+  "chunks": [
+    {
+      "filename": "chunk_00_curriculum.sql",
+      "description": "Pathways, 19 GPhC Categories and mapped Subtopics foundation",
+      "statementsCount": 89,
+      "itemCount": 89
+    },
+    {
+      "filename": "chunk_01_questions_1_to_200.sql",
+      "description": "Questions 1 to 200 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_02_questions_201_to_400.sql",
+      "description": "Questions 201 to 400 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_03_questions_401_to_600.sql",
+      "description": "Questions 401 to 600 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_04_questions_601_to_800.sql",
+      "description": "Questions 601 to 800 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_05_questions_801_to_1000.sql",
+      "description": "Questions 801 to 1000 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_06_questions_1001_to_1200.sql",
+      "description": "Questions 1001 to 1200 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_07_questions_1201_to_1400.sql",
+      "description": "Questions 1201 to 1400 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_08_questions_1401_to_1600.sql",
+      "description": "Questions 1401 to 1600 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_09_questions_1601_to_1800.sql",
+      "description": "Questions 1601 to 1800 with content, options, explanations & governance",
+      "statementsCount": 1800,
+      "itemCount": 200
+    },
+    {
+      "filename": "chunk_10_questions_1801_to_1905.sql",
+      "description": "Questions 1801 to 1905 with content, options, explanations & governance",
+      "statementsCount": 945,
+      "itemCount": 105
+    }
+  ]
+}

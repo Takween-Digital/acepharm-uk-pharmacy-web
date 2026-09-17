@@ -244,7 +244,7 @@ export default function InteractiveSampleQuestion() {
 
           <div className="pt-3 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="text-xs text-slate">
-              {isCorrect ? '🎉 Great job!' : '💡 Solid learning opportunity.'} Practice 1,500+ authentic GPhC scenarios on AcePharm.
+              {isCorrect ? '🎉 Great job!' : '💡 Solid learning opportunity.'} Practise high-yield GPhC scenarios on AcePharm.
             </div>
             <a
               href="https://app.acepharmexams.co.uk/auth/register"

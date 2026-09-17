@@ -3,7 +3,7 @@
 import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, Button, Badge } from '@acepharm/ui';
-import { Mail, Lock, User, GraduationCap, Loader2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, User, Loader2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { ApiError } from '@/lib/api-client';
 
@@ -14,12 +14,18 @@ function RegisterForm() {
   const selectedPlan = planParam === 'monthly' || planParam === 'yearly' ? planParam : null;
 
   const { signUp } = useAuth();
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [stage, setStage] = useState('foundation');
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [optInMarketing, setOptInMarketing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const marketingUrl =
+    process.env.NEXT_PUBLIC_MARKETING_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://acepharmexams.co.uk';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +34,16 @@ function RegisterForm() {
       return;
     }
 
+    if (!agreedTerms) {
+      setError('Please agree to the AcePharm Terms and acknowledge the Privacy Policy to proceed.');
+      return;
+    }
+
     setError(null);
     setLoading(true);
 
     try {
-      await signUp(email, password, name, stage);
+      await signUp(email, password, firstName, 'foundation');
       if (selectedPlan) {
         router.push(`/?plan=${selectedPlan}`);
       } else {
@@ -60,9 +71,9 @@ function RegisterForm() {
         <Badge variant="teal" className="mb-2 text-xs">
           Start Free Explorer Access
         </Badge>
-        <h1 className="text-2xl font-bold text-ink tracking-tight">Create your free account</h1>
+        <h1 className="text-2xl font-bold text-ink tracking-tight">Start revising with clarity.</h1>
         <p className="text-xs text-slate mt-1.5 leading-relaxed">
-          30 free questions every month. No credit card required.
+          Create your free AcePharm account and complete your first pharmacy session.
         </p>
       </div>
 
@@ -75,15 +86,15 @@ function RegisterForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
-            Full name
+            First name
           </label>
           <div className="relative">
             <input
               type="text"
               required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Aisha Patel"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Aisha"
               className="w-full text-sm py-2.5 pl-9 pr-3 rounded-btn border border-border bg-surface text-ink placeholder:text-slate-light focus:outline-none focus:ring-2 focus:ring-indigo/20 focus:border-indigo transition-all"
             />
             <User className="w-4 h-4 text-slate-light absolute left-3 top-3" />
@@ -109,27 +120,6 @@ function RegisterForm() {
 
         <div>
           <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
-            Current MPharm / Training Stage
-          </label>
-          <div className="relative">
-            <select
-              value={stage}
-              onChange={(e) => setStage(e.target.value)}
-              className="w-full text-sm py-2.5 pl-9 pr-3 rounded-btn border border-border bg-surface text-ink focus:outline-none focus:ring-2 focus:ring-indigo/20 focus:border-indigo transition-all appearance-none cursor-pointer"
-            >
-              <option value="mpharm_y2">MPharm Year 2 (Therapeutics & Basics)</option>
-              <option value="mpharm_y3">MPharm Year 3 (Clinical Disease States)</option>
-              <option value="mpharm_y4">MPharm Year 4 (Complex Patient Cases)</option>
-              <option value="foundation">Foundation Trainee (GPhC Assessment)</option>
-              <option value="oriel">Oriel SJT Preparation Candidate</option>
-              <option value="prescribing">Independent Prescribing Pharmacist</option>
-            </select>
-            <GraduationCap className="w-4 h-4 text-slate-light absolute left-3 top-3 pointer-events-none" />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-1.5">
             Password
           </label>
           <div className="relative">
@@ -145,6 +135,54 @@ function RegisterForm() {
           </div>
         </div>
 
+        {/* Legal & Compliance Checkboxes */}
+        <div className="space-y-3 pt-1">
+          <div className="flex items-start gap-2.5">
+            <input
+              id="terms-consent"
+              type="checkbox"
+              required
+              checked={agreedTerms}
+              onChange={(e) => setAgreedTerms(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-border text-indigo focus:ring-indigo/20 cursor-pointer shrink-0"
+            />
+            <label htmlFor="terms-consent" className="text-xs text-slate select-none cursor-pointer leading-relaxed">
+              I agree to the AcePharm{' '}
+              <a
+                href={`${marketingUrl}/terms`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-indigo hover:text-indigo-deep underline underline-offset-2"
+              >
+                Terms
+              </a>{' '}
+              and acknowledge the{' '}
+              <a
+                href={`${marketingUrl}/privacy`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-indigo hover:text-indigo-deep underline underline-offset-2"
+              >
+                Privacy Policy
+              </a>
+              .
+            </label>
+          </div>
+
+          <div className="flex items-start gap-2.5">
+            <input
+              id="marketing-consent"
+              type="checkbox"
+              checked={optInMarketing}
+              onChange={(e) => setOptInMarketing(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-border text-indigo focus:ring-indigo/20 cursor-pointer shrink-0"
+            />
+            <label htmlFor="marketing-consent" className="text-xs text-slate select-none cursor-pointer leading-relaxed">
+              Send me useful revision guidance and AcePharm product updates.
+            </label>
+          </div>
+        </div>
+
         <Button
           type="submit"
           disabled={loading}
@@ -157,7 +195,7 @@ function RegisterForm() {
             </>
           ) : (
             <>
-              Create account & start revising
+              Create free account
               <ArrowRight className="w-4 h-4" />
             </>
           )}

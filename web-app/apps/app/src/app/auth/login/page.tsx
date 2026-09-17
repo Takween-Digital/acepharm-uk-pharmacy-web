@@ -47,11 +47,11 @@ export default function LoginPage() {
       if (migrationCode === 'MIGRATION_RESET_REQUIRED') {
         setError("We've upgraded our login system for extra security. We've sent a link to your email so you can set a new password — check your inbox.");
       } else if (code === 'invalid_credentials') {
-        setError('Invalid email or password. Please try again or request a reset link.');
+        setError('We could not match that email and password. Check the details or reset your password.');
       } else if (code === 'account_suspended') {
         setError('This account has been disabled. Please contact support.');
       } else if (err instanceof ApiError && err.status === 429) {
-        setError('Too many failed attempts. Please wait a few minutes before trying again.');
+        setError('Too many attempts. Try again in a few minutes, or reset your password.');
       } else {
         setError(err.message || 'Unable to sign in. Please verify your details.');
       }
@@ -102,9 +102,9 @@ export default function LoginPage() {
           <Badge variant="teal" className="mb-2 text-xs">
             UK Pharmacy Learner Portal
           </Badge>
-          <h1 className="text-2xl font-bold text-ink tracking-tight">Log in to your account</h1>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">Welcome back.</h1>
           <p className="text-xs text-slate mt-1.5 leading-relaxed">
-            Continue your clinical revision sessions and track your accuracy calibration.
+            Continue from where you left off.
           </p>
         </div>
 
@@ -186,7 +186,7 @@ export default function LoginPage() {
 
         <div className="mt-5 pt-3 text-center text-[11px] text-slate-light flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-teal" />
-          <span>Independent UK Revision &bull; GPhC Aligned &bull; GDPR Compliant</span>
+          <span>Independent UK Revision &bull; MPharm &amp; OSPAP Blueprint &bull; GDPR Compliant</span>
         </div>
       </Card>
 

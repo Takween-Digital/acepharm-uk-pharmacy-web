@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { drizzle } from 'drizzle-orm/d1';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and, lte } from 'drizzle-orm';
 import { blogPosts, users } from '../db/schema';
 import { requireAuth } from '../middleware/auth';
 import { requireRole } from '../middleware/rbac';
@@ -248,55 +248,55 @@ Amiodarone contains iodine and has an exceptionally long terminal half-life (up 
   },
   {
     id: 'post-comparison-01',
-    slug: 'passmed-vs-quesmed-vs-acepharm-uk-pharmacy-comparison',
-    title: 'Passmed vs Quesmed vs AcePharm: Choosing the Best UK Revision Platform (2026)',
-    summary: 'A deep comparative review of UK healthcare question banks: why medical question banks fall short for pharmacy students and how AcePharm fills the gap.',
-    contentMarkdown: `## 1. Feature & Capability Comparison Matrix
+    slug: 'evaluating-pharmacy-revision-tools-methodology-guide',
+    title: 'Evaluating Pharmacy Revision Tools: Methodology, Evidence Grounding, and Clinical Practice (2026)',
+    summary: 'How to evaluate pharmacy revision resources: why curriculum specificity, calculation depth, and active clinical decision-making matter for UK pharmacy assessments.',
+    contentMarkdown: `## 1. Core Evaluation Criteria for Pharmacy Revision
 
-While legacy platforms like **Passmedicine** and **Quesmed** were originally designed for UK medical undergraduate and MSRA candidates, **AcePharm** is purpose-built exclusively for UK MPharm students, foundation trainees, and GPhC registration assessment candidates.
+When selecting a digital study platform for MPharm exams or the GPhC registration assessment, pharmacy students and foundation trainees encounter a wide variety of healthcare question banks. Because pharmacy education requires unique clinical evaluation skills, numeracy standards, and regulatory knowledge, candidates benefit most from tools tailored to the specific demands of UK pharmacy practice.
 
-| Feature / Criteria | Passmedicine (Passmed) | Quesmed | AcePharm |
-| :--- | :--- | :--- | :--- |
-| **Primary Target Audience** | UK Medical (MBChB / MSRA / MRCP) | Medical Students & Junior Doctors | **UK MPharm Students, Foundation Trainees & GPhC Candidates** |
-| **GPhC Paper 1 Calculation Engine** | Limited / Basic Math | Basic Numeracy | **Interactive Step-by-Step Calculation Coach with Unit Checks** |
-| **Clinical Guideline Grounding** | General UK Medical / NICE | Medical Specialties | **Exclusively BNF 87/88, BNFc, NICE CKS, MHRA & MEP 47** |
-| **Spaced Repetition Algorithm** | Standard Knowledge Bank | Flashcard System | **Native SM-2 Spaced Repetition with Confidence Calibration** |
-| **Real-time AI Clinical Tutor** | None | Limited AI Chat | **Ace AI: Interactive Socratic Clinical Case Simulator** |
-| **Free Access Tier** | Trial Period | Limited Free Access | **Explorer Tier: 30 Free Questions/Month with Full Explanations** |
-| **Mobile & Performance** | Standard Web View | Dedicated App | **Sub-second Edge-Rendered Web App (WCAG 2.2 AA Compliant)** |
-
----
-
-## 2. Why Medical Question Banks Fall Short for Pharmacy Candidates
-
-Historically, UK pharmacy students resorted to using medical question banks because dedicated pharmacy resources were scarce. However, significant pedagogical differences exist:
-
-1. **Calculations Rigour:** Medical exams feature minimal calculations. The GPhC Paper 1 contains 40 highly complex, multi-stage pharmaceutical numeracy questions requiring exact diagnostic precision.
-2. **Dispensing & Prescription Legality:** The GPhC assessment tests the legal validity of Controlled Drug prescriptions, instalment dispensing rules, veterinary prescriptions, and emergency supplies under MEP 47—topics completely omitted in medical banks.
-3. **High-Risk Therapeutic Drug Monitoring:** Pharmacists are expected to know exact serum sampling timings (e.g. 12 hours post-lithium dose, 6 hours post-digoxin dose) and therapeutic target values down to exact decimal ranges.
+| Feature / Criteria | Generic Healthcare Question Banks | Dedicated Pharmacy Revision Architecture (AcePharm) |
+| :--- | :--- | :--- |
+| **Primary Curriculum Focus** | General medical undergraduate & foundation doctor training | **UK MPharm Degree, Foundation Trainee Framework & GPhC Registration Blueprint** |
+| **Pharmaceutical Calculations** | Basic numeracy & clinical arithmetic | **Multi-stage Step-by-Step Calculation Coach with Units & Formula Explanations** |
+| **Guideline & Formulary Alignment** | Varied clinical guidelines & hospital protocols | **Grounded directly in the BNF, BNF for Children, NICE CKS, and MHRA Drug Safety Updates** |
+| **Spaced Repetition & Retention** | Standard question tagging or simple decks | **Confidence-Calibrated Spaced Repetition (First-Attempt Calibration vs Practice)** |
+| **Clinical Reasoning Support** | Static answer keys or generic AI chatbots | **Ace AI Tutor: Retrieval-grounded explanations citing specific BNF chapters and NICE guidance** |
+| **Trial & Exploration** | Limited time-limited trials | **Explorer Tier: 30 Free Questions Monthly with Complete Option-by-Option Rationales** |
+| **Platform Accessibility** | Desktop-centric layouts | **Mobile-First, Sub-Second Edge Architecture (WCAG 2.2 AA Compliant)** |
 
 ---
 
-## 3. How AcePharm Solves the "Illusion of Competence"
+## 2. Key Differences in Pharmacy Assessment Design
 
-Many candidates complete thousands of revision questions and achieve 80%+ scores, only to struggle in the actual GPhC exam. This occurs because repeating identical questions creates **recognition memory** rather than **generative retrieval**.
+Historically, pharmacy students often revised using general medical question banks due to a lack of pharmacy-specific digital resources. However, key pedagogical differences distinguish pharmacy assessments from other healthcare examinations:
 
-AcePharm eliminates this blind spot through **Confidence-Calibrated Scoring**:
+1. **Calculations Rigour:** GPhC Paper 1 is a dedicated 40-question calculation assessment requiring absolute accuracy under time pressure. Scenarios require multi-stage arithmetic, displacement volumes, paediatric weight scaling, infusion rate conversions, and molecular weight adjustments.
+2. **Medicines Ethics & Legal Practice:** Pharmacy assessments test legal validity of Controlled Drug prescriptions, instalment dispensing regulations, veterinary medicine cascade rules, and emergency supply criteria under the Medicines, Ethics and Practice (MEP) guidance.
+3. **Therapeutic Drug Monitoring Precision:** Pharmacists must know exact serum sampling timings (e.g. 12 hours post-dose for lithium, 6 hours post-dose for digoxin) and target therapeutic ranges to the decimal point.
+
+---
+
+## 3. Addressing the "Illusion of Competence" Through Calibration
+
+Many students answer hundreds of practice questions and achieve high percentage scores, only to find the actual assessment far more challenging. This disconnect often stems from **recognition memory**—recognising familiar question stems rather than actively retrieving and applying clinical principles.
+
+AcePharm addresses this challenge through **Confidence-Calibrated Learning**:
 - Before submitting an answer, you record your subjective confidence level (*Low, Medium, High*).
-- If you answer correctly with *Low Confidence*, the system flags this as "Lucky Guess" and schedules a review via the SM-2 algorithm.
-- If you answer incorrectly with *High Confidence*, the platform categorises this as an **"Uncalibrated Knowledge Hazard"**, directing you to the underlying BNF clinical monograph.
+- Answering correctly with *Low Confidence* identifies potential lucky guesses, scheduling timely re-testing to solidify memory.
+- Answering incorrectly with *High Confidence* surfaces **uncalibrated clinical blind spots**, directing you immediately to the underlying BNF clinical monograph and learning rationales.
 
 ---
 
-## 4. Final Verdict: Which Platform Should You Choose?
+## 4. Selecting the Right Revision Approach for Your Stage
 
-- **Choose Passmed/Quesmed if:** You are a medical student or junior doctor preparing for the UKMLA, MSRA, or MRCP examinations.
-- **Choose AcePharm if:** You are an MPharm student (Years 2-4), an Oriel applicant, a Foundation Trainee Pharmacist, or an OSPAP candidate targeting first-time success in the GPhC Registration Assessment.`,
+- **For Early MPharm Students (Years 1–2):** Focus on building foundational numeracy, mechanisms of action, and fundamental pharmacokinetic concepts.
+- **For Senior MPharm Students & Trainees (Years 3–4, Foundation Year):** Prioritise high-weighting clinical therapeutic scenarios (Cardiovascular, Endocrine, Respiratory, Infections), complex multi-stage calculations, and realistic OTC consultation triage.`,
     coverImageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=1000',
     published: true,
     publishedAt: new Date('2026-09-01T09:00:00Z'),
     readingTimeMinutes: 9,
-    tagsJson: JSON.stringify(['MPharm Study', 'Platform Comparison', 'GPhC Revision', 'Passmed Alternative']),
+    tagsJson: JSON.stringify(['MPharm Study', 'Revision Strategy', 'GPhC Preparation', 'Evidence-Based Learning']),
   },
   {
     id: 'post-oriel-01',
@@ -377,13 +377,15 @@ Unlike the 3-minute-per-question allowance in GPhC Paper 1, the Oriel numeracy a
 ];
 
 // 1. Public: List all published posts
+// 1. Public: List all published posts (filters future scheduled posts: publishedAt <= new Date())
 blogRoutes.get('/', async (c) => {
   const db = drizzle(c.env.DB);
+  const now = new Date();
   
   let posts = await db
     .select()
     .from(blogPosts)
-    .where(eq(blogPosts.published, true))
+    .where(and(eq(blogPosts.published, true), lte(blogPosts.publishedAt, now)))
     .orderBy(desc(blogPosts.publishedAt));
 
   if (posts.length === 0) {
@@ -398,7 +400,7 @@ blogRoutes.get('/', async (c) => {
     posts = await db
       .select()
       .from(blogPosts)
-      .where(eq(blogPosts.published, true))
+      .where(and(eq(blogPosts.published, true), lte(blogPosts.publishedAt, now)))
       .orderBy(desc(blogPosts.publishedAt));
   }
 
@@ -407,8 +409,12 @@ blogRoutes.get('/', async (c) => {
 
 // 2. Public: Get published post by slug
 blogRoutes.get('/:slug', async (c) => {
-  const slug = c.req.param('slug');
+  const rawSlug = c.req.param('slug');
+  const slug = rawSlug === 'passmed-vs-quesmed-vs-acepharm-uk-pharmacy-comparison' 
+    ? 'evaluating-pharmacy-revision-tools-methodology-guide' 
+    : rawSlug;
   const db = drizzle(c.env.DB);
+  const now = new Date();
 
   let [post] = await db
     .select()
@@ -434,7 +440,20 @@ blogRoutes.get('/:slug', async (c) => {
     }
   }
 
-  if (!post || (!post.published && c.get('user')?.role === 'super_admin')) {
+  const user = c.get('user');
+  const isPrivileged = user?.role === 'super_admin' || user?.role === 'marketing_editor';
+
+  if (!post) {
+    return c.json({ error: 'Blog post not found' }, 404);
+  }
+
+  // Hide draft posts from public
+  if (!post.published && !isPrivileged) {
+    return c.json({ error: 'Blog post not found' }, 404);
+  }
+
+  // Hide future scheduled posts from public (ACE-15)
+  if (post.publishedAt && new Date(post.publishedAt) > now && !isPrivileged) {
     return c.json({ error: 'Blog post not found' }, 404);
   }
 

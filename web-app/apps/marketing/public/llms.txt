@@ -9,7 +9,7 @@ AcePharm (https://acepharmexams.co.uk) is an independent UK pharmacy educational
 - Homepage: https://acepharmexams.co.uk/
 - Platform Features: https://acepharmexams.co.uk/features
 - Question Bank Overview: https://acepharmexams.co.uk/question-bank
-- Ace AI Clinical Tutor: https://acepharmexams.co.uk/ace
+- Ace AI Tutor: https://acepharmexams.co.uk/ace
 - Pricing & Plans (£4.99/mo or £49.99/yr): https://acepharmexams.co.uk/pricing
 - About & Mission: https://acepharmexams.co.uk/about
 - Clinical Editorial Standards: https://acepharmexams.co.uk/editorial-standards

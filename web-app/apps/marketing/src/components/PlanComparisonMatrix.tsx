@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, Badge } from '@acepharm/ui';
+import { QUESTION_INVENTORY } from '@acepharm/preferences';
 
 interface FeatureRow {
   category: string;
@@ -15,7 +15,7 @@ const COMPARISON_FEATURES: FeatureRow[] = [
     category: 'Question Bank & Mocks',
     name: 'Practice Questions Monthly Access',
     free: '30 questions / month',
-    pro: 'Unlimited (1,500+ items)',
+    pro: `Unlimited full bank (${QUESTION_INVENTORY.totalLiveCount.toLocaleString()} revision scenarios)`,
   },
   {
     category: 'Question Bank & Mocks',
@@ -39,10 +39,10 @@ const COMPARISON_FEATURES: FeatureRow[] = [
   // 2. AI Tutor & Diagnostic Coaching
   {
     category: 'AI Tutoring & Coaching',
-    name: 'Ace AI 24/7 Clinical Pharmacist Tutor',
+    name: 'Ace AI Tutor (Available 24/7)',
     description: 'Conversational mentoring with BNF / NICE guideline citations',
     free: false,
-    pro: 'Unlimited inquiries & step explanations',
+    pro: 'Unlimited enquiries & step explanations',
   },
   {
     category: 'AI Tutoring & Coaching',
@@ -88,68 +88,12 @@ const COMPARISON_FEATURES: FeatureRow[] = [
 
 export default function PlanComparisonMatrix() {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [promoError, setPromoError] = useState('');
-
-  const handleApplyPromo = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!promoCode.trim()) return;
-
-    const normalized = promoCode.trim().toUpperCase();
-    if (normalized === 'STUDENT20' || normalized === 'GPHC2026' || normalized === 'BPSA') {
-      setPromoApplied(true);
-      setPromoError('');
-    } else {
-      setPromoError('Invalid coupon code. Try STUDENT20 or BPSA.');
-      setPromoApplied(false);
-    }
-  };
 
   // Group by category
   const categories = Array.from(new Set(COMPARISON_FEATURES.map((f) => f.category)));
 
   return (
     <div className="mt-16 space-y-8">
-      {/* Student Discount Banner & Promo Trigger */}
-      <Card className="p-6 bg-gradient-to-r from-indigo-wash/80 via-surface to-teal-light/40 border border-indigo/20 shadow-xs rounded-card flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-        <div className="space-y-1">
-          <div className="flex items-center justify-center sm:justify-start gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo">Student & Trainee Discount</span>
-            <Badge variant="teal" className="text-[10px] font-bold">20% Off</Badge>
-          </div>
-          <h3 className="text-base font-bold text-ink">Are you an MPharm student or BPSA member?</h3>
-          <p className="text-xs text-slate">Use code <strong className="text-indigo font-mono">STUDENT20</strong> during checkout to receive 20% off your annual plan.</p>
-        </div>
-
-        <form onSubmit={handleApplyPromo} className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative">
-            <input
-              type="text"
-              value={promoCode}
-              onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
-              placeholder="Enter coupon (e.g. STUDENT20)"
-              className="text-xs py-2 px-3 rounded-btn border border-border bg-surface text-ink placeholder:text-slate-light uppercase font-mono w-48 focus:outline-none focus:ring-2 focus:ring-indigo/20 focus:border-indigo"
-            />
-          </div>
-          <Button type="submit" variant="outline" size="sm" className="text-xs font-bold whitespace-nowrap">
-            {promoApplied ? '✓ Applied' : 'Apply'}
-          </Button>
-        </form>
-      </Card>
-
-      {promoApplied && (
-        <div className="p-3 bg-teal-light border border-teal/30 rounded-btn text-teal text-xs font-semibold text-center animate-in fade-in">
-          🎉 Promo code active! 20% discount will automatically apply at checkout (£39.99/year instead of £49.99).
-        </div>
-      )}
-
-      {promoError && (
-        <div className="p-2.5 bg-danger-wash border border-danger-border rounded-btn text-danger text-xs text-center">
-          {promoError}
-        </div>
-      )}
-
       {/* Comparison Table Section */}
       <div className="bg-surface border border-border rounded-card shadow-xs overflow-hidden">
         {/* Table Header Controls */}

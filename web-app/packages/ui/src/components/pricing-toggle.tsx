@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Check } from 'lucide-react';
 import { Button } from './button';
 import { Card } from './card';
 
@@ -48,19 +49,29 @@ export const PricingToggle: React.FC = () => {
             <div className="mt-4 flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-ink">£0</span>
             </div>
-            <p className="text-xs text-slate mt-2">30 questions every month. No card required.</p>
+            <p className="text-xs text-slate mt-2">Sample question collection</p>
             <ul className="mt-6 space-y-3 text-xs text-slate">
-              <li className="flex items-center gap-2">✓ 30 practice questions per month</li>
-              <li className="flex items-center gap-2">✓ Option-by-option clinical rationales</li>
-              <li className="flex items-center gap-2">✓ Isolated first-attempt accuracy calibration</li>
-              <li className="flex items-center gap-2">✓ Bookmarks and personal study notes</li>
-              <li className="flex items-center gap-2 text-slate-light">✗ Spaced-repetition flashcards</li>
-              <li className="flex items-center gap-2 text-slate-light">✗ Ace AI tutor assistance</li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Sample question collection</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Limited progress overview</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Bookmarks and notes</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>No card required</span>
+              </li>
             </ul>
           </div>
           <div className="mt-8">
             <a href="https://app.acepharmexams.co.uk/auth/register" className="block w-full">
-              <Button variant="outline" className="w-full">Start revising free</Button>
+              <Button variant="outline" className="w-full">Start free</Button>
             </a>
           </div>
         </Card>
@@ -78,16 +89,34 @@ export const PricingToggle: React.FC = () => {
             </div>
             <div className="mt-4 flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-ink">£4.99</span>
-              <span className="text-xs text-slate">/ month</span>
+              <span className="text-xs text-slate">per month</span>
             </div>
             <p className="text-xs text-slate mt-2">Flexible access for focused revision periods.</p>
             <ul className="mt-6 space-y-3 text-xs text-slate">
-              <li className="flex items-center gap-2 font-medium text-ink">✓ Unlimited pharmacy questions & mocks</li>
-              <li className="flex items-center gap-2 font-medium text-ink">✓ Ace AI tutor with full reference citations</li>
-              <li className="flex items-center gap-2">✓ Option-by-option clinical rationales</li>
-              <li className="flex items-center gap-2">✓ Dual-store first-attempt vs practice analytics</li>
-              <li className="flex items-center gap-2">✓ Spaced repetition & weak area generator</li>
-              <li className="flex items-center gap-2">✓ Cancel online anytime</li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Full available question bank</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Full explanations and references</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Progress analytics</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Timed sessions</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Ask Ace and the full AI toolkit</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Cancel online</span>
+              </li>
             </ul>
           </div>
           <div className="mt-8">
@@ -103,30 +132,33 @@ export const PricingToggle: React.FC = () => {
         <Card className={`p-8 bg-surface border rounded-card shadow-card flex flex-col justify-between relative transition-all ${
           isAnnual ? 'border-indigo ring-2 ring-indigo/20' : 'border-border'
         }`}>
-          {isAnnual && (
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo text-white text-xs font-bold shadow-xs">
-              Most Popular · Save £9.89
-            </div>
-          )}
           <div>
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-bold text-ink">AcePharm Yearly</h3>
-              {isAnnual && (
-                <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold">Best Value</span>
-              )}
+              <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold">Best Value</span>
             </div>
             <div className="mt-4 flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-ink">£49.99</span>
-              <span className="text-xs text-slate">/ year</span>
+              <span className="text-xs text-slate">per year</span>
             </div>
-            <p className="text-xs text-teal font-medium mt-2">Equivalent to £4.16/month (billed annually)</p>
+            <p className="text-xs text-teal font-medium mt-2">Best for students who want consistent access throughout the academic year.</p>
             <ul className="mt-6 space-y-3 text-xs text-slate">
-              <li className="flex items-center gap-2 font-medium text-ink">✓ Unlimited pharmacy questions & mocks</li>
-              <li className="flex items-center gap-2 font-medium text-ink">✓ Ace AI tutor with full reference citations</li>
-              <li className="flex items-center gap-2">✓ Option-by-option clinical rationales</li>
-              <li className="flex items-center gap-2">✓ Spaced repetition & diagnostic weak area generator</li>
-              <li className="flex items-center gap-2">✓ Full uninterrupted year through final exam season</li>
-              <li className="flex items-center gap-2">✓ Exact proration shown on upgrade</li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Everything in monthly</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>One annual payment</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>Save £9.89</span>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-teal shrink-0" />
+                <span>No monthly interruptions</span>
+              </li>
             </ul>
           </div>
           <div className="mt-8">
@@ -140,7 +172,7 @@ export const PricingToggle: React.FC = () => {
       </div>
 
       <div className="mt-12 text-center text-xs text-slate-light max-w-2xl mx-auto leading-relaxed">
-        Clear renewal information. Cancel online anytime. Your completed progress and bookmarks remain safely stored in your account even if your paid subscription ends.
+        Clear renewal information. Cancel online. Your completed progress remains available if your subscription ends.
       </div>
     </div>
   );

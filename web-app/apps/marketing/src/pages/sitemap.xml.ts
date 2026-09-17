@@ -21,13 +21,18 @@ const STATIC_PAGES = [
 ];
 
 export const GET: APIRoute = async () => {
-  let blogSlugs = [
-    'gphc-calculations-essential-methods',
-    'asthma-bts-sign-vs-nice-guideline-comparison',
-    'high-risk-medicines-monitoring-guidelines',
-    'passmed-vs-quesmed-vs-acepharm-uk-pharmacy-comparison',
-    'oriel-pharmacy-sjt-foundation-training-guide',
+  const now = new Date();
+  const fallbackBlogPosts = [
+    { slug: 'gphc-calculations-essential-methods', publishedAt: '2026-09-18T09:00:00Z' },
+    { slug: 'asthma-bts-sign-vs-nice-guideline-comparison', publishedAt: '2026-09-12T09:00:00Z' },
+    { slug: 'high-risk-medicines-monitoring-guidelines', publishedAt: '2026-08-28T09:00:00Z' },
+    { slug: 'evaluating-pharmacy-revision-tools-methodology-guide', publishedAt: '2026-09-01T09:00:00Z' },
+    { slug: 'oriel-pharmacy-sjt-foundation-training-guide', publishedAt: '2026-08-20T09:00:00Z' },
   ];
+
+  let blogSlugs = fallbackBlogPosts
+    .filter(p => !p.publishedAt || new Date(p.publishedAt) <= now)
+    .map(p => p.slug);
 
   try {
     const API_URL = import.meta.env.PUBLIC_API_URL || 'https://api.acepharmexams.co.uk';
@@ -35,11 +40,13 @@ export const GET: APIRoute = async () => {
     if (res.ok) {
       const data = await res.json();
       if (data.posts && data.posts.length > 0) {
-        blogSlugs = data.posts.map((p: any) => p.slug);
+        blogSlugs = data.posts
+          .filter((p: any) => !p.publishedAt || new Date(p.publishedAt) <= now)
+          .map((p: any) => p.slug);
       }
     }
   } catch {
-    // Use fallback static slugs
+    // Use filtered fallback static slugs
   }
 
   const sitemapEntries = [

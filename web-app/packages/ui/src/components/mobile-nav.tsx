@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { AuthStorage } from '@acepharm/preferences';
+import { AuthStorage, SITE_NAVIGATION } from '@acepharm/preferences';
 
 interface MobileNavProps {
   currentPath?: string;
@@ -50,15 +50,12 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   }, [isOpen]);
 
   const navLinks = [
-    { href: '/features', label: 'Features' },
-    { href: '/question-bank', label: 'Question Bank' },
-    { href: '/ace', label: 'Ace AI Tutor' },
-    { href: '/pricing', label: 'Pricing' },
+    ...SITE_NAVIGATION.primary,
+    { href: '/features', label: 'Product Features' },
     { href: '/blog', label: 'Revision Guides' },
-    { href: '/about', label: 'About' },
     { href: '/editorial-standards', label: 'Editorial Standards' },
-    { href: '/faq', label: 'FAQ' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/faq', label: 'Student FAQ' },
+    { href: '/contact', label: 'Contact & Support' },
   ];
 
   return (

@@ -103,7 +103,7 @@ function VerifyEmailContent() {
 
         <div className="mt-6 pt-4 border-t border-border text-center text-xs text-slate flex items-center justify-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-teal" />
-          <span>GPhC Assessment Revision Platform &bull; UK Secure Auth</span>
+          <span>Independent UK Revision &bull; MPharm &amp; OSPAP Blueprint &bull; GDPR Compliant</span>
         </div>
       </Card>
     </div>

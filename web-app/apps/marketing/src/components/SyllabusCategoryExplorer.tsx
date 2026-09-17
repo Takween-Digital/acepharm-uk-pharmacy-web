@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Card, Badge, Button } from '@acepharm/ui';
+import { Card, Button } from '@acepharm/ui';
+import { QUESTION_INVENTORY, type CategoryQuestionStat } from '@acepharm/preferences';
 
 export interface CategoryInfo {
   id: string;
@@ -9,181 +10,20 @@ export interface CategoryInfo {
   questionCount: number;
   description: string;
   keyTopics: string[];
+  status?: 'live' | 'authoring';
 }
 
-const GPHC_CATEGORIES: CategoryInfo[] = [
-  {
-    id: 'cardio',
-    name: 'Cardiovascular System',
-    weighting: 'High',
-    bnfChapter: 'BNF Chapter 2',
-    questionCount: 160,
-    description: 'Hypertension, heart failure, arrhythmias, anticoagulation, lipid modification and acute coronary syndromes.',
-    keyTopics: ['NICE NG136', 'DOAC Dosing', 'Heart Failure Stepwise Therapy', 'Warfarin & INR Monitoring'],
-  },
-  {
-    id: 'resp',
-    name: 'Respiratory System',
-    weighting: 'High',
-    bnfChapter: 'BNF Chapter 3',
-    questionCount: 140,
-    description: 'Asthma and COPD management guidelines, inhaler device technique, and acute exacerbation protocols.',
-    keyTopics: ['BTS/SIGN Guidelines', 'GOLD COPD Criteria', 'Inhaler Technique Calibration', 'Theophylline Monitoring'],
-  },
-  {
-    id: 'cns',
-    name: 'Central Nervous System',
-    weighting: 'High',
-    bnfChapter: 'BNF Chapter 4',
-    questionCount: 155,
-    description: 'Depression, anxiety, psychosis, Parkinson’s disease, epilepsy management, and substance misuse services.',
-    keyTopics: ['Valproate Pregnancy Prevention', 'Lithium Toxicity', 'Antidepressant Switching', 'Parkinsonian Motor Symptoms'],
-  },
-  {
-    id: 'infection',
-    name: 'Infections & Antimicrobial Stewardship',
-    weighting: 'High',
-    bnfChapter: 'BNF Chapter 5',
-    questionCount: 145,
-    description: 'Antibiotic selection, sepsis screening, UKHSA primary care guidance, antifungal and antiviral regimens.',
-    keyTopics: ['Gentamicin & Vancomycin TDM', 'UKHSA Stewardship Guidance', 'Penicillin Allergy Stratification', 'Clostridioides difficile'],
-  },
-  {
-    id: 'endocrine',
-    name: 'Endocrine & Diabetes',
-    weighting: 'High',
-    bnfChapter: 'BNF Chapter 6',
-    questionCount: 130,
-    description: 'Type 1 and Type 2 Diabetes regimens, thyroid disease, corticosteroids, and adrenal crisis management.',
-    keyTopics: ['NICE NG28 Glycaemic Algorithms', 'Insulin Safety & Conversions', 'Sick Day Rules', 'Steroid Emergency Cards'],
-  },
-  {
-    id: 'calc',
-    name: 'Pharmaceutical Calculations (Paper 1)',
-    weighting: 'High',
-    bnfChapter: 'GPhC Paper 1 Focus',
-    questionCount: 180,
-    description: 'Dosages, dilution, concentrations, infusion rates, molecular weights, displacement volumes and pharmacokinetics.',
-    keyTopics: ['Infusion Rate Calculations', 'Alligation & Mixing', 'Paediatric BSA Dosing', 'Displacement Values'],
-  },
-  {
-    id: 'law',
-    name: 'Pharmacy Law, Ethics & Practice',
-    weighting: 'High',
-    bnfChapter: 'Medicines Ethics & Practice (MEP)',
-    questionCount: 120,
-    description: 'Controlled Drugs schedules, emergency supplies, responsible pharmacist regulations, and fitness to practise.',
-    keyTopics: ['Misuse of Drugs Regs 2001', 'Emergency Supply Rules', 'Responsible Pharmacist Absence', 'Veterinary Prescriptions'],
-  },
-  {
-    id: 'gi',
-    name: 'Gastrointestinal System',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 1',
-    questionCount: 95,
-    description: 'Dyspepsia, peptic ulcer disease, inflammatory bowel disease (IBD), stoma care, and liver impairment.',
-    keyTopics: ['PPI Long-Term Risks', 'H. pylori Eradication', 'IBD Biologics & Monitoring', 'Laxative Stepped Management'],
-  },
-  {
-    id: 'gu',
-    name: 'Genito-Urinary System',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 7',
-    questionCount: 80,
-    description: 'Urinary tract infections, benign prostatic hyperplasia, erectile dysfunction, and contraception counselling.',
-    keyTopics: ['Emergency Hormonal Contraception', 'BPH 5-ARI & Alpha Blockers', 'Catheter Maintenance Protocols', 'Recurrent UTI Guidance'],
-  },
-  {
-    id: 'malignancy',
-    name: 'Malignant Disease & Immunosuppression',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 8',
-    questionCount: 75,
-    description: 'Oral anticancer medicines safety, febrile neutropenia, antiemetic regimens, and DMARD toxicity.',
-    keyTopics: ['Oral Methotrexate Once-Weekly Alert', 'Febrile Neutropenia Flags', 'Chemotherapy-Induced Nausea', 'Biologic Screening'],
-  },
-  {
-    id: 'nutrition',
-    name: 'Nutrition & Blood Disorders',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 9',
-    questionCount: 70,
-    description: 'Anaemias, electrolyte disorders, parenteral nutrition requirements, and fluid replacement protocols.',
-    keyTopics: ['Oral vs IV Iron Therapy', 'Hypokalaemia Management', 'Vitamin D Deficiency Protocols', 'Refeeding Syndrome Flags'],
-  },
-  {
-    id: 'msk',
-    name: 'Musculoskeletal & Joint Diseases',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 10',
-    questionCount: 65,
-    description: 'Osteoarthritis, rheumatoid arthritis, gout prophylaxis/acute flares, osteoporosis and bone health.',
-    keyTopics: ['NSAID Gastro & Renal Risks', 'Allopurinol Initiation & Dosing', 'Bisphosphonate Counselling', 'DMARD Monitoring Intervals'],
-  },
-  {
-    id: 'eye',
-    name: 'Eye & Ophthalmic Conditions',
-    weighting: 'Low',
-    bnfChapter: 'BNF Chapter 11',
-    questionCount: 45,
-    description: 'Glaucoma topical therapies, eye drop administration technique, conjunctivitis, and red flag referrals.',
-    keyTopics: ['Prostaglandin Analogues Counselling', 'Beta-Blocker Eye Drop Contraindications', 'Dry Eye Stepped Care', 'Red Eye Triage'],
-  },
-  {
-    id: 'ent',
-    name: 'Ear, Nose & Oropharynx',
-    weighting: 'Low',
-    bnfChapter: 'BNF Chapter 12',
-    questionCount: 40,
-    description: 'Otitis externa, allergic rhinitis, oral candidiasis, and community pharmacy minor ailment protocols.',
-    keyTopics: ['Intranasal Steroid Technique', 'Otitis Externa Ear Drops', 'Oral Thrush Treatments', 'Pharmacy First Earache Protocols'],
-  },
-  {
-    id: 'skin',
-    name: 'Skin & Dermatology',
-    weighting: 'Medium',
-    bnfChapter: 'BNF Chapter 13',
-    questionCount: 85,
-    description: 'Eczema emollients, topical steroid potencies, acne stepped care, psoriasis, and skin malignancy referral flags.',
-    keyTopics: ['Fingertip Units (FTU) Guidance', 'Topical Corticosteroid Potencies', 'Emollient Fire Hazards', 'Oral Isotretinoin PPP'],
-  },
-  {
-    id: 'anaesthesia',
-    name: 'Anaesthesia & Intensive Care',
-    weighting: 'Low',
-    bnfChapter: 'BNF Chapter 15',
-    questionCount: 35,
-    description: 'Local anaesthetic maximum doses, neuromuscular blockade principles, and pre-operative medication holding.',
-    keyTopics: ['Lidocaine Adrenaline Exclusions', 'Pre-op Anticoagulant Holding Times', 'Sedation Reversal Protocols', 'Malignant Hyperthermia'],
-  },
-  {
-    id: 'paediatrics',
-    name: 'Paediatrics & Neonatal Dosing',
-    weighting: 'High',
-    bnfChapter: 'BNFC & Safety Guidelines',
-    questionCount: 90,
-    description: 'Age-appropriate formulations, BNFC weight-based dosing, off-label safety, and choking risk mitigation.',
-    keyTopics: ['BNFC Off-label Status Verification', 'Liquid Formulations Excipients', 'Paracetamol & Ibuprofen Alternation', 'Neonatal Jaundice Flags'],
-  },
-  {
-    id: 'elderly',
-    name: 'Older People & Polypharmacy',
-    weighting: 'High',
-    bnfChapter: 'Clinical Governance & STOPP/START',
-    questionCount: 85,
-    description: 'Anticholinergic burden, fall risks, STOPP/START criteria, deprescribing, and renal function estimation in frail adults.',
-    keyTopics: ['Anticholinergic Cognitive Burden (ACB)', 'STOPP/START Criteria', 'Cockcroft-Gault vs eGFR Dosing', 'Sedative Fall Risk Mitigation'],
-  },
-  {
-    id: 'otc',
-    name: 'Responding to Symptoms & OTC Triage',
-    weighting: 'High',
-    bnfChapter: 'Pharmacy First & Community Protocols',
-    questionCount: 110,
-    description: 'Differential diagnosis of common presenting symptoms, OTC licensing restrictions, and Pharmacy First referral triggers.',
-    keyTopics: ['Pharmacy First 7 Clinical Pathways', 'POM-to-P Sales Constraints', 'Red Flag Headaches & Chest Pain', 'Pregnancy OTC Suitability'],
-  },
-];
+const GPHC_CATEGORIES: CategoryInfo[] = QUESTION_INVENTORY.categories.map((cat: CategoryQuestionStat) => ({
+  id: cat.id,
+  name: cat.name,
+  weighting: cat.weighting,
+  bnfChapter: cat.bnfChapter,
+  questionCount: cat.count,
+  description: cat.description,
+  keyTopics: cat.keyTopics,
+  status: cat.status || 'live',
+}));
+
 
 export default function SyllabusCategoryExplorer() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -247,10 +87,10 @@ export default function SyllabusCategoryExplorer() {
       {/* Dynamic Count Stats */}
       <div className="flex items-center justify-between text-xs text-slate px-1">
         <span>
-          Showing <strong>{filteredCategories.length}</strong> of 19 GPhC curriculum categories
+          Showing <strong>{filteredCategories.length}</strong> GPhC curriculum categories
         </span>
         <span>
-          <strong>{totalFilteredQuestions}</strong> authentic revision scenarios available
+          <strong>{totalFilteredQuestions}</strong> authentic revision scenarios live in view ({QUESTION_INVENTORY.totalLiveCount}+ total bank)
         </span>
       </div>
 
@@ -262,8 +102,8 @@ export default function SyllabusCategoryExplorer() {
             className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-card transition-all rounded-card flex flex-col justify-between space-y-4 group"
           >
             <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] font-mono font-semibold text-slate truncate">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-[11px] font-mono font-semibold text-slate whitespace-normal break-words leading-tight">
                   {cat.bnfChapter}
                 </span>
                 <span
@@ -279,22 +119,22 @@ export default function SyllabusCategoryExplorer() {
                 </span>
               </div>
 
-              <h3 className="text-base font-bold text-ink group-hover:text-indigo transition-colors leading-tight">
+              <h3 className="text-base font-bold text-ink group-hover:text-indigo transition-colors leading-tight break-words">
                 {cat.name}
               </h3>
 
-              <p className="text-xs text-slate leading-relaxed">
+              <p className="text-xs text-slate leading-relaxed break-words">
                 {cat.description}
               </p>
             </div>
 
             <div className="space-y-3 pt-3 border-t border-border/60">
               {/* Key topics pill badges */}
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-wrap gap-1.5 items-center">
                 {cat.keyTopics.map((topic) => (
                   <span
                     key={topic}
-                    className="text-[10px] font-medium bg-canvas text-slate border border-border/80 px-2 py-0.5 rounded"
+                    className="text-[10px] font-medium bg-canvas text-slate border border-border/80 px-2 py-0.5 rounded whitespace-normal break-words leading-tight max-w-full inline-block"
                   >
                     {topic}
                   </span>
@@ -303,13 +143,13 @@ export default function SyllabusCategoryExplorer() {
 
               <div className="flex items-center justify-between text-xs pt-1">
                 <span className="font-semibold text-ink font-mono text-[11px]">
-                  {cat.questionCount} Questions
+                  {cat.questionCount > 0 ? `${cat.questionCount} Questions Live` : 'In Review Queue'}
                 </span>
                 <a
                   href="https://app.acepharmexams.co.uk/auth/register"
                   className="text-indigo hover:text-indigo-deep font-bold text-xs inline-flex items-center gap-1 group-hover:underline"
                 >
-                  Practice Topic &rarr;
+                  {cat.questionCount > 0 ? 'Practise Topic →' : 'View Syllabus →'}
                 </a>
               </div>
             </div>

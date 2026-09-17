@@ -7,45 +7,128 @@ import { Button } from '@acepharm/ui';
   title="Editorial Standards — AcePharm"
   description="How AcePharm protects the quality of its learning content through strict clinical, educational and editorial review."
 >
-  <section class="py-16 sm:py-24 bg-gradient-to-b from-primary-50/40 to-canvas border-b border-border-subtle text-center px-4">
+  {/* Hero Section */}
+  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4" style="background-image: url('/assets/backgrounds/hero-gradient.svg'); background-size: cover; background-position: center;">
     <div class="max-w-4xl mx-auto">
+      <div class="inline-block mb-4">
+        <span class="px-3.5 py-1 rounded-full bg-indigo-wash text-indigo text-xs font-semibold uppercase tracking-wider border border-indigo-200">
+          Editorial Governance & Clinical Safety
+        </span>
+      </div>
       <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-ink">
         How AcePharm protects the quality of its learning content.
       </h1>
-      <p class="mt-6 text-lg sm:text-xl text-ink-muted max-w-2xl mx-auto leading-relaxed">
-        Every question and subtopic note undergoes rigorous review before appearing in the learner question bank.
+      <p class="mt-6 text-lg sm:text-xl text-slate max-w-2xl mx-auto leading-relaxed">
+        Pharmacy education demands absolute clinical accuracy. Every question, rationale, calculation, and AI tutor response is held to rigorous clinical, educational, and editorial standards before reaching UK pharmacy learners.
       </p>
     </div>
   </section>
 
-  <section class="py-20 max-w-4xl mx-auto px-4 space-y-12">
+  {/* 7 Core Editorial Sections */}
+  <section class="py-20 max-w-4xl mx-auto px-4 space-y-8">
     <div class="space-y-6">
-      <div class="p-6 bg-white rounded-2xl border border-border-subtle shadow-sm">
-        <h3 class="text-base font-bold text-ink mb-2">1. Clinical Review</h3>
-        <p class="text-sm text-ink-muted leading-relaxed">
-          Verifies that clinical scenarios reflect contemporary UK pharmacy practice, dosing rules, contraindications and therapeutic drug monitoring protocols aligned with current BNF and NICE guidance.
+      {/* 1. Clinical Accuracy Commitment */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 1</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-xs font-bold border border-indigo/20">Clinical Integrity</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">1. Clinical Accuracy Commitment</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          AcePharm is committed to uncompromising clinical accuracy and patient safety across all revision resources. Every scenario is written to reflect contemporary UK clinical pharmacy practice, incorporating current dosing standards, contraindications, drug-drug interactions, therapeutic drug monitoring protocols, and high-risk medication safety alerts. Content undergoes scheduled annual re-validation and is expedited for immediate revision whenever the MHRA, NICE, or the BNF publish new clinical guidance, safety alerts, or formula updates.
         </p>
       </div>
 
-      <div class="p-6 bg-white rounded-2xl border border-border-subtle shadow-sm">
-        <h3 class="text-base font-bold text-ink mb-2">2. Educational Review</h3>
-        <p class="text-sm text-ink-muted leading-relaxed">
-          Ensures each question tests appropriate cognitive levels (application and clinical evaluation rather than rote trivia) and includes plausible, instructive distractors with complete rationales.
+      {/* 2. Question Authoring and Review Process */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 2</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-xs font-bold border border-indigo/20">Multi-Stage Workflow</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">2. Question Authoring and Review Process</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          No question is ever published directly upon creation. Every scenario moves through a multi-stage editorial lifecycle: <em>Draft → Awaiting Clinical Review → Changes Requested → Awaiting Editorial Review → Approved → Scheduled → Published</em>. Questions are mapped to the GPhC registration assessment blueprint weightings and designed to test higher-order cognitive application and clinical evaluation rather than passive recall. Every option—both the key answer and plausible clinical distractors—must include comprehensive, evidence-grounded rationales explaining precisely why each choice is clinically appropriate or unsuitable.
         </p>
       </div>
 
-      <div class="p-6 bg-white rounded-2xl border border-border-subtle shadow-sm">
-        <h3 class="text-base font-bold text-ink mb-2">3. Editorial & Governance Review</h3>
-        <p class="text-sm text-ink-muted leading-relaxed">
-          Enforces British English grammar, precision in terminology (e.g. micrograms written in full), and verifies that question generators never approve their own content.
+      {/* 3. Guideline Grounding & Citations Policy */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 3</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-xs font-bold border border-indigo/20">Evidence Grounding</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">3. Guideline Grounding & Citations Policy</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          Every clinical explanation and calculation breakdown on AcePharm is directly grounded in authoritative UK clinical sources: the British National Formulary (BNF), BNF for Children (BNFC), NICE Guidelines, Clinical Knowledge Summaries (CKS), and MHRA Drug Safety Updates. Explanations cite specific BNF chapters, guideline paragraphs, and published therapeutic tables so students can verify the primary evidence base and build habits of professional enquiry required in qualified practice.
+        </p>
+      </div>
+
+      {/* 4. Clinical AI Governance and Boundaries */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 4</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold border border-teal/20">AI Safety Framework</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">4. Clinical AI Governance and Boundaries</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          Ace AI operates under strict clinical and safety boundaries. Ace only answers from retrieved, human-reviewed AcePharm content—it is strictly prohibited from answering from unverified training data or external web scraping. Ace never publishes content directly to the question bank. Question generators are architecturally separated from human approvers. Every AI explanation carries source citations, and user feedback routes directly to the human clinical editorial queue. Ace never provides patient-specific medical advice or clinical prescribing recommendations.
+        </p>
+      </div>
+
+      {/* 5. Pharmacist Review and Approval Sign-offs */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 5</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-xs font-bold border border-indigo/20">Human Sign-Off</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">5. Pharmacist Review and Approval Sign-offs</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          Every published question, calculation tutorial, rationale, and learning point requires explicit sign-off by a qualified UK registered pharmacist. We maintain strict separation of duties: authors and AI generators can never approve or publish their own material. Every live question displays transparent editorial provenance, including its unique Question ID, the date of its last clinical review, and confirmation of sign-off by the AcePharm Clinical Editorial Team.
+        </p>
+      </div>
+
+      {/* 6. Conflict of Interest Disclosures */}
+      <div class="p-8 bg-surface rounded-card border border-border shadow-xs hover:border-indigo/30 transition-all">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 6</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo-wash text-indigo text-xs font-bold border border-indigo/20">Editorial Independence</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">6. Conflict of Interest Disclosures</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          AcePharm maintains complete editorial impartiality. All clinical authors, contributors, and editorial reviewers must declare any potential conflicts of interest, including advisory roles, research funding, or affiliations with pharmaceutical manufacturers and healthcare entities. Content decisions are made solely for educational value and clinical relevance. AcePharm does not accept commercial sponsorship, paid product placements, or industry funding that could influence question framing or therapeutic rationales.
+        </p>
+      </div>
+
+      {/* 7. Clear Statement of Independence from the GPhC and Royal Pharmaceutical Society */}
+      <div class="p-8 bg-gradient-to-br from-surface to-indigo-wash/20 rounded-card border-2 border-indigo/30 shadow-sm">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo">Section 7</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-indigo text-white text-xs font-bold shadow-xs">Independence Declaration</span>
+        </div>
+        <h2 class="text-xl font-bold text-ink mb-3">7. Clear Statement of Independence from the GPhC and Royal Pharmaceutical Society</h2>
+        <p class="text-sm text-slate leading-relaxed">
+          AcePharm is an entirely independent educational revision platform developed by UK clinical pharmacists. AcePharm is not affiliated with, endorsed by, accredited by, or partnered with the General Pharmaceutical Council (GPhC) or the Royal Pharmaceutical Society (RPS). Our questions, mock assessments, calculation tutorials, and learning tools are independently developed to support pharmacy students and foundation trainees preparing for registration assessments, but they do not constitute official publications, examination papers, or regulatory guidance of the statutory regulator or the professional leadership body.
         </p>
       </div>
     </div>
 
-    <div class="pt-8 text-center">
-      <a href="/contact">
-        <Button variant="outline">Report a content concern</Button>
-      </a>
+    {/* Report a Content Concern CTA & Standing Disclaimer */}
+    <div class="pt-12 border-t border-border text-center space-y-6">
+      <div class="max-w-xl mx-auto space-y-2">
+        <h3 class="text-lg font-bold text-ink">Help Us Maintain Clinical Excellence</h3>
+        <p class="text-xs sm:text-sm text-slate leading-relaxed">
+          Found a question you believe requires clinical review, an updated guideline reference, or an editorial correction? We investigate every report.
+        </p>
+      </div>
+      <div>
+        <a href="/contact?category=Report%20an%20error&subject=editorial-concern">
+          <Button variant="outline">Report a content concern</Button>
+        </a>
+      </div>
+      <p class="text-xs text-slate-light max-w-2xl mx-auto pt-4 leading-relaxed">
+        AcePharm is an educational resource. It does not provide patient-specific medical advice and does not replace official guidance, university teaching, professional supervision, clinical judgement or local policies.
+      </p>
     </div>
   </section>
 </BaseLayout>
+

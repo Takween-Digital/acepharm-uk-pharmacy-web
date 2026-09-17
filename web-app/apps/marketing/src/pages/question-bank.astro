@@ -82,44 +82,203 @@ import SyllabusCategoryExplorer from '../components/SyllabusCategoryExplorer';
       </div>
     </div>
 
-    {/* GPhC Therapeutic Categories & Syllabus Explorer */}
+    {/* Question Bank Browser & Syllabus Explorer */}
     <div>
       <div class="mb-6">
-        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Comprehensive Curriculum Coverage</span>
-        <h2 class="text-2xl font-bold text-ink mt-1">Explore GPhC Therapeutic Categories</h2>
-        <p class="text-xs sm:text-sm text-slate mt-1">
-          Search and filter across all 19 official GPhC syllabus domains, BNF chapters, and high-yield weighting priorities.
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Topic Browser</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-ink mt-1">Question bank browser</h2>
+        <p class="text-xs sm:text-sm text-slate mt-2 max-w-3xl leading-relaxed">
+          The question bank is growing. You can see exactly how many questions are available in each topic from the question bank browser before you start a session. Build a session from any combination of topics, or let AcePharm select a balanced mixture for you.
         </p>
       </div>
 
       <SyllabusCategoryExplorer client:visible />
+
+      <div class="mt-6 p-4 rounded-card bg-indigo-wash/40 border border-indigo/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-indigo shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span class="font-medium text-ink">Published questions pass clinical, educational and editorial review before becoming available to learners.</span>
+        </div>
+        <a href="/editorial-standards" class="text-indigo hover:text-indigo-deep font-semibold whitespace-nowrap text-xs underline">
+          Our editorial standards →
+        </a>
+      </div>
     </div>
 
     {/* Modes */}
     <div>
-      <h2 class="text-2xl font-bold text-ink mb-6">Study modes</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-surface border border-border rounded-card shadow-xs">
-          <h3 class="font-bold text-ink mb-2">Practice Mode</h3>
-          <p class="text-xs text-slate leading-relaxed">Untimed questions with immediate structured rationales, confidence ratings, bookmarks, and Ace tutor discussions.</p>
+      <div class="mb-6">
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Flexible Study Formats</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-ink mt-1">Choose your mode</h2>
+        <p class="text-xs sm:text-sm text-slate mt-2 max-w-2xl leading-relaxed">
+          Select from 8 purpose-built study modes to match your learning goals, from rapid knowledge checks to simulated exam conditions.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+        {/* Mode 1: High-Yield Filter */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-indigo-wash text-indigo flex items-center justify-center font-bold text-sm border border-indigo/20 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">High-Yield Filter</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Prioritise clinical questions and calculations aligned directly with high-weighting GPhC assessment domains.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-indigo">
+            <span>Blueprint Priority</span>
+          </div>
         </Card>
-        <Card className="p-6 bg-surface border border-border rounded-card shadow-xs">
-          <h3 class="font-bold text-ink mb-2">Timed Exam Mode</h3>
-          <p class="text-xs text-slate leading-relaxed">Realistic countdown timer with no interim answer displays. Full clinical breakdown available upon exam submission.</p>
+
+        {/* Mode 2: Weak-Area Focus */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-sm border border-rose-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">Weak-Area Focus</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Automatically targets topics where your first-attempt accuracy was low or confidence was uncalibrated.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-rose-700">
+            <span>Adaptive Diagnostic</span>
+          </div>
         </Card>
-        <Card className="p-6 bg-surface border border-border rounded-card shadow-xs">
-          <h3 class="font-bold text-ink mb-2">Diagnostic Weak Area Generator</h3>
-          <p class="text-xs text-slate leading-relaxed">Automated session generator that targets topics where your first-attempt accuracy was low or confidence was uncalibrated.</p>
+
+        {/* Mode 3: Untested First */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-sm border border-teal-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">Untested First</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Work through brand-new questions you have never seen before tackling repeated practice.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-teal-700">
+            <span>Fresh Scenario Queue</span>
+          </div>
         </Card>
+
+        {/* Mode 4: Spaced Repetition Drill */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-sm border border-purple-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">Spaced Repetition Drill</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Revisit previously attempted questions at clinically calibrated intervals to lock concepts into memory.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-purple-700">
+            <span>Long-Term Retention</span>
+          </div>
+        </Card>
+
+        {/* Mode 5: Timed Exam Condition */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-light text-amber flex items-center justify-center font-bold text-sm border border-amber/20 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">Timed Exam Condition</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Simulate realistic exam time pressure with strict countdown timers and hidden interim rationales.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-amber">
+            <span>Pearson VUE Simulation</span>
+          </div>
+        </Card>
+
+        {/* Mode 6: Rapid-Fire Revision */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center font-bold text-sm border border-sky-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">Rapid-Fire Revision</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Quick recall practice designed for short, efficient study bursts on high-frequency BNF facts.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-sky-700">
+            <span>High Pacing Drills</span>
+          </div>
+        </Card>
+
+        {/* Mode 7: High-Risk Drug Drill */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-sm border border-rose-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">High-Risk Drug Drill</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Dedicated focus on narrow therapeutic index medicines, therapeutic drug monitoring, and toxicity traps.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-rose-700">
+            <span>Patient Safety Critical</span>
+          </div>
+        </Card>
+
+        {/* Mode 8: OTC Consultation Simulator */}
+        <Card className="p-5 bg-surface border border-border hover:border-indigo/50 hover:shadow-xs transition-all rounded-card flex flex-col justify-between space-y-3 group">
+          <div class="space-y-2">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm border border-emerald-200/60 group-hover:scale-105 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+            <h3 class="font-bold text-ink text-base">OTC Consultation Simulator</h3>
+            <p class="text-xs text-slate leading-relaxed">
+              Realistic community pharmacy triage, Pharmacy First clinical pathways, and red-flag referral triggers.
+            </p>
+          </div>
+          <div class="pt-2 border-t border-border/50 text-[11px] font-semibold text-emerald-700">
+            <span>Pharmacy First Practice</span>
+          </div>
+        </Card>
+      </div>
+
+      <div class="text-center mt-10">
+        <a href="https://app.acepharmexams.co.uk/auth/register">
+          <Button variant="primary" size="lg">Customise practice session</Button>
+        </a>
       </div>
     </div>
 
-    {/* Bottom CTA */}
-    <div class="text-center pt-8 border-t border-border">
+    {/* Bottom CTA & Disclaimers */}
+    <div class="text-center pt-8 border-t border-border space-y-4">
       <a href="https://app.acepharmexams.co.uk/auth/register">
-        <Button size="lg" variant="primary">Start revising with 30 free questions</Button>
+        <Button size="lg" variant="primary">Start revising free</Button>
       </a>
-      <p class="text-xs text-slate-light mt-3">No card required. Upgrade only when you are ready.</p>
+      <p class="text-xs text-slate-light">No card required. Upgrade only when you are ready.</p>
+      <p class="text-[11px] text-slate-light max-w-2xl mx-auto leading-relaxed pt-2">
+        AcePharm is not affiliated with or endorsed by examination bodies unless explicitly stated. Practice content is designed for education and cannot guarantee a particular examination result.
+      </p>
     </div>
   </section>
 </BaseLayout>
