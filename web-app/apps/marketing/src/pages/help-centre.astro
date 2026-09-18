@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Card } from '@acepharm/ui';
+
+const RESOURCES = [
+  {
+    heading: 'Student FAQ',
+    body: 'Answers to common questions about the question bank, Ace, subscriptions and account settings.',
+    cta: 'Browse the FAQ',
+    href: '/faq',
+  },
+  {
+    heading: 'Contact the team',
+    body: 'Ask about your account, report a content concern, or suggest a feature directly to AcePharm.',
+    cta: 'Get in touch',
+    href: '/contact',
+  },
+  {
+    heading: 'Revision guides & blog',
+    body: 'Clinical guideline explainers, BNF high-yield summaries and exam blueprint breakdowns.',
+    cta: 'Read the blog',
+    href: '/blog',
+  },
+];
+---
+
+<BaseLayout
+  title="Help Centre — AcePharm"
+  description="Find answers, get support, or reach the AcePharm team directly."
+>
+  <section class="py-16 sm:py-24 bg-gradient-to-b from-indigo-wash/50 via-canvas to-canvas border-b border-border text-center px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="inline-block mb-4">
+        <span class="px-3.5 py-1 rounded-full bg-indigo-wash text-indigo text-xs font-semibold uppercase tracking-wider border border-indigo-200">
+          Help Centre
+        </span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-ink">
+        Find your way to an answer.
+      </h1>
+      <p class="mt-6 text-lg text-slate max-w-2xl mx-auto leading-relaxed">
+        Start with the FAQ for quick answers, or reach the AcePharm team directly if you need something specific.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {RESOURCES.map((item) => (
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 transition-all rounded-card shadow-xs flex flex-col justify-between space-y-4">
+          <div class="space-y-2">
+            <h3 class="font-bold text-ink text-lg">{item.heading}</h3>
+            <p class="text-sm text-slate leading-relaxed">{item.body}</p>
+          </div>
+          <a href={item.href} class="text-sm font-semibold text-indigo hover:underline">
+            {item.cta} →
+          </a>
+        </Card>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

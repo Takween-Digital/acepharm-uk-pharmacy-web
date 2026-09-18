@@ -55,7 +55,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { href: '/blog', label: 'Revision Guides' },
     { href: '/editorial-standards', label: 'Editorial Standards' },
     { href: '/faq', label: 'Student FAQ' },
-    { href: '/contact', label: 'Contact & Support' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (

@@ -9,6 +9,8 @@ export interface SiteNavigationConfig {
   primary: NavLink[];
   productDropdown: NavLink[];
   resourcesDropdown: NavLink[];
+  footerProduct: NavLink[];
+  footerResources: NavLink[];
   company: NavLink[];
   legal: NavLink[];
   auth: {
@@ -46,18 +48,28 @@ export const SITE_NAVIGATION: SiteNavigationConfig = {
     { href: '/blog', label: 'Revision Guides & Blog', shortLabel: 'Revision Guides' },
     { href: '/faq', label: 'Student FAQ' },
   ],
+  footerProduct: [
+    { href: '/question-bank', label: 'Question Bank' },
+    { href: '/features#progress', label: 'Progress' },
+    { href: '/pricing', label: 'Pricing' },
+  ],
+  footerResources: [
+    { href: '/blog', label: 'Blog' },
+    { href: '/help-centre', label: 'Help Centre' },
+    { href: '/faq', label: 'Student FAQ' },
+  ],
   company: [
     { href: '/about', label: 'About AcePharm' },
     { href: '/editorial-standards', label: 'Editorial Standards' },
-    { href: '/about#team', label: 'Clinical Advisory Team' },
-    { href: '/contact', label: 'Contact & Support' },
+    { href: '/contact', label: 'Contact' },
   ],
   legal: [
-    { href: '/terms', label: 'Terms of Service', shortLabel: 'Terms' },
-    { href: '/privacy', label: 'Privacy Policy' },
+    { href: '/terms', label: 'Terms' },
+    { href: '/privacy', label: 'Privacy' },
     { href: '/cookie-policy', label: 'Cookie Policy' },
-    { href: '/privacy#security', label: 'Security & Compliance' },
-    { href: '/editorial-standards#independence', label: 'Independence Disclaimer' },
+    { href: '/accessibility', label: 'Accessibility' },
+    { href: '/terms#acceptable-use', label: 'Acceptable Use' },
+    { href: '/ai-use-policy', label: 'AI Use Policy' },
   ],
   auth: {
     login: {
