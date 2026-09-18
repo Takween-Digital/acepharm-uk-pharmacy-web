@@ -412,14 +412,14 @@ export const GPHC_19_CATEGORIES: CategoryBlueprint[] = [
     bnfChapter: 'Medicines Ethics & Practice (MEP)',
     targetCount: 120,
     subtopics: [
-      { id: 'sub-cd', code: 'controlled-drugs-regs', name: 'Controlled Drugs Schedules & Prescriptions' },
+      { id: 'sub-cd-law', code: 'controlled-drugs-regs', name: 'Controlled Drugs Schedules & Prescriptions' },
       { id: 'sub-rp', code: 'responsible-pharmacist', name: 'Responsible Pharmacist Regulations & Absence' },
       { id: 'sub-emergency', code: 'emergency-supplies', name: 'Emergency Supplies at Request of Patient/Doctor' },
       { id: 'sub-vet', code: 'veterinary-medicines', name: 'Veterinary Prescriptions & Cascade Regulations' },
     ],
     archetypes: [
       {
-        subtopicCode: 'sub-cd',
+        subtopicCode: 'sub-cd-law',
         topicTitle: 'Schedule 2 Controlled Drug Prescription Legal Validity',
         guidelineRef: 'Misuse of Drugs Regulations 2001 & MEP 46',
         stemCore: 'A private prescription for Morphine sulfate 10 mg tablets (Schedule 2 CD) is presented at a community pharmacy. The prescription is dated 32 days ago and specifies total quantity as 56 tablets without words and figures.',
@@ -880,7 +880,11 @@ export function generateFull1905QuestionBank(): ClinicalQuestionItem[] {
         difficulty: diff,
         questionType: isCalculation ? 'calculation' : 'sba',
         sector,
-        stem: `A ${age}-year-old ${gender} patient ${arch.stemCore} (Case Ref: ${cat.code.toUpperCase()}-${qIndexStr}). Relevant physiological and medication history have been reviewed.`,
+        stem: `${
+          /^An? /.test(arch.stemCore)
+            ? arch.stemCore
+            : `A ${age}-year-old ${gender} patient ${arch.stemCore}`
+        } (Case Ref: ${cat.code.toUpperCase()}-${qIndexStr}). Relevant physiological and medication history have been reviewed.`,
         leadIn: arch.leadIn,
         options: [
           {
