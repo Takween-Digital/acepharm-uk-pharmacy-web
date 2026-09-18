@@ -59,7 +59,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   ];
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       {/* Hamburger button */}
       <button
         type="button"

@@ -231,7 +231,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenSubscription }) => {
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <a
                 href="/auth/login"
                 className="text-xs font-semibold text-slate hover:text-ink px-3 py-1.5 rounded-btn border border-border hover:border-slate transition-colors"
@@ -262,6 +262,24 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenSubscription }) => {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-border bg-surface px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-200 shadow-lg">
+          {!user && (
+            <div className="sm:hidden flex items-center gap-2 pb-2 border-b border-border">
+              <a
+                href="/auth/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center text-xs font-semibold text-slate hover:text-ink px-3 py-2 rounded-btn border border-border hover:border-slate transition-colors"
+              >
+                Sign In
+              </a>
+              <a
+                href="/auth/register"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex-1 text-center text-xs font-semibold text-white bg-indigo hover:bg-indigo-deep px-3.5 py-2 rounded-btn shadow-xs transition-all"
+              >
+                Register Free
+              </a>
+            </div>
+          )}
           <div className="space-y-1">
             <Link
               href="/"
