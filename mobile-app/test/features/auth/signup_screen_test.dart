@@ -13,15 +13,21 @@ class _FakeAuthRepository extends AuthRepository {
   Object? signUpError;
   int signUpCallCount = 0;
 
+  String? lastFirstName;
+  bool? lastMarketingOptIn;
+
   @override
   Future<void> signUpWithEmail({
     required String email,
     required String password,
     String? firstName,
+    bool marketingOptIn = false,
   }) async {
     signUpCallCount++;
     lastEmail = email;
     lastPassword = password;
+    lastFirstName = firstName;
+    lastMarketingOptIn = marketingOptIn;
     if (signUpError != null) throw signUpError!;
   }
 }
@@ -37,6 +43,7 @@ void main() {
         MaterialApp(home: SignUpScreen(authRepository: authRepository)),
       );
 
+      await tester.ensureVisible(find.text('Create account'));
       await tester.tap(find.text('Create account'));
       await tester.pump();
 
@@ -65,6 +72,7 @@ void main() {
       find.widgetWithText(TextFormField, 'Confirm password'),
       'different',
     );
+    await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pump();
 
@@ -111,6 +119,9 @@ void main() {
       find.widgetWithText(TextFormField, 'Confirm password'),
       'longenoughpw',
     );
+    await tester.tap(find.byKey(const Key('terms-consent-checkbox')));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pump();
 
@@ -118,6 +129,41 @@ void main() {
     expect(authRepository.lastEmail, 'new.student@acepharm.co.uk');
     expect(authRepository.lastPassword, 'longenoughpw');
   });
+
+  testWidgets(
+    'blocks submission and shows an error when terms are not agreed to',
+    (tester) async {
+      final authRepository = _FakeAuthRepository();
+
+      await tester.pumpWidget(
+        MaterialApp(home: SignUpScreen(authRepository: authRepository)),
+      );
+
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Email'),
+        'student@acepharm.co.uk',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Password'),
+        'longenoughpw',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Confirm password'),
+        'longenoughpw',
+      );
+      await tester.ensureVisible(find.text('Create account'));
+      await tester.tap(find.text('Create account'));
+      await tester.pump();
+
+      expect(
+        find.text(
+          'Please agree to the AcePharm Terms and Privacy Policy to continue.',
+        ),
+        findsOneWidget,
+      );
+      expect(authRepository.signUpCallCount, 0);
+    },
+  );
 
   testWidgets('shows a friendly message when sign-up fails', (tester) async {
     final requestOptions = RequestOptions(path: '/auth/signup');
@@ -148,6 +194,9 @@ void main() {
       find.widgetWithText(TextFormField, 'Confirm password'),
       'longenoughpw',
     );
+    await tester.tap(find.byKey(const Key('terms-consent-checkbox')));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Create account'));
     await tester.tap(find.text('Create account'));
     await tester.pump();
 

@@ -80,6 +80,7 @@ class AuthRepository {
     required String email,
     required String password,
     String? firstName,
+    bool marketingOptIn = false,
   }) async {
     final response = await _dio.post(
       '/auth/signup',
@@ -87,6 +88,7 @@ class AuthRepository {
         'email': email,
         'password': password,
         if (firstName != null) 'firstName': firstName,
+        'marketingOptIn': marketingOptIn,
       },
     );
     await _applyTokenResponse(response.data, email: email);
