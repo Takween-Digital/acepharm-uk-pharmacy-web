@@ -586,7 +586,7 @@ export const GPHC_19_CATEGORIES: CategoryBlueprint[] = [
     subtopics: [
       { id: 'sub-bph', code: 'bph-alpha-blockers', name: 'Benign Prostatic Hyperplasia (BPH)' },
       { id: 'sub-contraception', code: 'emergency-contraception', name: 'Emergency Hormonal Contraception (LNG vs UPA)' },
-      { id: 'sub-aki', code: 'aki-nephrotoxic-drugs', name: 'Acute Kidney Injury (DAMN Drugs)' },
+      { id: 'sub-aki-gu', code: 'aki-nephrotoxic-drugs', name: 'Acute Kidney Injury (DAMN Drugs)' },
     ],
     archetypes: [
       {
