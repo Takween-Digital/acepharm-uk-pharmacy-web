@@ -19,27 +19,27 @@ const router = new Hono<{ Bindings: any; Variables: { user?: any } }>();
  * Authentication: Requires either valid admin auth OR BULK_INDEX_SECRET env var
  */
 router.post('/admin/bulk-index-questions', async (c) => {
-  // Check authentication: either valid admin session OR special bulk index secret
-  const bulkSecret = c.req.header('X-Bulk-Index-Secret');
-  const authUser = c.get('user') as any;
-
-  const isBulkIndexSecretValid = bulkSecret && bulkSecret === c.env.BULK_INDEX_SECRET;
-  const isAdminUser = authUser?.role === 'admin';
-
-  if (!isBulkIndexSecretValid && !isAdminUser) {
-    return c.json(
-      {
-        error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
-      },
-      401
-    );
-  }
-
-  const db = drizzle(c.env.DB);
-  const ai = c.env.AI;
-  const vectorize = c.env.VECTORIZE;
-
   try {
+    // Check authentication: either valid admin session OR special bulk index secret
+    const bulkSecret = c.req.header('X-Bulk-Index-Secret');
+    const authUser = c.get('user') as any;
+    const envSecret = c.env.BULK_INDEX_SECRET as string;
+
+    const isBulkIndexSecretValid = bulkSecret && bulkSecret === envSecret;
+    const isAdminUser = authUser?.role === 'admin';
+
+    if (!isBulkIndexSecretValid && !isAdminUser) {
+      return c.json(
+        {
+          error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
+        },
+        401
+      );
+    }
+
+    const db = drizzle(c.env.DB);
+    const ai = c.env.AI;
+    const vectorize = c.env.VECTORIZE;
     // 1. Fetch all published questions ordered by creation date
     const allQuestions = await db
       .select({ id: questions.id, publicId: questions.publicId, status: questions.status })
@@ -126,25 +126,25 @@ router.post('/admin/bulk-index-questions', async (c) => {
  * Authentication: Requires either valid admin auth OR BULK_INDEX_SECRET env var
  */
 router.get('/admin/indexing-status', async (c) => {
-  // Check authentication: either valid admin session OR special bulk index secret
-  const bulkSecret = c.req.header('X-Bulk-Index-Secret');
-  const authUser = c.get('user') as any;
-
-  const isBulkIndexSecretValid = bulkSecret && bulkSecret === c.env.BULK_INDEX_SECRET;
-  const isAdminUser = authUser?.role === 'admin';
-
-  if (!isBulkIndexSecretValid && !isAdminUser) {
-    return c.json(
-      {
-        error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
-      },
-      401
-    );
-  }
-
-  const db = drizzle(c.env.DB);
-
   try {
+    // Check authentication: either valid admin session OR special bulk index secret
+    const bulkSecret = c.req.header('X-Bulk-Index-Secret');
+    const authUser = c.get('user') as any;
+    const envSecret = c.env.BULK_INDEX_SECRET as string;
+
+    const isBulkIndexSecretValid = bulkSecret && bulkSecret === envSecret;
+    const isAdminUser = authUser?.role === 'admin';
+
+    if (!isBulkIndexSecretValid && !isAdminUser) {
+      return c.json(
+        {
+          error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
+        },
+        401
+      );
+    }
+
+    const db = drizzle(c.env.DB);
     // Count indexed questions (those with content_chunks)
     const indexedQuestions = await db
       .select({ count: questions.id })
