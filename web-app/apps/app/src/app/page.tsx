@@ -220,6 +220,26 @@ export default function StudentDashboardPage() {
   const totalAttempted = categoriesOverview.reduce((sum, cat) => sum + (cat.attempted || 0), 0);
   const isNewLearner = totalAttempted === 0;
 
+  const getSubscriptionBadgeInfo = () => {
+    if (!profile) return null;
+
+    if (profile.isPro) {
+      return {
+        label: 'Pro Plan',
+        variant: 'success' as const,
+        bgClass: 'bg-teal-wash text-teal border border-teal/20',
+      };
+    }
+
+    return {
+      label: 'Free Tier',
+      variant: 'default' as const,
+      bgClass: 'bg-slate-wash text-slate border border-slate/20',
+    };
+  };
+
+  const subscriptionBadge = getSubscriptionBadgeInfo();
+
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-canvas">
       {/* Responsive Unified Navigation Header */}
@@ -245,9 +265,16 @@ export default function StudentDashboardPage() {
               <Card className="p-6 lg:col-span-2 bg-surface border-indigo/30 ring-1 ring-indigo/10 shadow-sm flex flex-col justify-between space-y-5">
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <Badge variant="default" className="text-xs font-semibold bg-indigo-wash text-indigo border border-indigo-200">
-                      <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> Getting Started
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="default" className="text-xs font-semibold bg-indigo-wash text-indigo border border-indigo-200">
+                        <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> Getting Started
+                      </Badge>
+                      {subscriptionBadge && (
+                        <Badge variant={subscriptionBadge.variant} className={`text-xs font-semibold ${subscriptionBadge.bgClass}`}>
+                          {subscriptionBadge.label}
+                        </Badge>
+                      )}
+                    </div>
                     <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold border border-teal/20 whitespace-nowrap shrink-0">
                       {profile?.displayName ? `Welcome, ${profile.displayName.split(' ')[0]}` : 'New Learner'}
                     </span>
@@ -297,9 +324,16 @@ export default function StudentDashboardPage() {
               <Card className="p-6 lg:col-span-2 bg-surface border-indigo/30 ring-1 ring-indigo/10 shadow-sm flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <Badge variant="default" className="text-xs font-semibold">
-                      <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> Recommended Focus Drill
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="default" className="text-xs font-semibold">
+                        <Sparkles className="w-3.5 h-3.5 mr-1 inline" /> Recommended Focus Drill
+                      </Badge>
+                      {subscriptionBadge && (
+                        <Badge variant={subscriptionBadge.variant} className={`text-xs font-semibold ${subscriptionBadge.bgClass}`}>
+                          {subscriptionBadge.label}
+                        </Badge>
+                      )}
+                    </div>
                     <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold border border-teal/20 whitespace-nowrap shrink-0">
                       {profile?.displayName ? `Good evening, ${profile.displayName.split(' ')[0]}` : 'Active Session'}
                     </span>
