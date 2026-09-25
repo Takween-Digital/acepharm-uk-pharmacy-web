@@ -724,16 +724,22 @@ export function QuestionPlayer({
 
       {/* 1. Clinical Vignette & Stem */}
       <Card className="p-6 bg-surface border-border shadow-sm space-y-4">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate uppercase tracking-wider">
-          <Stethoscope className="w-4 h-4 text-indigo" /> Clinical Scenario
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate uppercase tracking-wider">
+            <Stethoscope className="w-4 h-4 text-indigo" /> Clinical Scenario
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo/5 border border-indigo/20 text-indigo text-[11px] font-semibold whitespace-nowrap">
+            <Sparkles className="w-3.5 h-3.5" />
+            Double-click any word to ask Ace
+          </div>
         </div>
 
-        <p className="text-base text-ink leading-relaxed font-normal">
+        <p className="text-base text-ink leading-relaxed font-normal select-text cursor-text">
           {question.stem}
         </p>
 
         <div className="pt-3 border-t border-border/80">
-          <h2 className="text-sm sm:text-base font-bold text-ink leading-snug">
+          <h2 className="text-sm sm:text-base font-bold text-ink leading-snug select-text cursor-text">
             {question.leadIn}
           </h2>
         </div>
