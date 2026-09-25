@@ -129,27 +129,34 @@ export default function SyllabusCategoryExplorer() {
             </div>
 
             <div className="space-y-3 pt-3 border-t border-border/60">
-              {/* Key topics pill badges */}
+              {/* Key topics clickable filter pills (AP-24) */}
               <div className="flex flex-wrap gap-1.5 items-center">
                 {cat.keyTopics.map((topic) => (
-                  <span
+                  <button
                     key={topic}
-                    className="text-[10px] font-medium bg-canvas text-slate border border-border/80 px-2 py-0.5 rounded whitespace-normal break-words leading-tight max-w-full inline-block"
+                    type="button"
+                    onClick={() => setSearchTerm(topic)}
+                    className="text-[10px] font-medium bg-canvas hover:bg-indigo hover:text-white text-slate border border-border/80 hover:border-indigo px-2 py-0.5 rounded transition-all cursor-pointer whitespace-normal break-words leading-tight max-w-full inline-block"
+                    title={`Filter by ${topic}`}
                   >
                     {topic}
-                  </span>
+                  </button>
                 ))}
               </div>
 
-              <div className="flex items-center justify-between text-xs pt-1">
+              <div className="flex items-center justify-between text-xs pt-1 gap-2">
                 <span className="font-semibold text-ink font-mono text-[11px]">
                   {cat.questionCount > 0 ? `${cat.questionCount} Questions Live` : 'In Review Queue'}
                 </span>
                 <a
                   href="https://app.acepharmexams.co.uk/auth/register"
-                  className="text-indigo hover:text-indigo-deep font-bold text-xs inline-flex items-center gap-1 group-hover:underline"
+                  className="inline-flex items-center justify-center gap-1 font-bold text-xs px-3 py-1.5 rounded-btn bg-indigo text-white hover:bg-indigo-deep transition-all shadow-xs whitespace-nowrap"
+                  title={cat.questionCount > 0 ? `Practise ${cat.name}` : `View ${cat.name} syllabus`}
                 >
-                  {cat.questionCount > 0 ? 'Practise Topic →' : 'View Syllabus →'}
+                  {cat.questionCount > 0 ? 'Practise Topic' : 'View Syllabus'}
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
                 </a>
               </div>
             </div>

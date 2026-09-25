@@ -54,30 +54,30 @@ import SyllabusCategoryExplorer from '../components/SyllabusCategoryExplorer';
     <div>
       <h2 class="text-2xl font-bold text-ink mb-6">Choose your pathway</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <Card className="p-5 bg-surface border-2 border-indigo rounded-card shadow-xs">
-          <span class="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold border border-teal/20">Active</span>
-          <h3 class="font-bold text-ink text-base mt-2">MPharm revision</h3>
+        <Card className="p-5 bg-surface border-2 border-indigo rounded-card shadow-sm hover:shadow-card hover:border-indigo-deep transition-all group">
+          <span class="px-2.5 py-0.5 rounded-full bg-teal text-white text-xs font-bold border border-teal/40">Active</span>
+          <h3 class="font-bold text-ink text-base mt-2 group-hover:text-indigo transition-colors">MPharm revision</h3>
           <p class="text-xs text-slate mt-1">High-yield clinical topics, therapeutics, calculations and law for years 2 to 4.</p>
         </Card>
-        <Card className="p-5 bg-surface border border-border rounded-card opacity-85">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter/50 text-slate text-xs font-medium">Coming later</span>
-          <h3 class="font-bold text-ink text-base mt-2">Foundation training</h3>
-          <p class="text-xs text-slate mt-1">Practice-based scenarios, calculations and clinical governance for trainees.</p>
+        <Card className="p-5 bg-canvas border border-border rounded-card hover:bg-surface hover:border-border/60 transition-all group">
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter text-slate text-xs font-medium border border-slate-lighter/60">Coming later</span>
+          <h3 class="font-bold text-slate-deep text-base mt-2 group-hover:text-ink transition-colors">Foundation training</h3>
+          <p class="text-xs text-slate-light mt-1">Practice-based scenarios, calculations and clinical governance for trainees.</p>
         </Card>
-        <Card className="p-5 bg-surface border border-border rounded-card opacity-85">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter/50 text-slate text-xs font-medium">Coming later</span>
-          <h3 class="font-bold text-ink text-base mt-2">Registration Assessment</h3>
-          <p class="text-xs text-slate mt-1">Simulated full-length Paper 1 and Paper 2 mock exam experiences.</p>
+        <Card className="p-5 bg-canvas border border-border rounded-card hover:bg-surface hover:border-border/60 transition-all group">
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter text-slate text-xs font-medium border border-slate-lighter/60">Coming later</span>
+          <h3 class="font-bold text-slate-deep text-base mt-2 group-hover:text-ink transition-colors">Registration Assessment</h3>
+          <p class="text-xs text-slate-light mt-1">Simulated full-length Paper 1 and Paper 2 mock exam experiences.</p>
         </Card>
-        <Card className="p-5 bg-surface border border-border rounded-card opacity-85">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter/50 text-slate text-xs font-medium">Coming later</span>
-          <h3 class="font-bold text-ink text-base mt-2">Oriel preparation</h3>
-          <p class="text-xs text-slate mt-1">Situational judgement tests and clinical prioritisation questions.</p>
+        <Card className="p-5 bg-canvas border border-border rounded-card hover:bg-surface hover:border-border/60 transition-all group">
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter text-slate text-xs font-medium border border-slate-lighter/60">Coming later</span>
+          <h3 class="font-bold text-slate-deep text-base mt-2 group-hover:text-ink transition-colors">Oriel preparation</h3>
+          <p class="text-xs text-slate-light mt-1">Situational judgement tests and clinical prioritisation questions.</p>
         </Card>
-        <Card className="p-5 bg-surface border border-border rounded-card opacity-85">
-          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter/50 text-slate text-xs font-medium">Coming later</span>
-          <h3 class="font-bold text-ink text-base mt-2">Independent Prescribing</h3>
-          <p class="text-xs text-slate mt-1">Advanced therapeutics, differential diagnosis and prescribing safety.</p>
+        <Card className="p-5 bg-canvas border border-border rounded-card hover:bg-surface hover:border-border/60 transition-all group">
+          <span class="px-2.5 py-0.5 rounded-full bg-slate-lighter text-slate text-xs font-medium border border-slate-lighter/60">Coming later</span>
+          <h3 class="font-bold text-slate-deep text-base mt-2 group-hover:text-ink transition-colors">Independent Prescribing</h3>
+          <p class="text-xs text-slate-light mt-1">Advanced therapeutics, differential diagnosis and prescribing safety.</p>
         </Card>
       </div>
     </div>
@@ -246,11 +246,16 @@ import SyllabusCategoryExplorer from '../components/SyllabusCategoryExplorer';
       </div>
     </div>
 
-    {/* Bottom CTA & Disclaimers */}
+    {/* Bottom CTA & Disclaimers (AP-19: Differentiated CTAs) */}
     <div class="text-center pt-8 border-t border-border space-y-4">
-      <a href="https://app.acepharmexams.co.uk/auth/register">
-        <Button size="lg" variant="primary">Start revising free</Button>
-      </a>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="https://app.acepharmexams.co.uk/auth/register">
+          <Button size="lg" variant="primary">Start revising free</Button>
+        </a>
+        <a href="/question-bank#modes">
+          <Button size="lg" variant="outline">Explore study modes</Button>
+        </a>
+      </div>
       <p class="text-xs text-slate-light">No card required. Upgrade only when you are ready.</p>
       <p class="text-[11px] text-slate-light max-w-2xl mx-auto leading-relaxed pt-2">
         AcePharm is not affiliated with or endorsed by examination bodies unless explicitly stated. Practice content is designed for education and cannot guarantee a particular examination result.
