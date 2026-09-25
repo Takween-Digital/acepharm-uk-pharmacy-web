@@ -444,6 +444,31 @@ sessionsRouter.get('/:id/summary', requireAuth, async (c) => {
 });
 
 // ==========================================
+// 4.5. Session Ownership Validation (AP-20)
+// ==========================================
+
+sessionsRouter.get('/:id/validate', requireAuth, async (c) => {
+  const user = c.get('user');
+  const sessionId = c.req.param('id');
+  if (!sessionId) return c.json({ error: 'Session ID is required' }, 400);
+
+  const db = drizzle(c.env.DB);
+
+  // Check if session belongs to user
+  const [session] = await db
+    .select({ id: sessions.id })
+    .from(sessions)
+    .where(and(eq(sessions.id, sessionId), eq(sessions.userId, user.id)))
+    .limit(1);
+
+  if (session) {
+    return c.json({ valid: true });
+  } else {
+    return c.status(403).json({ valid: false, error: 'Unauthorized' });
+  }
+});
+
+// ==========================================
 // 5. Category Reset (Dual-Store Rule #1 Safeguard)
 // Clears question_attempts for category, question_first_attempts remains UNTOUCHED
 // ==========================================

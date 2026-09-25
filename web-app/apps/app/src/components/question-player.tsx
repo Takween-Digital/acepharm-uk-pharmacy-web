@@ -161,6 +161,15 @@ export function QuestionPlayer({
   const [allBookmarks, setAllBookmarks] = useState<Array<{ questionId: string; questionPublicId: string; difficulty: string }>>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);
 
+  // AP-36: Reset state when question changes to ensure clean slate
+  useEffect(() => {
+    setSelectedOptionId(null);
+    setConfidence(null);
+    setIsSubmitted(false);
+    setHideOptions(userPreferences.hideOptionsByDefault);
+    setSecondsElapsed(0);
+  }, [question.id, userPreferences.hideOptionsByDefault]);
+
   // Fetch all bookmarked questions
   const fetchAllBookmarks = () => {
     if (typeof window === 'undefined') return;

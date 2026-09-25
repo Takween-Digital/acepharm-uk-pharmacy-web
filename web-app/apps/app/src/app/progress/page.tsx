@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, Badge, Button, Skeleton } from '@acepharm/ui';
 import { useAuth } from '@/lib/auth-context';
 import { getAccessToken } from '@/lib/auth-client';
@@ -121,8 +122,16 @@ const DEMO_PROGRESS_DATA: ProgressAnalyticsResult = {
 };
 
 export default function ProgressPage() {
+  const router = useRouter();
   const { user, profile } = useAuth();
   const [data, setData] = useState<ProgressAnalyticsResult | null>(null);
+
+  // AP-39: Redirect unauthorized users
+  useEffect(() => {
+    if (!user && typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
+  }, [user]);
   const [isZeroAttempts, setIsZeroAttempts] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);

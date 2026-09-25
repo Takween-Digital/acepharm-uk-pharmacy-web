@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Button, 
   Badge, 
@@ -50,7 +51,16 @@ interface CategoryItem {
 }
 
 export default function StudentDashboardPage() {
+  const router = useRouter();
   const { user, profile, signOut } = useAuth();
+
+  // AP-39: Redirect unauthorized users
+  React.useEffect(() => {
+    if (!user && typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
+  }, [user]);
+
   const [selectedResetCategory, setSelectedResetCategory] = useState<{ id: string; name: string; count: number } | null>(null);
   const [showCancellationModal, setShowCancellationModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);

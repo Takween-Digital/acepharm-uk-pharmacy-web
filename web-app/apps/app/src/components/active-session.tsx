@@ -65,13 +65,23 @@ function mapApiQuestionToPlayerQuestion(q: SessionQuestion): QuestionData {
   };
 }
 
+import { useAuth } from '@/lib/auth-context';
+
 export function ActiveSession() {
   const router = useRouter();
+  const { user } = useAuth();
   const [questions, setQuestions] = useState<QuestionData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionId, setSessionId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // AP-39: Check auth on mount
+  useEffect(() => {
+    if (!user && typeof window !== 'undefined') {
+      window.location.href = '/auth/login';
+    }
+  }, [user]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
