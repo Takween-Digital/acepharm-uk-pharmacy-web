@@ -1021,6 +1021,7 @@ export function QuestionPlayer({
             questionPublicId={question.publicId}
             isCalculation={question.questionType === 'calculation'}
             highlightedText={highlightedText}
+            isSubmitted={isSubmitted}
           />
         </div>
       )}
