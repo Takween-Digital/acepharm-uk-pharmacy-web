@@ -122,7 +122,7 @@ const DEMO_PROGRESS_DATA: ProgressAnalyticsResult = {
 
 export default function ProgressPage() {
   const { user, profile } = useAuth();
-  const [data, setData] = useState<ProgressAnalyticsResult>(DEMO_PROGRESS_DATA);
+  const [data, setData] = useState<ProgressAnalyticsResult | null>(null);
   const [isZeroAttempts, setIsZeroAttempts] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -164,7 +164,7 @@ export default function ProgressPage() {
     loadLiveMetrics();
   }, [user]);
 
-  const totalAttempts = isZeroAttempts ? 0 : data.accuracySplit.practice.total;
+  const totalAttempts = isZeroAttempts ? 0 : data?.accuracySplit.practice.total || 0;
 
   const getStatusBadgeVariant = (label: string) => {
     switch (label) {
@@ -253,10 +253,10 @@ export default function ProgressPage() {
                 <>
                   <div className="mt-3 flex items-baseline gap-3">
                     <span className="text-4xl font-extrabold text-ink font-mono">
-                      {data.accuracySplit.firstAttempt.percentage}%
+                      {data?.accuracySplit.firstAttempt.percentage}%
                     </span>
                     <span className="text-xs text-slate font-mono">
-                      ({data.accuracySplit.firstAttempt.correct} / {data.accuracySplit.firstAttempt.total} Qs)
+                      ({data?.accuracySplit.firstAttempt.correct} / {data?.accuracySplit.firstAttempt.total} Qs)
                     </span>
                   </div>
                   <p className="text-xs text-slate mt-2 leading-relaxed">
@@ -269,7 +269,7 @@ export default function ProgressPage() {
             <div className="w-full h-2 bg-canvas rounded-full overflow-hidden border border-border">
               <div
                 className="bg-indigo h-full rounded-full transition-all"
-                style={{ width: `${isZeroAttempts ? 0 : data.accuracySplit.firstAttempt.percentage}%` }}
+                style={{ width: `${isZeroAttempts ? 0 : data?.accuracySplit.firstAttempt.percentage || 0}%` }}
               />
             </div>
           </Card>
@@ -297,10 +297,10 @@ export default function ProgressPage() {
                 <>
                   <div className="mt-3 flex items-baseline gap-3">
                     <span className="text-4xl font-extrabold text-teal font-mono">
-                      {data.accuracySplit.practice.percentage}%
+                      {data?.accuracySplit.practice.percentage}%
                     </span>
                     <span className="text-xs text-slate font-mono">
-                      ({data.accuracySplit.practice.correct} / {data.accuracySplit.practice.total} Qs)
+                      ({data?.accuracySplit.practice.correct} / {data?.accuracySplit.practice.total} Qs)
                     </span>
                   </div>
                   <p className="text-xs text-slate mt-2 leading-relaxed">
@@ -313,7 +313,7 @@ export default function ProgressPage() {
             <div className="w-full h-2 bg-canvas rounded-full overflow-hidden border border-border">
               <div
                 className="bg-teal h-full rounded-full transition-all"
-                style={{ width: `${isZeroAttempts ? 0 : data.accuracySplit.practice.percentage}%` }}
+                style={{ width: `${isZeroAttempts ? 0 : data?.accuracySplit.practice.percentage || 0}%` }}
               />
             </div>
           </Card>
@@ -341,10 +341,10 @@ export default function ProgressPage() {
                 <>
                   <div className="mt-3 flex items-baseline gap-3">
                     <span className="text-4xl font-extrabold text-indigo-deep font-mono">
-                      {data.accuracySplit.repeat.percentage}%
+                      {data?.accuracySplit.repeat.percentage}%
                     </span>
                     <span className="text-xs text-slate font-mono">
-                      ({data.accuracySplit.repeat.correct} / {data.accuracySplit.repeat.total} Qs)
+                      ({data?.accuracySplit.repeat.correct} / {data?.accuracySplit.repeat.total} Qs)
                     </span>
                   </div>
                   <p className="text-xs text-slate mt-2 leading-relaxed">
@@ -357,7 +357,7 @@ export default function ProgressPage() {
             <div className="w-full h-2 bg-canvas rounded-full overflow-hidden border border-border">
               <div
                 className="bg-indigo-deep h-full rounded-full transition-all"
-                style={{ width: `${isZeroAttempts ? 0 : data.accuracySplit.repeat.percentage}%` }}
+                style={{ width: `${isZeroAttempts ? 0 : data?.accuracySplit.repeat.percentage || 0}%` }}
               />
             </div>
           </Card>
@@ -406,13 +406,13 @@ export default function ProgressPage() {
               <div className="p-4 rounded-lg border border-border bg-canvas/40 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-ink">Stated "Low" Confidence</span>
-                  <span className="text-xs font-mono text-slate">{data.calibrationMatrix.lowConfidence.total} Qs</span>
+                  <span className="text-xs font-mono text-slate">{data?.calibrationMatrix.lowConfidence.total} Qs</span>
                 </div>
                 <div className="text-2xl font-bold font-mono text-slate">
-                  {data.calibrationMatrix.lowConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
+                  {data?.calibrationMatrix.lowConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
                 </div>
                 <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
-                  <div className="bg-slate h-full rounded-full" style={{ width: `${data.calibrationMatrix.lowConfidence.accuracy}%` }} />
+                  <div className="bg-slate h-full rounded-full" style={{ width: `${data?.calibrationMatrix.lowConfidence.accuracy || 0}%` }} />
                 </div>
                 <p className="text-[11px] text-slate">
                   Correctly captures uncertain clinical areas where you recognise gaps in your knowledge.
@@ -423,13 +423,13 @@ export default function ProgressPage() {
               <div className="p-4 rounded-lg border border-border bg-canvas/40 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-ink">Stated "Medium" Confidence</span>
-                  <span className="text-xs font-mono text-slate">{data.calibrationMatrix.mediumConfidence.total} Qs</span>
+                  <span className="text-xs font-mono text-slate">{data?.calibrationMatrix.mediumConfidence.total} Qs</span>
                 </div>
                 <div className="text-2xl font-bold font-mono text-indigo">
-                  {data.calibrationMatrix.mediumConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
+                  {data?.calibrationMatrix.mediumConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
                 </div>
                 <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
-                  <div className="bg-indigo h-full rounded-full" style={{ width: `${data.calibrationMatrix.mediumConfidence.accuracy}%` }} />
+                  <div className="bg-indigo h-full rounded-full" style={{ width: `${data?.calibrationMatrix.mediumConfidence.accuracy || 0}%` }} />
                 </div>
                 <p className="text-[11px] text-slate">
                   Solid baseline in developing areas; rationales help clarify differential reasoning.
@@ -440,13 +440,13 @@ export default function ProgressPage() {
               <div className="p-4 rounded-lg border border-teal/40 bg-teal/5 space-y-3 ring-1 ring-teal/20">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-teal">Stated "High" Confidence</span>
-                  <span className="text-xs font-mono text-teal font-semibold">{data.calibrationMatrix.highConfidence.total} Qs</span>
+                  <span className="text-xs font-mono text-teal font-semibold">{data?.calibrationMatrix.highConfidence.total} Qs</span>
                 </div>
                 <div className="text-2xl font-bold font-mono text-teal">
-                  {data.calibrationMatrix.highConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
+                  {data?.calibrationMatrix.highConfidence.accuracy}% <span className="text-xs font-normal">actual accuracy</span>
                 </div>
                 <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
-                  <div className="bg-teal h-full rounded-full" style={{ width: `${data.calibrationMatrix.highConfidence.accuracy}%` }} />
+                  <div className="bg-teal h-full rounded-full" style={{ width: `${data?.calibrationMatrix.highConfidence.accuracy || 0}%` }} />
                 </div>
                 <p className="text-[11px] text-teal/80">
                   High precision: when you feel confident, you are correct in 86% of clinical scenarios.
@@ -497,7 +497,7 @@ export default function ProgressPage() {
                 </div>
               ))
             ) : (
-              data.coverageMap.map((cat) => {
+              (data?.coverageMap || []).map((cat) => {
               const catAttempted = isZeroAttempts ? 0 : cat.attemptedQuestions;
               const catCoverage = isZeroAttempts ? 0 : cat.coveragePercentage;
               const catStatus = isZeroAttempts ? 'Not started' : cat.statusLabel;
