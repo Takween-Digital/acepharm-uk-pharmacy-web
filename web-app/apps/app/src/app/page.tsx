@@ -506,7 +506,17 @@ export default function StudentDashboardPage() {
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-border/60">
             <button
               type="button"
-              onClick={() => setShowSubscriptionModal(true)}
+              onClick={async () => {
+                // Wave 3: Link to Stripe customer portal
+                try {
+                  const data = await apiClient.post('/api/v1/stripe/customer-portal', {});
+                  if (data.url) {
+                    window.location.href = data.url;
+                  }
+                } catch (err) {
+                  setShowSubscriptionModal(true);
+                }
+              }}
               className="text-indigo hover:text-indigo-deep text-xs font-semibold px-3 py-1.5 rounded-btn border border-indigo/20 bg-indigo-wash hover:bg-indigo/10 transition-colors flex items-center gap-1.5"
             >
               Manage Subscription
