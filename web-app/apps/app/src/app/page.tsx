@@ -15,6 +15,7 @@ import { CategoryResetModal } from '@/components/category-reset-modal';
 import { CancellationFlowModal } from '@/components/cancellation-flow-modal';
 import { SubscriptionModal } from '@/components/subscription-modal';
 import { AppHeader } from '@/components/app-header';
+import { EmailVerificationBanner } from '@/components/email-verification-banner';
 import { useAuth } from '@/lib/auth-context';
 import { apiClient } from '@/lib/api-client';
 import { getAccessToken } from '@/lib/auth-client';
@@ -223,6 +224,9 @@ export default function StudentDashboardPage() {
     <div className="flex-1 flex flex-col min-h-screen bg-canvas">
       {/* Responsive Unified Navigation Header */}
       <AppHeader onOpenSubscription={() => setShowSubscriptionModal(true)} />
+
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
 
       {/* Main Dashboard Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
