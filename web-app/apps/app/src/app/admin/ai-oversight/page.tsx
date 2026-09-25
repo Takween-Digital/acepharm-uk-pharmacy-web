@@ -17,7 +17,7 @@ import {
 
 export default function AdminAIOversightPage() {
   const [modelStatus, setModelStatus] = useState({
-    name: 'mimo-v2.5-free / deepseek-ai',
+    name: 'mimo-v2.5-free',
     provider: 'OpenCode Zen Gateway',
     state: 'operational',
     latencyP95: '640ms',
@@ -123,9 +123,16 @@ export default function AdminAIOversightPage() {
               <span className="text-slate">Primary Model:</span>
               <span className="text-ink font-bold">mimo-v2.5-free</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-slate">Fallback Model:</span>
-              <span className="text-ink font-bold">deepseek-chat</span>
+            <div className="flex flex-col gap-1">
+              <span className="text-slate">Fallback Models (Free):</span>
+              <div className="pl-3 space-y-1 text-teal font-bold">
+                <div>• nemotron-3.5-lightning-free</div>
+                <div>• llama-3-free</div>
+                <div>• muse-spark-1.2-free</div>
+                <div>• big-pickle-free</div>
+                <div>• grok-3-free</div>
+                <div>• nemotron-3-ultra-free</div>
+              </div>
             </div>
             <div className="flex justify-between">
               <span className="text-slate">Gateway Endpoint:</span>
