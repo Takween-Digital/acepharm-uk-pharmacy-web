@@ -366,17 +366,115 @@ import InteractiveSampleQuestion from '../components/InteractiveSampleQuestion';
   </section>
 
   {/* 2.9b Ace AI Section */}
-  <section class="py-20 bg-gradient-to-b from-indigo-wash/40 via-canvas to-canvas border-y border-border" style="background-image: url('/assets/backgrounds/ace-ai.svg'); background-size: cover; background-position: center;">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="text-center max-w-3xl mx-auto mb-12">
-        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Meet Ace</span>
-        <h2 class="text-3xl font-bold text-ink mt-2">A tutor that has read every explanation, and remembers every answer you gave.</h2>
+  <section class="py-20 bg-gradient-to-b from-indigo-wash/40 via-canvas to-canvas border-y border-border" style="background-image: url(‘/assets/backgrounds/ace-ai.svg’); background-size: cover; background-position: center;">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <span class="text-xs font-bold uppercase tracking-wider text-indigo">Meet Ask Ace</span>
+        <h2 class="text-3xl sm:text-4xl font-bold text-ink mt-2 tracking-tight">Your 24/7 clinical pharmacy tutor.</h2>
         <p class="mt-4 text-base text-slate leading-relaxed">
-          Ace sits beside every question. Ask it to explain something differently, challenge the answer, or test you on it — and it answers from AcePharm’s reviewed content, citing where each point came from.
+          Ask Ace sits beside every question in AcePharm. It’s grounded in reviewed clinical content, knows your learning history, and explains concepts in the way that helps you most.
         </p>
-        <div class="mt-6 flex justify-center gap-4">
-          <a href="/ace"><Button variant="primary">See Ace on a real question</Button></a>
-          <a href="/ace"><Button variant="outline">How Ace works</Button></a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {/* Feature 1 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-indigo-wash text-indigo flex items-center justify-center font-bold text-base border border-indigo/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Ask about anything</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              Double-click any word, ask to "explain simpler", challenge an answer, or test yourself on a concept.
+            </p>
+          </div>
+        </Card>
+
+        {/* Feature 2 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold text-base border border-teal-200/60 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Grounded in evidence</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              Every answer comes from AcePharm’s reviewed content. Ace cites its sources: question explanations, BNF guidance, NICE references.
+            </p>
+          </div>
+        </Card>
+
+        {/* Feature 3 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-base border border-purple-200/60 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Included free</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              Ask Ace is available to all AcePharm users, even on the free plan. No extra subscription needed.
+            </p>
+          </div>
+        </Card>
+
+        {/* Feature 4 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-base border border-emerald-200/60 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Instant explanations</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              No waiting. Get immediate clinical explanations, GPhC exam traps, drug interaction alerts, and monitoring parameters.
+            </p>
+          </div>
+        </Card>
+
+        {/* Feature 5 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-base border border-rose-200/60 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Context-aware</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              Ace knows which question you’re on, your learning history, and what makes this concept tricky for exam success.
+            </p>
+          </div>
+        </Card>
+
+        {/* Feature 6 */}
+        <Card className="p-6 bg-surface border border-border hover:border-indigo/40 hover:shadow-xs transition-all flex flex-col space-y-4 group">
+          <div class="w-10 h-10 rounded-xl bg-amber-light text-amber flex items-center justify-center font-bold text-base border border-amber/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-ink text-sm">Quick prompts</h3>
+            <p class="text-xs text-slate mt-2 leading-relaxed">
+              One-tap buttons: "Explain simpler", "Why not other options?", "Show similar case", "Test my knowledge", "GPhC exam traps".
+            </p>
+          </div>
+        </Card>
+      </div>
+
+      <div class="text-center">
+        <p class="text-sm text-slate mb-6 max-w-2xl mx-auto">
+          <strong>Try Ask Ace now:</strong> It’s available in the free demo and on every question across the platform.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="https://app.acepharmexams.co.uk/demo/question"><Button variant="primary">Try Ace on a sample question</Button></a>
+          <a href="/features"><Button variant="outline">See all features</Button></a>
         </div>
       </div>
     </div>
