@@ -332,9 +332,11 @@ import { stripeRoutes } from './routes/stripe';
 import { contactRouter } from './routes/contact';
 import { authEmailsRouter } from './routes/auth-emails';
 import { authRouter } from './routes/auth';
+import adminIndexingRouter from './routes/admin-indexing';
 
 admin.route('/curriculum', curriculumRouter);
 admin.route('/questions', questionsRouter);
+admin.use(adminIndexingRouter);
 
 app.route('/admin', admin);
 app.route('/api/v1/admin', admin);
