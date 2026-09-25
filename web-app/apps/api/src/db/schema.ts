@@ -577,7 +577,7 @@ export const simulatorAttempts = sqliteTable('simulator_attempts', {
 export const subscriptions = sqliteTable('subscriptions', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  stripeCustomerId: text('stripe_customer_id').notNull(),
+  stripeCustomerId: text('stripe_customer_id'),
   stripeSubscriptionId: text('stripe_subscription_id').unique(),
   stripePriceId: text('stripe_price_id'),
   plan: text('plan', {
@@ -585,7 +585,7 @@ export const subscriptions = sqliteTable('subscriptions', {
   }).notNull().default('explorer'),
   status: text('status', {
     enum: ['active', 'past_due', 'canceled', 'unpaid', 'incomplete', 'incomplete_expired', 'trialing'],
-  }).notNull().default('active'),
+  }).notNull().default('inactive'),
   currentPeriodStart: integer('current_period_start', { mode: 'timestamp' }),
   currentPeriodEnd: integer('current_period_end', { mode: 'timestamp' }),
   cancelAtPeriodEnd: integer('cancel_at_period_end', { mode: 'boolean' }).notNull().default(false),
