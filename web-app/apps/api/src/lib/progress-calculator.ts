@@ -165,6 +165,8 @@ export async function calculateProgressMetrics(
   const allSubtopics = await db.select().from(subtopics).orderBy(subtopics.sortOrder);
   const allQuestions = await db.select({ id: questions.id, subtopicId: questions.primarySubtopicId }).from(questions).where(eq(questions.status, 'published'));
 
+  // Track ALL questions attempted (not just first attempts) for live progress updates
+  const allAttemptedQuestionIds = new Set(allAttempts.map((a) => a.questionId));
   const firstAttemptedQuestionIds = new Set(firstAttempts.map((a) => a.questionId));
   const subtopicMap = new Map<string, typeof allSubtopics>();
   for (const s of allSubtopics) {
@@ -181,7 +183,8 @@ export async function calculateProgressMetrics(
     const subtopicStats = catSubs.map((sub) => {
       const subQs = allQuestions.filter((q) => q.subtopicId === sub.id);
       const total = subQs.length;
-      const attempted = subQs.filter((q) => firstAttemptedQuestionIds.has(q.id)).length;
+      // Use all attempts for live progress update - coverage reflects any attempt on the question
+      const attempted = subQs.filter((q) => allAttemptedQuestionIds.has(q.id)).length;
       const coveragePercentage = total > 0 ? Math.round((attempted / total) * 100) : 0;
 
       const subFirstAttempts = firstAttempts.filter((a) => subQs.some((q) => q.id === a.questionId));
