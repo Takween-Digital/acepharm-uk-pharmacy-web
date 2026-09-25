@@ -508,16 +508,16 @@ export function QuestionPlayer({
         }}
       />
 
-      {/* Top Session Progress Bar with Back/Exit button */}
+      {/* Top Session Progress Bar with Back/Exit button (AP-64: 44px tap target on mobile) */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 pb-2 border-b border-border text-xs">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={handleExit}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-indigo hover:bg-indigo-deep px-3 py-2 rounded-lg border border-indigo hover:border-indigo-deep transition-all shadow-sm hover:shadow-md"
+            className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold text-white bg-indigo hover:bg-indigo-deep px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg border border-indigo hover:border-indigo-deep transition-all shadow-sm hover:shadow-md min-h-[44px] sm:min-h-auto"
             title="Exit practice session and return to dashboard"
           >
-            <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+            <ArrowRight className="w-3.5 h-3.5 rotate-180 shrink-0" />
             <span>Exit Session</span>
           </button>
           <span className="font-bold text-ink font-mono text-sm">
@@ -536,19 +536,20 @@ export function QuestionPlayer({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 bg-canvas rounded-lg border border-border/60 shadow-sm">
+        {/* AP-65: Enlarged exam tools on mobile with balanced top bar */}
+        <div className="flex flex-wrap items-center gap-2 px-2 sm:px-3 py-2 sm:py-1.5 bg-canvas rounded-lg border border-border/60 shadow-sm">
           {/* GPhC Calculator Button */}
           <button
             type="button"
             onClick={() => setIsCalculatorOpen(!isCalculatorOpen)}
-            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded transition-all flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-xs font-medium border min-h-[40px] sm:min-h-auto flex-1 sm:flex-none ${
               isCalculatorOpen
                 ? 'bg-indigo text-white border-indigo shadow-sm'
                 : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-indigo/40'
             }`}
             title="Open Pearson VUE style GPhC exam calculator"
           >
-            <Calculator className="w-4 h-4" />
+            <Calculator className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Calculator</span>
           </button>
 
@@ -556,10 +557,10 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={() => setIsRefModalOpen(true)}
-            className="px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-teal/40"
+            className="px-2.5 sm:px-3 py-2 sm:py-1.5 rounded transition-all flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-teal/40 min-h-[40px] sm:min-h-auto flex-1 sm:flex-none"
             title="Open Biochemical lab reference ranges and therapeutic drug levels"
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-4 h-4 shrink-0" />
             <span className="hidden sm:inline">Lab Ranges</span>
           </button>
 
@@ -567,14 +568,14 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={() => setHideOptions(!hideOptions)}
-            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded transition-all flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium border min-h-[40px] sm:min-h-auto flex-1 sm:flex-none ${
               hideOptions
                 ? 'bg-amber-50 text-amber-700 border-amber-200'
                 : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-amber-200'
             }`}
             title="Cover options for active diagnostic recall"
           >
-            {hideOptions ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            {hideOptions ? <Eye className="w-4 h-4 shrink-0" /> : <EyeOff className="w-4 h-4 shrink-0" />}
             <span className="hidden md:inline text-[11px]">{hideOptions ? 'Show' : 'Cover'}</span>
           </button>
 
@@ -582,7 +583,7 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={() => setShowNotesDrawer(!showNotesDrawer)}
-            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+            className={`px-2.5 sm:px-3 py-2 sm:py-1.5 rounded transition-all flex items-center justify-center sm:justify-start gap-1.5 text-xs font-medium border min-h-[40px] sm:min-h-auto flex-1 sm:flex-none ${
               showNotesDrawer
                 ? 'bg-indigo/20 text-indigo border-indigo/40'
                 : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-indigo/40'
@@ -724,7 +725,7 @@ export function QuestionPlayer({
       )}
 
       {/* 1. Clinical Vignette & Stem */}
-      <Card className="p-6 bg-surface border-border shadow-sm space-y-4">
+      <Card className="p-4 sm:p-6 bg-surface border-border shadow-sm space-y-2 sm:space-y-4">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate uppercase tracking-wider">
             <Stethoscope className="w-4 h-4 text-indigo" /> Clinical Scenario
@@ -746,9 +747,9 @@ export function QuestionPlayer({
         </div>
       </Card>
 
-      {/* 2. Answer Options */}
+      {/* 2. Answer Options (AP-66: Reduced gap on mobile) */}
       {!hideOptions && !isSubmitted ? (
-        <div className="space-y-3" role="radiogroup" aria-label="Answer options">
+        <div className="space-y-2 sm:space-y-3" role="radiogroup" aria-label="Answer options">
           {question.options.map((opt) => {
             const isSelected = selectedOptionId === opt.id;
             const showResults = isSubmitted;
@@ -825,9 +826,9 @@ export function QuestionPlayer({
         </Card>
       )}
 
-      {/* 3. Pre-Submission Confidence Selector & Submit Bar */}
+      {/* 3. Pre-Submission Confidence Selector & Submit Bar (AP-66: Reduced gap on mobile) */}
       {!isSubmitted ? (
-        <Card className="p-4 bg-surface border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+        <Card className="p-4 bg-surface border-border flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           {showConfidencePrompt ? (
             <div className="flex items-center gap-2 text-xs w-full sm:w-auto">
               <span className="font-semibold text-slate whitespace-nowrap">State Confidence:</span>
