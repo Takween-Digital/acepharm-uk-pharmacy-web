@@ -246,6 +246,16 @@ export default function RegisterPage() {
           <Loader2 className="w-6 h-6 animate-spin mx-auto text-indigo" />
         </Card>
       }>
+        <div className="w-full max-w-md mb-4">
+          <a
+            href="/"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-slate hover:text-ink px-2.5 py-1.5 rounded-btn bg-canvas border border-border hover:border-slate transition-colors"
+            title="Back to home"
+          >
+            <ArrowRight className="w-3 h-3 rotate-180 text-indigo" />
+            <span>Back</span>
+          </a>
+        </div>
         <RegisterForm />
       </Suspense>
     </div>

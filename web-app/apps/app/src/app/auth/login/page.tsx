@@ -99,6 +99,17 @@ export default function LoginPage() {
       </div>
 
       <Card className="max-w-md w-full p-6 sm:p-8 bg-surface border border-border shadow-card rounded-card relative overflow-hidden">
+        <div className="mb-4">
+          <a
+            href="/"
+            className="inline-flex items-center gap-1 text-xs font-semibold text-slate hover:text-ink px-2.5 py-1.5 rounded-btn bg-canvas border border-border hover:border-slate transition-colors"
+            title="Back to home"
+          >
+            <ArrowRight className="w-3 h-3 rotate-180 text-indigo" />
+            <span>Back</span>
+          </a>
+        </div>
+
         <div className="text-center mb-6">
           <Badge variant="teal" className="mb-2 text-xs">
             UK Pharmacy Learner Portal
