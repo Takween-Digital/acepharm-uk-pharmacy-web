@@ -119,20 +119,25 @@ export default function AdminAIOversightPage() {
             Model & Gateway Configuration
           </h3>
           <div className="bg-canvas p-4 rounded-xl border border-border space-y-2 text-xs font-mono">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <span className="text-slate">Primary Model:</span>
-              <span className="text-ink font-bold">mimo-v2.5-free</span>
+              <span className="text-emerald-600 font-bold bg-emerald-500/10 px-2 py-1 rounded">grok-3-free (Highest Tokens)</span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-slate">Fallback Models (Free):</span>
+              <span className="text-slate">Smart Fallback Chain (Token-Aware + Auto-Discovered):</span>
               <div className="pl-3 space-y-1 text-teal font-bold">
+                <div>• mimo-v2.5-free</div>
                 <div>• nemotron-3.5-lightning-free</div>
                 <div>• llama-3-free</div>
                 <div>• muse-spark-1.2-free</div>
                 <div>• big-pickle-free</div>
-                <div>• grok-3-free</div>
                 <div>• nemotron-3-ultra-free</div>
+                <div className="text-amber-600 text-xs">+ Auto-detected new models hourly</div>
               </div>
+            </div>
+            <div className="flex justify-between text-[11px]">
+              <span className="text-slate">Exhaustion Recovery:</span>
+              <span className="text-amber-600">Auto-switch if tokens exhausted, retry after 5 mins</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate">Gateway Endpoint:</span>
@@ -140,7 +145,7 @@ export default function AdminAIOversightPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-slate">Streaming Mode:</span>
-              <span className="text-teal font-bold">SSE chunked</span>
+              <span className="text-teal font-bold">SSE chunked (adaptive routing)</span>
             </div>
           </div>
         </Card>

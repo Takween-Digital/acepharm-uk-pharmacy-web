@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/d1';
 import { eq, inArray } from 'drizzle-orm';
-import { contentChunks, aceMessages, aceUsage, questions, questionExplanations, subtopics, references } from '../db/schema';
+import { contentChunks, aceMessages, aceUsage, questions, questionExplanations, questionOptions, subtopics, references } from '../db/schema';
 
 export type AceContextType = 'question' | 'dashboard' | 'planner' | 'calculation' | 'simulator';
 
@@ -256,6 +256,46 @@ export async function generateAceResponse(params: GenerateAceRequest): Promise<G
     createdAt: now,
   });
 
+  // 1b. For question context, fetch full question data for structured context
+  let questionContext = '';
+  if (contextType === 'question' && contextId) {
+    try {
+      const [q] = await db.select().from(questions).where(eq(questions.id, contextId)).limit(1);
+      if (q) {
+        const [explanation] = await db.select().from(questionExplanations).where(eq(questionExplanations.questionId, contextId)).limit(1);
+        const options = await db.select().from(questionOptions).where(eq(questionOptions.questionId, contextId)).orderBy(questionOptions.sortOrder);
+
+        const optionsText = options.map((opt) => `${opt.label}: ${opt.content}`).join('\n');
+        const correctOption = options.find((o) => o.isCorrect);
+
+        questionContext = `
+### Question Context (GPhC Exam Practice):
+**Question ID**: ${q.publicId}
+**Question Type**: ${q.questionType}
+**Difficulty**: ${q.difficulty}
+
+**Options**:
+${optionsText}
+
+**Correct Answer**: ${correctOption?.label} — ${correctOption?.content}
+
+**Correct Answer Rationale**:
+${correctOption?.rationale || 'See clinical explanation below'}
+
+**Clinical Explanation**:
+${explanation?.detailedExplanation || explanation?.summaryTakeaway || 'No detailed explanation available'}
+
+**Key Takeaway**:
+${explanation?.summaryTakeaway || 'See detailed explanation above'}
+
+${explanation?.clinicalGuidanceReference ? `**BNF/NICE Reference**: ${explanation.clinicalGuidanceReference}` : ''}
+`.trim();
+      }
+    } catch (qErr) {
+      console.warn('Question context fetch error:', qErr);
+    }
+  }
+
   // 2. Perform Vectorize RAG Retrieval
   const retrievedChunks = await retrieveRelevantChunks(db, userPrompt, ai, vectorize, 4, contextId);
   const retrievedChunkIds = retrievedChunks.map((c) => c.id);
@@ -329,11 +369,18 @@ export async function generateAceResponse(params: GenerateAceRequest): Promise<G
   }
 
   const completeUserPrompt = `
-${intentInstruction ? `### Specific Intent: ${intentInstruction}\n\n` : ''}### Learner Question / Inquiry:
+${questionContext ? `${questionContext}\n\n` : ''}${intentInstruction ? `### Specific Intent: ${intentInstruction}\n\n` : ''}### Learner Question / Inquiry:
 ${userPrompt.trim()}
 
 ### Verified Clinical Grounding Context:
 ${contextBlock}
+
+### UK Clinical Pharmacy Rules & Standards:
+- Always reference current BNF guidance and NICE recommendations
+- Consider GPhC registration assessment standards and learning outcomes
+- Apply UK legal/regulatory frameworks (Medicines Act, Human Medicines Regulations)
+- Include relevant monitoring parameters, contraindications, and drug interactions
+- Reference NICE technology appraisals (TAs) and clinical guidelines where applicable
   `.trim();
 
   // 4. Workers AI generation using Llama 3.8B Instruct

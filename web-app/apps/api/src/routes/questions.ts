@@ -12,7 +12,7 @@ import {
   subtopicNotes
 } from '../db/schema';
 import { generateText } from 'ai';
-import { getMimoModel } from '../lib/zen-ai-client';
+import { getOptimalModel, markModelExhausted, resetModelState } from '../lib/zen-ai-client';
 import { requireAuth, type AuthContext } from '../middleware/auth';
 import { requireRole } from '../middleware/rbac';
 import { validateQuestion, type QuestionValidationPayload } from '../lib/question-validator';
@@ -725,12 +725,29 @@ Rules:
 
   let generatedData: any = null;
   try {
-    const model = getMimoModel(zenApiKey);
-    const result = await generateText({
-      model,
-      system: 'You are an expert UK pharmacy question author. Output strictly valid JSON.',
-      prompt,
-    });
+    let model = getOptimalModel(zenApiKey);
+    let result;
+    try {
+      result = await generateText({
+        model,
+        system: 'You are an expert UK pharmacy question author. Output strictly valid JSON.',
+        prompt,
+      });
+      resetModelState(model.modelId);
+    } catch (modelErr: any) {
+      if (modelErr?.message?.includes('429') || modelErr?.message?.includes('quota') || modelErr?.message?.includes('exhausted')) {
+        markModelExhausted(model.modelId);
+        model = getOptimalModel(zenApiKey, model.modelId);
+        result = await generateText({
+          model,
+          system: 'You are an expert UK pharmacy question author. Output strictly valid JSON.',
+          prompt,
+        });
+        resetModelState(model.modelId);
+      } else {
+        throw modelErr;
+      }
+    }
     const match = result.text.match(/\{[\s\S]*\}/);
     if (match) {
       generatedData = JSON.parse(match[0]);

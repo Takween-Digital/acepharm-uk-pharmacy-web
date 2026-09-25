@@ -8,7 +8,7 @@ import {
   subtopics 
 } from '../db/schema';
 import { generateText } from 'ai';
-import { getMimoModel } from './zen-ai-client';
+import { getOptimalModel, markModelExhausted, resetModelState } from './zen-ai-client';
 
 export type SM2Grade = 'again' | 'hard' | 'good' | 'easy';
 
@@ -146,12 +146,29 @@ export async function generateFlashcardFromQuestion(
   let backAnswer = conceptKeyPoint;
 
   try {
-    const model = getMimoModel(zenApiKey);
-    const result = await generateText({
-      model,
-      system: 'You are Ace, generating a high-yield UK clinical pharmacy flashcard from a question. Return JSON only with "frontPrompt" and "backAnswer". Keep backAnswer under 40 words.',
-      prompt: `Stem: ${content?.stem}\nExplanation: ${explanation?.detailedExplanation}`,
-    });
+    let model = getOptimalModel(zenApiKey);
+    let result;
+    try {
+      result = await generateText({
+        model,
+        system: 'You are Ace, generating a high-yield UK clinical pharmacy flashcard from a question. Return JSON only with "frontPrompt" and "backAnswer". Keep backAnswer under 40 words.',
+        prompt: `Stem: ${content?.stem}\nExplanation: ${explanation?.detailedExplanation}`,
+      });
+      resetModelState(model.modelId);
+    } catch (modelErr: any) {
+      if (modelErr?.message?.includes('429') || modelErr?.message?.includes('quota') || modelErr?.message?.includes('exhausted')) {
+        markModelExhausted(model.modelId);
+        model = getOptimalModel(zenApiKey, model.modelId);
+        result = await generateText({
+          model,
+          system: 'You are Ace, generating a high-yield UK clinical pharmacy flashcard from a question. Return JSON only with "frontPrompt" and "backAnswer". Keep backAnswer under 40 words.',
+          prompt: `Stem: ${content?.stem}\nExplanation: ${explanation?.detailedExplanation}`,
+        });
+        resetModelState(model.modelId);
+      } else {
+        throw modelErr;
+      }
+    }
 
     const jsonMatch = result.text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {

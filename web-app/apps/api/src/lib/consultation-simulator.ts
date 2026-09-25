@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
 import { simulatorScenarios, simulatorAttempts } from '../db/schema';
 import { generateText } from 'ai';
-import { getMimoModel } from './zen-ai-client';
+import { getOptimalModel, markModelExhausted, resetModelState } from './zen-ai-client';
 
 export interface RubricCriterion {
   id: string;
@@ -126,13 +126,30 @@ Rules:
   `.trim();
 
   try {
-    const model = getMimoModel(zenApiKey);
-    const result = await generateText({
-      model,
-      system: `You are roleplaying as patient ${personaName}. Respond in character in 1-2 conversational sentences.`,
-      prompt,
-    });
-    return result.text.trim();
+    let model = getOptimalModel(zenApiKey);
+    try {
+      const result = await generateText({
+        model,
+        system: `You are roleplaying as patient ${personaName}. Respond in character in 1-2 conversational sentences.`,
+        prompt,
+      });
+      resetModelState(model.modelId);
+      return result.text.trim();
+    } catch (modelErr: any) {
+      // Check if error is token exhaustion / rate limit
+      if (modelErr?.message?.includes('429') || modelErr?.message?.includes('quota') || modelErr?.message?.includes('exhausted')) {
+        markModelExhausted(model.modelId);
+        model = getOptimalModel(zenApiKey, model.modelId);
+        const result = await generateText({
+          model,
+          system: `You are roleplaying as patient ${personaName}. Respond in character in 1-2 conversational sentences.`,
+          prompt,
+        });
+        resetModelState(model.modelId);
+        return result.text.trim();
+      }
+      throw modelErr;
+    }
   } catch (err) {
     // Deterministic fallback dialogue
     const fallbackResponses = [
@@ -182,12 +199,29 @@ Return strictly valid JSON:
   `.trim();
 
   try {
-    const model = getMimoModel(zenApiKey);
-    const result = await generateText({
-      model,
-      system: 'You are a GPhC OSCE clinical examiner. Return valid JSON only.',
-      prompt,
-    });
+    let model = getOptimalModel(zenApiKey);
+    let result;
+    try {
+      result = await generateText({
+        model,
+        system: 'You are a GPhC OSCE clinical examiner. Return valid JSON only.',
+        prompt,
+      });
+      resetModelState(model.modelId);
+    } catch (modelErr: any) {
+      if (modelErr?.message?.includes('429') || modelErr?.message?.includes('quota') || modelErr?.message?.includes('exhausted')) {
+        markModelExhausted(model.modelId);
+        model = getOptimalModel(zenApiKey, model.modelId);
+        result = await generateText({
+          model,
+          system: 'You are a GPhC OSCE clinical examiner. Return valid JSON only.',
+          prompt,
+        });
+        resetModelState(model.modelId);
+      } else {
+        throw modelErr;
+      }
+    }
     const match = result.text.match(/\{[\s\S]*\}/);
     if (match) {
       return JSON.parse(match[0]);

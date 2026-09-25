@@ -2,7 +2,7 @@ import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
 import { questions, questionContent, questionExplanations } from '../db/schema';
 import { generateText } from 'ai';
-import { getMimoModel } from './zen-ai-client';
+import { getOptimalModel, markModelExhausted, resetModelState } from './zen-ai-client';
 
 export interface CalculationCoachDiagnostics {
   questionId: string;
@@ -84,12 +84,29 @@ Learner's Final Answer: ${studentNumericAnswer ?? 'Not provided'} ${unit}
   `.trim();
 
   try {
-    const model = getMimoModel(zenApiKey);
-    const result = await generateText({
-      model,
-      system: 'You are the Ace Calculation Coach. Respond with valid JSON only.',
-      prompt,
-    });
+    let model = getOptimalModel(zenApiKey);
+    let result;
+    try {
+      result = await generateText({
+        model,
+        system: 'You are the Ace Calculation Coach. Respond with valid JSON only.',
+        prompt,
+      });
+      resetModelState(model.modelId);
+    } catch (modelErr: any) {
+      if (modelErr?.message?.includes('429') || modelErr?.message?.includes('quota') || modelErr?.message?.includes('exhausted')) {
+        markModelExhausted(model.modelId);
+        model = getOptimalModel(zenApiKey, model.modelId);
+        result = await generateText({
+          model,
+          system: 'You are the Ace Calculation Coach. Respond with valid JSON only.',
+          prompt,
+        });
+        resetModelState(model.modelId);
+      } else {
+        throw modelErr;
+      }
+    }
 
     const jsonMatch = result.text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
