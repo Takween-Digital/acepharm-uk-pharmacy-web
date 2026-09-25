@@ -502,6 +502,7 @@ export function QuestionPlayer({
       {/* Highlight-To-Ask Floating Menu (Mobile & Desktop Text Selection Handles) */}
       <FloatingHighlightMenu
         containerRef={playerRef}
+        isSubmitted={isSubmitted}
         onAskAce={(text) => {
           setHighlightedText(text);
         }}

@@ -6,9 +6,10 @@ import { Sparkles } from 'lucide-react';
 interface FloatingHighlightMenuProps {
   onAskAce: (selectedText: string) => void;
   containerRef?: React.RefObject<HTMLElement>;
+  isSubmitted?: boolean;
 }
 
-export function FloatingHighlightMenu({ onAskAce, containerRef }: FloatingHighlightMenuProps) {
+export function FloatingHighlightMenu({ onAskAce, containerRef, isSubmitted = false }: FloatingHighlightMenuProps) {
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
   const [selectedText, setSelectedText] = useState('');
 
@@ -88,21 +89,29 @@ export function FloatingHighlightMenu({ onAskAce, containerRef }: FloatingHighli
     >
       <button
         type="button"
+        disabled={!isSubmitted}
         onMouseDown={(e) => {
           // Prevent losing selection on click
           e.preventDefault();
         }}
         onClick={(e) => {
           e.stopPropagation();
-          onAskAce(selectedText);
-          setPosition(null);
-          // Clear selection
-          window.getSelection()?.removeAllRanges();
+          if (isSubmitted) {
+            onAskAce(selectedText);
+            setPosition(null);
+            // Clear selection
+            window.getSelection()?.removeAllRanges();
+          }
         }}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo text-white text-xs font-bold shadow-lg hover:bg-indigo/90 active:scale-95 transition-all border border-white/20 whitespace-nowrap cursor-pointer touch-manipulation"
+        title={isSubmitted ? 'Ask Ace about this term' : 'Submit your answer first to ask Ace'}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-white/20 whitespace-nowrap touch-manipulation transition-all ${
+          isSubmitted
+            ? 'bg-indigo text-white hover:bg-indigo/90 active:scale-95 cursor-pointer'
+            : 'bg-slate-300 text-slate-600 cursor-not-allowed opacity-60'
+        }`}
       >
         <Sparkles className="w-3.5 h-3.5" />
-        <span>Ask Ace about this</span>
+        <span>{isSubmitted ? 'Ask Ace about this' : 'Submit answer first'}</span>
       </button>
     </div>
   );
