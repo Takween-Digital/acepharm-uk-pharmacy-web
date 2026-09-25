@@ -68,8 +68,7 @@ export function SessionBuilder() {
           setStatusFilter('unattempted');
         }
         if (modeParam === 'drill' && topicId) {
-          // For drill mode, pre-select the topic and set appropriate parameters
-          setSelectedSubtopicIds([topicId]);
+          // For drill mode, set appropriate question count
           setQuestionCount(10); // Default to 10 questions for drill
         }
 
@@ -97,7 +96,16 @@ export function SessionBuilder() {
                 };
               });
             setCategories(mapped);
-            if (preselectedCat && mapped.some((m) => m.id === preselectedCat)) {
+            if (topicId && modeParam === 'drill') {
+              // For drill mode, find and select the category containing the subtopic
+              const categoryWithTopic = mapped.find((c) =>
+                c.subtopics.some((s) => s.id === topicId)
+              );
+              if (categoryWithTopic) {
+                setSelectedCategoryIds([categoryWithTopic.id]);
+              }
+              setSelectedSubtopicIds([topicId]);
+            } else if (preselectedCat && mapped.some((m) => m.id === preselectedCat)) {
               setSelectedCategoryIds([preselectedCat]);
             } else if (modeParam === 'diagnostic') {
               // For diagnostic baseline, select top therapeutic categories
