@@ -121,6 +121,7 @@ You are Ace, the AI clinical revision assistant for AcePharm UK Pharmacy student
 
 /**
  * Step 1: Retrieval stage — embed learner prompt, query Vectorize, and hydrate from D1 content_chunks.
+ * Enhanced with smart fallback: if Vectorize is sparse, prioritize current question's explanation.
  */
 export async function retrieveRelevantChunks(
   db: ReturnType<typeof drizzle>,
@@ -130,7 +131,85 @@ export async function retrieveRelevantChunks(
   topK: number = 4,
   filterContextId?: string
 ): Promise<RetrievedChunk[]> {
-  if (!ai || !vectorize || !userPrompt.trim()) {
+  if (!userPrompt.trim()) {
+    return [];
+  }
+
+  // First, try to get the current question's explanation (always high-value for question context)
+  if (filterContextId) {
+    try {
+      const questionChunks = await db
+        .select()
+        .from(contentChunks)
+        .where(eq(contentChunks.sourceId, filterContextId))
+        .orderBy(contentChunks.chunkIndex);
+
+      if (questionChunks.length > 0) {
+        // Return question's own explanation first, then try to augment with semantic search
+        const questionData = questionChunks.map((r) => ({
+          id: r.id,
+          sourceType: r.sourceType,
+          sourceId: r.sourceId,
+          chunkIndex: r.chunkIndex,
+          contentText: r.contentText,
+          score: 1.0, // High confidence for question's own explanation
+        }));
+
+        // If we have Vectorize, try to get similar questions/topics too
+        if (ai && vectorize) {
+          try {
+            const embeddingResponse = await ai.run('@cf/baai/bge-base-en-v1.5', {
+              text: [userPrompt.trim()],
+            });
+
+            const queryVector = embeddingResponse?.data?.[0];
+            if (queryVector && Array.isArray(queryVector)) {
+              const matches = await vectorize.query(queryVector, {
+                topK: Math.max(topK, 6),
+                returnMetadata: true,
+              });
+
+              if (matches?.matches && matches.matches.length > 0) {
+                const chunkIds = matches.matches.map((m: any) => m.id);
+                const vectorChunks = await db
+                  .select()
+                  .from(contentChunks)
+                  .where(inArray(contentChunks.id, chunkIds));
+
+                const scoreMap = new Map<string, number>();
+                for (const m of matches.matches) {
+                  scoreMap.set(m.id, m.score || 0);
+                }
+
+                const augmentedChunks = vectorChunks.map((r) => ({
+                  id: r.id,
+                  sourceType: r.sourceType,
+                  sourceId: r.sourceId,
+                  chunkIndex: r.chunkIndex,
+                  contentText: r.contentText,
+                  score: scoreMap.get(r.id) || 0.5,
+                }));
+
+                // Merge question chunks with similar-question chunks, sorted by score
+                const merged = [...questionData, ...augmentedChunks];
+                merged.sort((a, b) => (b.score || 0) - (a.score || 0));
+                return merged.slice(0, topK);
+              }
+            }
+          } catch (vectorErr) {
+            console.warn('Vectorize augmentation failed, using question context only:', vectorErr);
+          }
+        }
+
+        return questionData.slice(0, topK);
+      }
+    } catch (qErr) {
+      console.warn('Question chunk lookup failed:', qErr);
+    }
+  }
+
+  // Fallback: Vectorize-only retrieval for non-question contexts or if question has no chunks
+  if (!ai || !vectorize) {
     return [];
   }
 
@@ -145,40 +224,13 @@ export async function retrieveRelevantChunks(
       return [];
     }
 
-    // 2. Query Vectorize with optional namespace/metadata
-    const queryOptions: any = {
-      topK: Math.max(topK, 6), // Fetch candidate pool for reranking
+    // 2. Query Vectorize
+    const matches = await vectorize.query(queryVector, {
+      topK: Math.max(topK, 6),
       returnMetadata: true,
-    };
-
-    // Add metadata filter to scope search to current question's chunks
-    if (filterContextId) {
-      queryOptions.filter = { sourceId: filterContextId };
-    }
-
-    const matches = await vectorize.query(queryVector, queryOptions);
+    });
 
     if (!matches || !matches.matches || matches.matches.length === 0) {
-      // D1 fallback: if Vectorize returns empty, try direct SQL lookup
-      if (filterContextId) {
-        const fallbackRows = await db
-          .select()
-          .from(contentChunks)
-          .where(eq(contentChunks.sourceId, filterContextId))
-          .orderBy(contentChunks.chunkIndex)
-          .limit(topK);
-        
-        if (fallbackRows.length > 0) {
-          return fallbackRows.map((r) => ({
-            id: r.id,
-            sourceType: r.sourceType,
-            sourceId: r.sourceId,
-            chunkIndex: r.chunkIndex,
-            contentText: r.contentText,
-            score: 0.5,
-          }));
-        }
-      }
       return [];
     }
 
@@ -302,12 +354,12 @@ ${explanation?.clinicalGuidanceReference ? `**BNF/NICE Reference**: ${explanatio
 
   const citations: CitationItem[] = await resolveCitationLabels(db, retrievedChunks);
 
-  // 2b. Deterministic graceful refusal. If retrieval genuinely found
-  // nothing, refuse outright rather than asking the model to decide —
-  // relying purely on prompt compliance risks an occasional ungrounded
-  // (hallucinated) answer slipping through. Also skips the model call
-  // entirely, so it's free.
-  if (retrievedChunks.length === 0) {
+  // 2b. If Vectorize retrieval found nothing but we have question context,
+  // use the question data directly as fallback source material.
+  // Only refuse if we have truly zero grounding (no chunks AND no question context).
+  let shouldRefuse = retrievedChunks.length === 0 && !questionContext;
+
+  if (shouldRefuse) {
     const assistantMessageId = `msg-ast-${crypto.randomUUID()}`;
     const latencyMs = Date.now() - startTime;
     const completionTokens = Math.ceil(REFUSAL_MESSAGE.length / 4);
