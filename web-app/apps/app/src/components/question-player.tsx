@@ -155,6 +155,38 @@ export function QuestionPlayer({
   const [isRefModalOpen, setIsRefModalOpen] = useState(false);
   const [isMyNotesOpen, setIsMyNotesOpen] = useState(false);
   const [allNotes, setAllNotes] = useState<Array<{ questionId: string; questionPublicId: string; content: string; savedAt: string }>>([]);
+  const [isBookmarksOpen, setIsBookmarksOpen] = useState(false);
+  const [allBookmarks, setAllBookmarks] = useState<Array<{ questionId: string; questionPublicId: string; difficulty: string }>>([]);
+
+  // Fetch all bookmarked questions
+  const fetchAllBookmarks = () => {
+    if (typeof window === 'undefined') return;
+    const bookmarks: Array<{ questionId: string; questionPublicId: string; difficulty: string }> = [];
+
+    try {
+      const sessionsData = sessionStorage.getItem('acepharm_sessions');
+      if (sessionsData) {
+        const sessions = JSON.parse(sessionsData);
+        Object.values(sessions).forEach((session: any) => {
+          if (typeof session === 'object') {
+            Object.values(session).forEach((question: any) => {
+              if (question && typeof question === 'object' && question.isBookmarked) {
+                bookmarks.push({
+                  questionId: question.questionId || '',
+                  questionPublicId: question.publicId || 'Unknown',
+                  difficulty: question.difficulty || 'medium',
+                });
+              }
+            });
+          }
+        });
+      }
+    } catch {
+      // Ignored
+    }
+
+    setAllBookmarks(bookmarks);
+  };
 
   // Fetch all saved notes from session storage
   const fetchAllNotes = () => {
@@ -306,7 +338,28 @@ export function QuestionPlayer({
   };
 
   const handleToggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+    const newBookmarkState = !isBookmarked;
+    setIsBookmarked(newBookmarkState);
+
+    // Persist bookmark to session storage
+    if (typeof window === 'undefined') return;
+    const sessionKey = sessionId || 'adhoc-practice';
+    try {
+      const sessionsData = sessionStorage.getItem('acepharm_sessions') || '{}';
+      const sessions = JSON.parse(sessionsData);
+      if (!sessions[sessionKey]) sessions[sessionKey] = {};
+      if (!sessions[sessionKey][question.id]) {
+        sessions[sessionKey][question.id] = {
+          questionId: question.id,
+          publicId: question.publicId,
+          difficulty: question.difficulty,
+        };
+      }
+      sessions[sessionKey][question.id].isBookmarked = newBookmarkState;
+      sessionStorage.setItem('acepharm_sessions', JSON.stringify(sessions));
+    } catch {
+      // Ignored
+    }
   };
 
   // Timer tick & session persistence
@@ -521,6 +574,20 @@ export function QuestionPlayer({
           >
             <BookOpen className="w-4 h-4" />
             <span className="hidden lg:inline">My Notes</span>
+          </button>
+
+          {/* Bookmarked Questions Button */}
+          <button
+            type="button"
+            onClick={() => {
+              fetchAllBookmarks();
+              setIsBookmarksOpen(true);
+            }}
+            className="px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-rose-200"
+            title="View all bookmarked questions"
+          >
+            <Bookmark className="w-4 h-4" />
+            <span className="hidden lg:inline">Bookmarks</span>
           </button>
 
           {/* Bookmark */}
@@ -919,6 +986,82 @@ export function QuestionPlayer({
         questionVersion={question.version}
         sessionId={sessionId}
       />
+
+      {/* Bookmarked Questions Modal */}
+      {isBookmarksOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <Card className="max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col bg-surface border-border shadow-lg">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Bookmark className="w-5 h-5 text-rose-600" />
+                <h2 className="text-lg font-bold text-ink">Bookmarked Questions ({allBookmarks.length})</h2>
+              </div>
+              <button
+                onClick={() => setIsBookmarksOpen(false)}
+                className="p-1 rounded hover:bg-canvas/50 transition-colors text-slate hover:text-ink"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1 p-4 space-y-3">
+              {allBookmarks.length === 0 ? (
+                <div className="text-center py-8 text-slate">
+                  <p className="text-sm">No bookmarks yet. Start bookmarking questions to review them later!</p>
+                </div>
+              ) : (
+                allBookmarks.map((bookmark, index) => (
+                  <div
+                    key={`${bookmark.questionId}-${index}`}
+                    className="p-3 rounded-lg border border-rose-200 bg-rose-50/40 hover:bg-rose-50/60 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <div className="text-xs font-bold text-rose-600">{bookmark.questionPublicId}</div>
+                        <div className="text-[11px] text-slate mt-0.5 capitalize">
+                          Difficulty: {bookmark.difficulty}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const sessionKey = sessionId || 'adhoc-practice';
+                          try {
+                            const sessionsData = sessionStorage.getItem('acepharm_sessions') || '{}';
+                            const sessions = JSON.parse(sessionsData);
+                            if (sessions[sessionKey]?.[bookmark.questionId]) {
+                              sessions[sessionKey][bookmark.questionId].isBookmarked = false;
+                              sessionStorage.setItem('acepharm_sessions', JSON.stringify(sessions));
+                            }
+                            fetchAllBookmarks();
+                          } catch {
+                            // Ignored
+                          }
+                        }}
+                        className="p-1 rounded hover:bg-rose-100 text-rose-600 hover:text-rose-700 transition-colors flex-shrink-0"
+                        title="Remove bookmark"
+                      >
+                        <Bookmark className="w-4 h-4 fill-current" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-4 border-t border-border flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsBookmarksOpen(false)}
+                className="text-xs"
+              >
+                Close
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* My Notes Modal */}
       {isMyNotesOpen && (
