@@ -174,4 +174,32 @@ analyticsRouter.post('/weak-area-session', requireAuth, async (c) => {
   });
 });
 
+// ==========================================
+// Wave 5: Weak Topics for Drill Recommendations
+// ==========================================
+
+analyticsRouter.get('/weak-topics', requireAuth, async (c) => {
+  const user = c.get('user');
+  const db = drizzle(c.env.DB);
+
+  try {
+    const weakAreas = await generateWeakAreaSession(db, user.id, {});
+
+    const weakTopics = weakAreas.weakTopics?.map((topic: any) => ({
+      subtopicId: topic.subtopicId,
+      name: topic.name,
+      accuracy: Math.round((topic.correctCount / Math.max(topic.totalQuestions, 1)) * 100),
+      totalQuestions: topic.totalQuestions,
+    })) || [];
+
+    return c.json({
+      status: 'ok',
+      weakTopics,
+    });
+  } catch (err) {
+    console.warn('Could not generate weak topics:', err);
+    return c.json({ status: 'ok', weakTopics: [] });
+  }
+});
+
 export { analyticsRouter };

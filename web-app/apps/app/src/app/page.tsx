@@ -108,6 +108,13 @@ export default function StudentDashboardPage() {
     answeredToday: 0,
     dailyTarget: 20,
   });
+  // Wave 5: Weak topics drill recommendations
+  const [weakTopics, setWeakTopics] = useState<Array<{
+    subtopicId: string;
+    name: string;
+    accuracy: number;
+    totalQuestions: number;
+  }>>([]);
   const [loading, setLoading] = useState(true);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.acepharmexams.co.uk';
@@ -215,6 +222,16 @@ export default function StudentDashboardPage() {
             }
           } catch (recErr) {
             console.warn('Could not load recommendation:', recErr);
+          }
+
+          // Wave 5: Fetch weak topics for drill recommendations
+          try {
+            const wData = await apiClient.get('/api/v1/analytics/weak-topics', { token });
+            if (wData?.weakTopics && Array.isArray(wData.weakTopics)) {
+              setWeakTopics(wData.weakTopics.slice(0, 3)); // Top 3 weak areas
+            }
+          } catch (weakErr) {
+            console.warn('Could not load weak topics:', weakErr);
           }
         }
       } catch (err) {
@@ -390,6 +407,40 @@ export default function StudentDashboardPage() {
             </>
           )}
         </div>
+
+        {/* Wave 5: Weak Topics Drill Recommendations */}
+        {weakTopics.length > 0 && (
+          <Card className="p-6 bg-amber/5 border border-amber/20 shadow-sm space-y-4">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="w-5 h-5 text-amber mt-0.5 shrink-0" />
+              <div>
+                <h3 className="text-sm font-bold text-ink">Areas to Focus On</h3>
+                <p className="text-xs text-slate mt-0.5">
+                  These topics need more practice. Targeted drill recommended.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {weakTopics.map((topic) => (
+                <button
+                  key={topic.subtopicId}
+                  onClick={() => {
+                    window.location.href = `/session/new?mode=drill&topicId=${encodeURIComponent(topic.subtopicId)}&count=10`;
+                  }}
+                  className="w-full flex items-center justify-between p-3 rounded-lg border border-border bg-surface hover:border-amber hover:bg-amber/5 transition-all text-left"
+                >
+                  <div>
+                    <p className="text-xs font-semibold text-ink">{topic.name}</p>
+                    <p className="text-[11px] text-slate mt-0.5">
+                      {topic.accuracy}% accuracy • {topic.totalQuestions} questions
+                    </p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate flex-shrink-0" />
+                </button>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* 2. Core Curriculum Systems & Category Reset (Dual-Store Management) */}
         <Card className="p-6 bg-surface border-border shadow-sm space-y-5">
