@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { drizzle } from 'drizzle-orm/d1';
 import { and, eq, isNull } from 'drizzle-orm';
-import { users, authRefreshTokens, authEmailVerificationTokens, authPasswordResetTokens, type User } from '../db/schema';
+import { users, authRefreshTokens, authEmailVerificationTokens, authPasswordResetTokens, subscriptions, type User } from '../db/schema';
 import { requireAuth, type AuthContext } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rate-limit';
 import { hashPassword, verifyPassword } from '../lib/password';
@@ -226,6 +226,7 @@ authRouter.post('/signup', async (c) => {
   const now = new Date();
   const userId = crypto.randomUUID();
 
+  // AP-50: Create user with default free plan (no hardcoded Pro tier or mock card)
   const [newUser] = await db
     .insert(users)
     .values({
@@ -241,6 +242,19 @@ authRouter.post('/signup', async (c) => {
       lastLoginAt: now,
     })
     .returning();
+
+  // Create default free tier subscription for new user
+  await db.insert(subscriptions).values({
+    id: crypto.randomUUID(),
+    userId,
+    plan: 'explorer', // Default: free tier
+    status: 'active',
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+    stripePriceId: null,
+    createdAt: now,
+    updatedAt: now,
+  });
 
   c.executionCtx.waitUntil(sendVerificationEmail(c.env as EmailEnvironment, db, newUser));
 
