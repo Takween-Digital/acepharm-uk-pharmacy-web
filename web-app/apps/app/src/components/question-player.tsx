@@ -153,6 +153,49 @@ export function QuestionPlayer({
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   const [isRefModalOpen, setIsRefModalOpen] = useState(false);
+  const [isMyNotesOpen, setIsMyNotesOpen] = useState(false);
+  const [allNotes, setAllNotes] = useState<Array<{ questionId: string; questionPublicId: string; content: string; savedAt: string }>>([]);
+
+  // Fetch all saved notes from session storage
+  const fetchAllNotes = () => {
+    if (typeof window === 'undefined') return;
+    const sessionKey = sessionId || 'adhoc-practice';
+    const notes: Array<{ questionId: string; questionPublicId: string; content: string; savedAt: string }> = [];
+
+    try {
+      // Scan sessionStorage for all notes in this session
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key?.startsWith(`acepharm_note_${sessionKey}_`)) {
+          const content = sessionStorage.getItem(key) || '';
+          const questionId = key.replace(`acepharm_note_${sessionKey}_`, '');
+          // Try to get question public ID from session data
+          const sessionsData = sessionStorage.getItem('acepharm_sessions');
+          let publicId = `Q-${notes.length + 1}`;
+          if (sessionsData) {
+            try {
+              const sessions = JSON.parse(sessionsData);
+              if (sessions[sessionKey]?.[questionId]) {
+                publicId = sessions[sessionKey][questionId].publicId || publicId;
+              }
+            } catch {
+              // Ignored
+            }
+          }
+          notes.push({
+            questionId,
+            questionPublicId: publicId,
+            content,
+            savedAt: new Date().toLocaleString(),
+          });
+        }
+      }
+    } catch {
+      // Ignored
+    }
+
+    setAllNotes(notes);
+  };
 
   // Auto-save & resume state from SessionStorage for network resilience and reload recovery
   useEffect(() => {
@@ -464,6 +507,20 @@ export function QuestionPlayer({
           >
             <FileEdit className="w-4 h-4" />
             <span className="hidden lg:inline">Notes</span>
+          </button>
+
+          {/* My Notes History Button */}
+          <button
+            type="button"
+            onClick={() => {
+              fetchAllNotes();
+              setIsMyNotesOpen(true);
+            }}
+            className="px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-indigo/40"
+            title="View all saved notes from this session"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden lg:inline">My Notes</span>
           </button>
 
           {/* Bookmark */}
@@ -862,6 +919,73 @@ export function QuestionPlayer({
         questionVersion={question.version}
         sessionId={sessionId}
       />
+
+      {/* My Notes Modal */}
+      {isMyNotesOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <Card className="max-w-2xl w-full max-h-[80vh] overflow-hidden flex flex-col bg-surface border-border shadow-lg">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-indigo" />
+                <h2 className="text-lg font-bold text-ink">My Notes ({allNotes.length})</h2>
+              </div>
+              <button
+                onClick={() => setIsMyNotesOpen(false)}
+                className="p-1 rounded hover:bg-canvas/50 transition-colors text-slate hover:text-ink"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1 p-4 space-y-3">
+              {allNotes.length === 0 ? (
+                <div className="text-center py-8 text-slate">
+                  <p className="text-sm">No notes saved yet. Start adding notes to your questions!</p>
+                </div>
+              ) : (
+                allNotes.map((note, index) => (
+                  <div
+                    key={`${note.questionId}-${index}`}
+                    className="p-3 rounded-lg border border-border bg-canvas/40 hover:bg-canvas/60 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex-1">
+                        <div className="text-xs font-bold text-indigo">{note.questionPublicId}</div>
+                        <div className="text-[11px] text-slate mt-0.5">Saved: {note.savedAt}</div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          const sessionKey = sessionId || 'adhoc-practice';
+                          const key = `acepharm_note_${sessionKey}_${note.questionId}`;
+                          sessionStorage.removeItem(key);
+                          fetchAllNotes();
+                        }}
+                        className="p-1 rounded hover:bg-rose-50 text-slate hover:text-rose-600 transition-colors flex-shrink-0"
+                        title="Delete note"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-ink leading-relaxed whitespace-pre-wrap">{note.content}</p>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-4 border-t border-border flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsMyNotesOpen(false)}
+                className="text-xs"
+              >
+                Close
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Free Tier Upgrade Soft Modal (Rendered ONLY after Question 30 Explanation) */}
       <FreeTierUpgradeModal
