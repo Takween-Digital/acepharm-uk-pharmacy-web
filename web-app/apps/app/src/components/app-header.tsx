@@ -208,10 +208,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onOpenSubscription }) => {
                       setUserDropdownOpen(false);
                       onOpenSubscription?.();
                     }}
-                    className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-ink hover:bg-canvas rounded-lg transition-colors text-left"
+                    className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-ink hover:bg-canvas rounded-lg transition-colors text-left font-medium"
+                    title="View subscription plan, manage billing, and download invoices"
                   >
                     <CreditCard className="w-4 h-4 text-indigo" />
-                    <span>Membership & Invoices</span>
+                    <span>Billing & Invoices</span>
                   </button>
 
                   <div className="my-1 border-t border-border" />
