@@ -80,14 +80,16 @@ export async function calculateMeaningfulStreak(
   const todayMinutes = Math.floor(todayStats.durationSeconds / 60);
   const isMeaningfulToday = todayStats.count >= 5 || todayMinutes >= 10;
 
-  // 5. Calculate continuous streaks (walking back day by day)
+  // 5. Calculate continuous streaks (walking back day by day from today)
   let currentStreak = 0;
   let longestStreak = 0;
   let tempStreak = 0;
 
-  // Check if today qualifies or if streak is alive from yesterday
-  let checkDate = isMeaningfulToday ? new Date(now) : yesterdayObj;
-  
+  // Current streak: walk backward from today to find consecutive meaningful days
+  // Start from today and count backward
+  let checkDate = new Date(now);
+  let streakBroken = false;
+
   while (true) {
     const dStr = checkDate.toLocaleDateString('en-CA', { timeZone: userTimezone });
     const stats = dayStatsMap.get(dStr);
@@ -95,10 +97,18 @@ export async function calculateMeaningfulStreak(
 
     if (isDayMeaningful) {
       currentStreak += 1;
-      checkDate = new Date(checkDate.getTime() - 24 * 60 * 60 * 1000);
+      // Move to previous day
+      checkDate.setDate(checkDate.getDate() - 1);
     } else {
+      // Streak broken - stop counting
+      streakBroken = true;
       break;
     }
+  }
+
+  // If today is not meaningful and we haven't found any streak, ensure current is 0
+  if (!isMeaningfulToday && streakBroken) {
+    currentStreak = 0;
   }
 
   // 6. Compute longest streak across all recorded history
