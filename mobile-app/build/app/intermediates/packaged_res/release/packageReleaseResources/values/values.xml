@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <string name="com.google.firebase.crashlytics.mapping_file_id" ns1:ignore="UnusedResources,TypographyDashes" translatable="false">5e3dbd27638e40bd802a00c35aa2004d</string>
+    <string name="gcm_defaultSenderId" translatable="false">1066048447991</string>
+    <string name="google_api_key" translatable="false">AIzaSyAtcE6zrsQNhx3J5PPeduflQCXNP2kmVtw</string>
+    <string name="google_app_id" translatable="false">1:1066048447991:android:43d08dec4349a33cc63af2</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAtcE6zrsQNhx3J5PPeduflQCXNP2kmVtw</string>
+    <string name="google_storage_bucket" translatable="false">acepharm-uk.firebasestorage.app</string>
+    <string name="project_id" translatable="false">acepharm-uk</string>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+</resources>

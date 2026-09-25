@@ -1,0 +1,18 @@
+<lint-module
+    format="1"
+    dir="/Users/pc/acepharm-web-app/mobile-app/android/app"
+    name=":app"
+    type="APP"
+    maven="android:app:unspecified"
+    agpVersion="8.9.1"
+    buildFolder="/Users/pc/acepharm-web-app/mobile-app/build/app"
+    bootClassPath="/Users/pc/Library/Android/sdk/platforms/android-36/android.jar:/Users/pc/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="11"
+    compileTarget="android-36">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

@@ -148,12 +148,20 @@ export function SessionBuilder() {
 
   const handleStartSession = async () => {
     setIsStarting(true);
+
+    // Validate that at least one category is selected
+    if (selectedCategoryIds.length === 0) {
+      alert('Please select at least one clinical category to continue.');
+      setIsStarting(false);
+      return;
+    }
+
     const catQuery = selectedCategoryIds.join(',');
 
     try {
       const data = await apiClient.post('/api/v1/sessions/create', {
         mode,
-        questionCount: effectiveCount,
+        questionCount: Math.max(1, effectiveCount), // Ensure minimum of 1
         categoryIds: selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined,
         statusFilter: statusFilter !== 'all' ? statusFilter : undefined,
       });
@@ -161,8 +169,13 @@ export function SessionBuilder() {
       sessionStorage.setItem('acepharm_active_session', JSON.stringify(data));
       window.location.href = `/session/active?mode=${mode}&count=${effectiveCount}&categories=${encodeURIComponent(catQuery)}&filter=${statusFilter}`;
     } catch (err: any) {
-      console.error('Session creation failed:', err);
-      alert(err.message || 'Failed to create session. Please try again.');
+      console.error('Session creation failed:', {
+        message: err?.message,
+        status: err?.status,
+        response: err?.response,
+      });
+      const errorMsg = err?.response?.error || err?.message || 'Failed to create session. Please try again.';
+      alert(errorMsg);
       setIsStarting(false);
     }
   };

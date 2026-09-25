@@ -7,6 +7,22 @@ import { chunkQuestionOnPublish } from '../lib/chunking-pipeline';
 const router = new Hono<{ Bindings: any; Variables: { user?: any } }>();
 
 /**
+ * Debug Endpoint: Check if BULK_INDEX_SECRET is available
+ */
+router.get('/admin/bulk-index-debug', async (c) => {
+  const envSecret = c.env.BULK_INDEX_SECRET as string;
+  const headerSecret = c.req.header('X-Bulk-Index-Secret');
+
+  return c.json({
+    secretAvailable: !!envSecret,
+    secretLength: envSecret ? envSecret.length : 0,
+    headerReceived: !!headerSecret,
+    headerLength: headerSecret ? headerSecret.length : 0,
+    match: headerSecret === envSecret,
+  });
+});
+
+/**
  * Admin Endpoint: Bulk Index All Questions into Ask Ace Knowledge Base
  *
  * Fetches all published questions (1900+) and pre-indexes them into:

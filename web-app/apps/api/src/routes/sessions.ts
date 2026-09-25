@@ -53,60 +53,80 @@ sessionsRouter.post('/estimate', requireAuth, async (c) => {
 // ==========================================
 
 sessionsRouter.post('/create', async (c) => {
-  const user = c.get('user'); // May be null for guest sessions
-  const body = await c.req.json<SessionBuilderQuery>();
-  const db = drizzle(c.env.DB);
-  const now = new Date();
+  try {
+    const user = c.get('user'); // May be null for guest sessions
+    const body = await c.req.json<SessionBuilderQuery>();
+    const db = drizzle(c.env.DB);
+    const now = new Date();
 
-  // 1. Resolve filtered question pool
-  const userId = user?.id || crypto.randomUUID(); // Use temp ID for guest sessions
-  const matchedQuestionIds = await fetchFilteredQuestions(db, userId, body);
+    // Validate input
+    if (!body.mode || (body.mode !== 'learn' && body.mode !== 'timed')) {
+      return c.json({ error: 'Invalid or missing mode' }, 400);
+    }
+    if (!body.questionCount || body.questionCount < 1) {
+      return c.json({ error: 'Question count must be at least 1' }, 400);
+    }
 
-  if (matchedQuestionIds.length === 0) {
+    // 1. Resolve filtered question pool
+    const userId = user?.id || crypto.randomUUID(); // Use temp ID for guest sessions
+    const matchedQuestionIds = await fetchFilteredQuestions(db, userId, body);
+
+    if (matchedQuestionIds.length === 0) {
+      return c.json({
+        error: 'No questions match the selected curriculum and status filters.',
+      }, 422);
+    }
+
+    // 2. Shuffle and limit to target count
+    const shuffled = [...matchedQuestionIds].sort(() => Math.random() - 0.5);
+    const targetCount = Math.min(body.questionCount || 20, shuffled.length);
+    const selectedQuestionIds = shuffled.slice(0, targetCount);
+
+    // 3. Create Session Record in D1
+    const sessionId = crypto.randomUUID();
+    const timeLimit = body.mode === 'timed' ? body.timeLimitSeconds || targetCount * 90 : null; // default 90s per question in timed
+
+    await db.insert(sessions).values({
+      id: sessionId,
+      userId: userId,
+      mode: body.mode || 'learn',
+      totalQuestions: targetCount,
+      questionsAnswered: 0,
+      correctAnswers: 0,
+      timeLimitSeconds: timeLimit,
+      timeTakenSeconds: 0,
+      completed: false,
+      configurationJson: JSON.stringify({
+        categoryIds: body.categoryIds,
+        subtopicIds: body.subtopicIds,
+        statusFilter: body.statusFilter,
+        selectedQuestionIds,
+      }),
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    // 4. Fetch full question objects for immediate client-side rendering
+    const fullQuestions = await fetchHydratedQuestions(db, selectedQuestionIds);
+
     return c.json({
-      error: 'No questions match the selected curriculum and status filters.',
-    }, 422);
+      sessionId,
+      mode: body.mode || 'learn',
+      totalQuestions: targetCount,
+      timeLimitSeconds: timeLimit,
+      questions: fullQuestions,
+    }, 201);
+  } catch (err: any) {
+    console.error('[Sessions API] Create session error:', {
+      message: err?.message,
+      stack: err?.stack,
+      cause: err?.cause,
+    });
+    return c.json({
+      error: 'Failed to create session. Please try again.',
+      details: err?.message,
+    }, 500);
   }
-
-  // 2. Shuffle and limit to target count
-  const shuffled = [...matchedQuestionIds].sort(() => Math.random() - 0.5);
-  const targetCount = Math.min(body.questionCount || 20, shuffled.length);
-  const selectedQuestionIds = shuffled.slice(0, targetCount);
-
-  // 3. Create Session Record in D1
-  const sessionId = crypto.randomUUID();
-  const timeLimit = body.mode === 'timed' ? body.timeLimitSeconds || targetCount * 90 : null; // default 90s per question in timed
-
-  await db.insert(sessions).values({
-    id: sessionId,
-    userId: userId,
-    mode: body.mode || 'learn',
-    totalQuestions: targetCount,
-    questionsAnswered: 0,
-    correctAnswers: 0,
-    timeLimitSeconds: timeLimit,
-    timeTakenSeconds: 0,
-    completed: false,
-    configurationJson: JSON.stringify({
-      categoryIds: body.categoryIds,
-      subtopicIds: body.subtopicIds,
-      statusFilter: body.statusFilter,
-      selectedQuestionIds,
-    }),
-    createdAt: now,
-    updatedAt: now,
-  });
-
-  // 4. Fetch full question objects for immediate client-side rendering
-  const fullQuestions = await fetchHydratedQuestions(db, selectedQuestionIds);
-
-  return c.json({
-    sessionId,
-    mode: body.mode || 'learn',
-    totalQuestions: targetCount,
-    timeLimitSeconds: timeLimit,
-    questions: fullQuestions,
-  }, 201);
 });
 
 // ==========================================

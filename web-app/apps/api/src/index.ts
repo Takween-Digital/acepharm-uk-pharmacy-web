@@ -338,7 +338,7 @@ admin.route('/curriculum', curriculumRouter);
 admin.route('/questions', questionsRouter);
 
 // Bulk indexing routes (not subject to global admin auth middleware)
-app.use(adminIndexingRouter);
+app.route('/', adminIndexingRouter);
 
 app.route('/admin', admin);
 app.route('/api/v1/admin', admin);

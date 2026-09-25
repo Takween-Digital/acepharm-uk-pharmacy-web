@@ -1,0 +1,4 @@
+#Fri Sep 18 20:11:29 PKT 2026
+base.0=/Users/pc/acepharm-web-app/mobile-app/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
