@@ -44,6 +44,24 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// Wave 6: Cache Control Headers for Performance
+app.use('*', async (c, next) => {
+  await next();
+
+  // Cache public/static data for 5 minutes
+  if (c.req.path.match(/\/(curriculum|analytics|recommendation)/)) {
+    c.header('Cache-Control', 'public, max-age=300'); // 5 min
+  }
+  // Cache user-specific data for 1 minute
+  else if (c.req.path.match(/\/user\/|\/progress|\/streak|\/subscription/)) {
+    c.header('Cache-Control', 'private, max-age=60'); // 1 min
+  }
+  // Don't cache mutations
+  else if (c.req.method !== 'GET') {
+    c.header('Cache-Control', 'no-store');
+  }
+});
+
 app.use('*', cors({
   origin: [
     'https://acepharmexams.co.uk',
