@@ -635,6 +635,17 @@ export async function handleStripeWebhook(db: any, event: any, env?: any) {
       const currentPeriodEnd = dataObject.current_period_end ? new Date(dataObject.current_period_end * 1000) : new Date(Date.now() + 30 * 86400000);
       const customerId = dataObject.customer;
 
+      // AP-51: Determine plan from subscription items (handles downgrades)
+      let plan = 'explorer'; // Default to free tier
+      if (dataObject.items?.data && Array.isArray(dataObject.items.data)) {
+        const priceId = dataObject.items.data[0]?.price?.id;
+        if (priceId === STRIPE_PLANS.MONTHLY.priceId) {
+          plan = 'monthly_pro';
+        } else if (priceId === STRIPE_PLANS.YEARLY.priceId) {
+          plan = 'yearly_pro';
+        }
+      }
+
       if (subId) {
         // Find existing subscription by subscriptionId or customerId
         const [existing] = await db
@@ -647,6 +658,7 @@ export async function handleStripeWebhook(db: any, event: any, env?: any) {
           await db
             .update(subscriptions)
             .set({
+              plan: plan as any,
               status: status as any,
               cancelAtPeriodEnd,
               currentPeriodStart,

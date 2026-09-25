@@ -40,6 +40,7 @@ interface AskAcePanelProps {
   questionPublicId?: string;
   isCalculation?: boolean;
   highlightedText?: string;
+  isSubmitted?: boolean; // AP-35: Lock Ask Ace until question submitted
 }
 
 const QUICK_PROMPTS = [
@@ -50,7 +51,7 @@ const QUICK_PROMPTS = [
   { id: 'exam', label: 'GPhC exam traps', icon: AlertCircle, prompt: 'What are common GPhC examination traps or high-risk monitoring points for this topic?' },
 ];
 
-export function AskAcePanel({ questionId, questionPublicId, isCalculation, highlightedText }: AskAcePanelProps) {
+export function AskAcePanel({ questionId, questionPublicId, isCalculation, highlightedText, isSubmitted }: AskAcePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<AceMessage[]>([]);
@@ -230,6 +231,17 @@ export function AskAcePanel({ questionId, questionPublicId, isCalculation, highl
 
             {/* 2. Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+          {/* AP-35: State Banner - Locked/Unlocked */}
+          {!isSubmitted && (
+            <div className="flex items-start gap-2 p-3 bg-amber/10 border border-amber/30 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-amber mt-0.5 shrink-0" />
+              <div className="flex-1 text-xs text-amber-800">
+                <p className="font-semibold">Ask Ace locked</p>
+                <p className="text-[11px] mt-0.5 opacity-90">Submit your answer first to unlock clinical explanations. Double-click any text to select and ask Ace about it.</p>
+              </div>
+            </div>
+          )}
+
           {/* Quick-Prompt Chips */}
           <div className="space-y-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate">
@@ -242,9 +254,9 @@ export function AskAcePanel({ questionId, questionPublicId, isCalculation, highl
                   <button
                     key={qp.id}
                     type="button"
-                    disabled={isLoading}
+                    disabled={isLoading || !isSubmitted}
                     onClick={() => handleQuickPromptClick(qp)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-surface border border-border/80 text-ink hover:border-indigo hover:text-indigo hover:bg-indigo/5 transition-all shadow-xs disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-surface border border-border/80 text-ink hover:border-indigo hover:text-indigo hover:bg-indigo/5 transition-all shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Icon className="w-3.5 h-3.5 text-indigo" />
                     <span>{qp.label}</span>
@@ -314,16 +326,17 @@ export function AskAcePanel({ questionId, questionPublicId, isCalculation, highl
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Ask Ace any clinical question about this vignette (e.g. 'Why is Indapamide chosen here?')..."
-              disabled={isLoading}
-              className="flex-1 bg-surface border border-border rounded-md px-3.5 py-2 text-xs text-ink placeholder:text-slate/60 focus:outline-none focus:ring-1 focus:ring-indigo focus:border-indigo transition-all disabled:opacity-50"
+              placeholder={isSubmitted ? "Ask Ace any clinical question about this vignette (e.g. 'Why is Indapamide chosen here?')..." : "Submit your answer first to unlock Ask Ace..."}
+              disabled={isLoading || !isSubmitted}
+              className="flex-1 bg-surface border border-border rounded-md px-3.5 py-2 text-xs text-ink placeholder:text-slate/60 focus:outline-none focus:ring-1 focus:ring-indigo focus:border-indigo transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <Button
               type="submit"
               variant="primary"
               size="sm"
-              disabled={!inputText.trim() || isLoading}
+              disabled={!inputText.trim() || isLoading || !isSubmitted}
               className="flex items-center gap-1 text-xs px-3.5 py-2 shrink-0 font-semibold"
+              title={!isSubmitted ? "Submit your answer first to ask Ace questions" : ""}
             >
               {isLoading ? (
                 <RotateCw className="w-3.5 h-3.5 animate-spin" />
