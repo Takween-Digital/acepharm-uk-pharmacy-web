@@ -12,6 +12,12 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const marketingUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_MARKETING_URL ||
+    'https://acepharm-marketing.pages.dev';
+  const privacyPolicyUrl = `${marketingUrl}/privacy`;
+
   return (
     <>
       {children}
@@ -19,6 +25,7 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
         onConsentChange={(consent) => {
           tracker.updateConsent(consent);
         }}
+        privacyPolicyUrl={privacyPolicyUrl}
       />
     </>
   );
