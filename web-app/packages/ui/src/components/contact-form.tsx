@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Card } from './card';
 import { Button } from './button';
-import { CheckCircle2, AlertCircle, Loader2, Send } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Send, X } from 'lucide-react';
 
 export const ContactForm: React.FC = () => {
   const [name, setName] = React.useState('');
@@ -13,6 +13,13 @@ export const ContactForm: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [status, setStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
   const [feedback, setFeedback] = React.useState('');
+
+  React.useEffect(() => {
+    if (status === 'success') {
+      const timer = setTimeout(() => setStatus('idle'), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
 
   const API_URL = 'https://api.acepharmexams.co.uk';
 
@@ -51,22 +58,40 @@ export const ContactForm: React.FC = () => {
   return (
     <Card className="p-8 bg-surface border border-border rounded-card shadow-card space-y-6">
       {status === 'success' && (
-        <div className="p-4 rounded-btn bg-success-wash border border-success/30 text-success text-xs flex items-start gap-3">
-          <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-bold text-sm">Message Sent Successfully</p>
-            <p className="mt-1 text-slate">{feedback}</p>
+        <div className="p-4 rounded-btn bg-success-wash border border-success/30 text-success text-xs flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-sm">Message Sent Successfully</p>
+              <p className="mt-1 text-slate">{feedback}</p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setStatus('idle')}
+            className="shrink-0 text-success hover:text-success-deep transition-colors mt-0.5"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
       {status === 'error' && (
-        <div className="p-4 rounded-btn bg-danger-wash border border-danger/30 text-danger text-xs flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-bold text-sm">Failed to Send</p>
-            <p className="mt-1">{feedback}</p>
+        <div className="p-4 rounded-btn bg-danger-wash border border-danger/30 text-danger text-xs flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-sm">Failed to Send</p>
+              <p className="mt-1">{feedback}</p>
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setStatus('idle')}
+            className="shrink-0 text-danger hover:text-danger-deep transition-colors mt-0.5"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -92,7 +117,7 @@ export const ContactForm: React.FC = () => {
 
         <div>
           <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
-            Your Name
+            Your Name <span className="text-rose-600">*</span>
           </label>
           <input 
             type="text" 
@@ -106,7 +131,7 @@ export const ContactForm: React.FC = () => {
 
         <div>
           <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
-            Email Address
+            Email Address <span className="text-rose-600">*</span>
           </label>
           <input 
             type="email" 
@@ -120,7 +145,7 @@ export const ContactForm: React.FC = () => {
 
         <div>
           <label className="block text-xs font-bold text-ink uppercase tracking-wider mb-2">
-            Message
+            Message <span className="text-rose-600">*</span>
           </label>
           <textarea 
             rows={5} 

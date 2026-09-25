@@ -26,5 +26,8 @@
       "protobufjs"
     ]
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.4",
+  "dependencies": {
+    "lucide-react": "^0.441.0"
+  }
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Button, Badge } from '@acepharm/ui';
+import { CheckCircle2, Lightbulb } from 'lucide-react';
 
 export interface SampleQuestionOption {
   id: string;
@@ -96,21 +97,21 @@ export default function InteractiveSampleQuestion() {
   return (
     <Card className="max-w-3xl mx-auto p-6 sm:p-8 bg-surface border border-indigo/30 ring-1 ring-indigo/10 shadow-lg text-left relative overflow-hidden">
       {/* Top Header Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-border">
-        <div className="flex items-center gap-2">
-          <Badge variant="teal" className="text-xs font-bold uppercase tracking-wider font-mono">
+      <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-border">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant="teal" className="text-xs font-bold uppercase tracking-wider font-mono shrink-0">
             {SAMPLE_QUESTION.publicId}
           </Badge>
-          <span className="text-xs font-semibold text-slate">
+          <span className="text-xs font-semibold text-slate whitespace-nowrap">
             {SAMPLE_QUESTION.sector} Pharmacy &bull; {SAMPLE_QUESTION.category}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-auto">
           <button
             type="button"
             onClick={() => setHideOptions(!hideOptions)}
-            className="text-xs font-medium text-slate hover:text-ink px-2.5 py-1 rounded bg-canvas border border-border transition-colors"
+            className="text-xs font-semibold text-white bg-indigo hover:bg-indigo-deep px-3 py-1.5 rounded-btn border border-indigo hover:border-indigo-deep transition-all shadow-xs whitespace-nowrap"
           >
             {hideOptions ? 'Show Options' : 'Cover Options (Active Recall)'}
           </button>
@@ -118,7 +119,7 @@ export default function InteractiveSampleQuestion() {
             <button
               type="button"
               onClick={handleReset}
-              className="text-xs font-semibold text-indigo hover:text-indigo-deep transition-colors"
+              className="text-xs font-semibold text-white bg-slate hover:bg-slate-deep px-3 py-1.5 rounded-btn border border-slate hover:border-slate-deep transition-all shadow-xs whitespace-nowrap"
             >
               Reset Demo
             </button>
@@ -164,18 +165,18 @@ export default function InteractiveSampleQuestion() {
                 onClick={() => handleSelectOption(opt.id)}
                 className={`p-3.5 sm:p-4 rounded-btn border transition-all cursor-pointer select-none ${style}`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <span className="w-6 h-6 rounded-md font-mono text-xs font-bold flex items-center justify-center shrink-0 border border-current">
                       {opt.label}
                     </span>
-                    <span className="text-xs sm:text-sm font-medium pt-0.5 leading-relaxed">
+                    <span className="text-xs sm:text-sm font-medium leading-relaxed break-words">
                       {opt.content}
                     </span>
                   </div>
 
                   {isSubmitted && (
-                    <span className="shrink-0 text-xs font-bold pt-0.5">
+                    <span className="shrink-0 text-xs font-bold whitespace-nowrap ml-2">
                       {opt.isCorrect ? (
                         <span className="text-teal">✓ Correct</span>
                       ) : isSelected ? (
@@ -243,8 +244,18 @@ export default function InteractiveSampleQuestion() {
           </p>
 
           <div className="pt-3 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="text-xs text-slate">
-              {isCorrect ? '🎉 Great job!' : '💡 Solid learning opportunity.'} Practise high-yield GPhC scenarios on AcePharm.
+            <div className="text-xs text-slate flex items-center gap-2">
+              {isCorrect ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-teal shrink-0" />
+                  <span>Great job! Practise high-yield GPhC scenarios on AcePharm.</span>
+                </>
+              ) : (
+                <>
+                  <Lightbulb className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span>Solid learning opportunity. Practise high-yield GPhC scenarios on AcePharm.</span>
+                </>
+              )}
             </div>
             <a
               href="https://app.acepharmexams.co.uk/auth/register"
