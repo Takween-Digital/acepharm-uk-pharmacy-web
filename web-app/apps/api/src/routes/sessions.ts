@@ -52,14 +52,15 @@ sessionsRouter.post('/estimate', requireAuth, async (c) => {
 // 2. Create & Launch Session (Atomic)
 // ==========================================
 
-sessionsRouter.post('/create', requireAuth, async (c) => {
-  const user = c.get('user');
+sessionsRouter.post('/create', async (c) => {
+  const user = c.get('user'); // May be null for guest sessions
   const body = await c.req.json<SessionBuilderQuery>();
   const db = drizzle(c.env.DB);
   const now = new Date();
 
   // 1. Resolve filtered question pool
-  const matchedQuestionIds = await fetchFilteredQuestions(db, user.id, body);
+  const userId = user?.id || crypto.randomUUID(); // Use temp ID for guest sessions
+  const matchedQuestionIds = await fetchFilteredQuestions(db, userId, body);
 
   if (matchedQuestionIds.length === 0) {
     return c.json({
@@ -78,7 +79,7 @@ sessionsRouter.post('/create', requireAuth, async (c) => {
 
   await db.insert(sessions).values({
     id: sessionId,
-    userId: user.id,
+    userId: userId,
     mode: body.mode || 'learn',
     totalQuestions: targetCount,
     questionsAnswered: 0,
