@@ -161,10 +161,16 @@ export function QuestionPlayer({
 
     // 1. Restore response state (selected option, confidence, submission state)
     const saved = SessionStorageHelper.getResponse(sessionKey, question.id);
-    if (saved) {
-      if (saved.selectedOptionId) setSelectedOptionId(saved.selectedOptionId);
+    if (saved && saved.selectedOptionId) {
+      // Only restore submitted state if there is a valid selectedOptionId
+      setSelectedOptionId(saved.selectedOptionId);
       if (saved.confidence) setConfidence(saved.confidence);
       if (saved.isSubmitted) setIsSubmitted(true);
+    } else {
+      // Reset state for new question or corrupted saved data
+      setSelectedOptionId(null);
+      setConfidence(null);
+      setIsSubmitted(false);
     }
 
     // 2. Restore drafted personal notes from session storage
@@ -173,6 +179,9 @@ export function QuestionPlayer({
       if (savedNote) {
         setPersonalNote(savedNote);
         setShowNotesDrawer(true);
+      } else {
+        setShowNotesDrawer(false);
+        setPersonalNote('');
       }
     } catch {
       // Ignored if storage unavailable
@@ -183,6 +192,8 @@ export function QuestionPlayer({
       const savedTime = sessionStorage.getItem(`acepharm_timer_${sessionKey}_${question.id}`);
       if (savedTime) {
         setSecondsElapsed(parseInt(savedTime, 10) || 0);
+      } else {
+        setSecondsElapsed(0);
       }
     } catch {
       // Ignored if storage unavailable
@@ -192,11 +203,36 @@ export function QuestionPlayer({
   const persistResponse = (optId: string | null, conf: any, submitted: boolean) => {
     if (typeof window === 'undefined') return;
     const sessionKey = sessionId || 'adhoc-practice';
+
+    // Save to SessionStorageHelper for individual question state
     SessionStorageHelper.saveResponse(sessionKey, question.id, {
       selectedOptionId: optId,
       confidence: conf,
       isSubmitted: submitted,
     });
+
+    // Also save complete question metadata for session summary aggregation
+    const selectedOption = question.options.find((o) => o.id === optId);
+    const responseData = {
+      questionId: question.id,
+      publicId: question.publicId,
+      selectedOptionId: optId,
+      isCorrect: selectedOption?.isCorrect ?? false,
+      confidence: conf,
+      isSubmitted: submitted,
+      timeTakenSeconds: secondsElapsed,
+      difficulty: question.difficulty,
+    };
+
+    try {
+      const sessionsData = sessionStorage.getItem('acepharm_sessions') || '{}';
+      const sessions = JSON.parse(sessionsData);
+      if (!sessions[sessionKey]) sessions[sessionKey] = {};
+      sessions[sessionKey][question.id] = responseData;
+      sessionStorage.setItem('acepharm_sessions', JSON.stringify(sessions));
+    } catch {
+      // Ignored if storage unavailable
+    }
   };
 
   const handleSelectOption = (optId: string) => {
@@ -313,7 +349,10 @@ export function QuestionPlayer({
   const playerRef = React.useRef<HTMLDivElement>(null);
 
   const handleSubmit = () => {
-    if (!selectedOptionId || isSubmitted) return;
+    // Strict submission guard: option MUST be selected and question MUST not be already submitted
+    if (selectedOptionId === null || selectedOptionId === undefined || selectedOptionId === '' || isSubmitted) {
+      return;
+    }
     // OPTIMISTIC-UI SUBMISSION: Immediate feedback rendering (<300ms perceived latency)
     setIsSubmitted(true);
     persistResponse(selectedOptionId, confidence, true);
@@ -370,13 +409,15 @@ export function QuestionPlayer({
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+        <div className="flex flex-wrap items-center gap-2 px-2 py-1.5 bg-canvas rounded-lg border border-border/60 shadow-sm">
           {/* GPhC Calculator Button */}
           <button
             type="button"
             onClick={() => setIsCalculatorOpen(!isCalculatorOpen)}
-            className={`p-1.5 rounded hover:bg-surface transition-colors flex items-center gap-1 text-xs ${
-              isCalculatorOpen ? 'text-indigo bg-indigo/10 font-bold' : 'text-slate hover:text-ink'
+            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+              isCalculatorOpen
+                ? 'bg-indigo text-white border-indigo shadow-sm'
+                : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-indigo/40'
             }`}
             title="Open Pearson VUE style GPhC exam calculator"
           >
@@ -388,7 +429,7 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={() => setIsRefModalOpen(true)}
-            className="p-1.5 rounded hover:bg-surface transition-colors flex items-center gap-1 text-xs text-slate hover:text-ink"
+            className="px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-teal/40"
             title="Open Biochemical lab reference ranges and therapeutic drug levels"
           >
             <BookOpen className="w-4 h-4" />
@@ -399,19 +440,25 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={() => setHideOptions(!hideOptions)}
-            className="p-1.5 rounded hover:bg-surface text-slate hover:text-ink transition-colors flex items-center gap-1 text-xs"
+            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+              hideOptions
+                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-amber-200'
+            }`}
             title="Cover options for active diagnostic recall"
           >
-            {hideOptions ? <Eye className="w-4 h-4 text-indigo" /> : <EyeOff className="w-4 h-4" />}
-            <span className="hidden md:inline">{hideOptions ? 'Show Options' : 'Cover Options'}</span>
+            {hideOptions ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+            <span className="hidden md:inline text-[11px]">{hideOptions ? 'Show' : 'Cover'}</span>
           </button>
 
           {/* Personal Question Note */}
           <button
             type="button"
             onClick={() => setShowNotesDrawer(!showNotesDrawer)}
-            className={`p-1.5 rounded hover:bg-surface transition-colors flex items-center gap-1 text-xs ${
-              showNotesDrawer ? 'text-indigo bg-indigo/5' : 'text-slate hover:text-ink'
+            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+              showNotesDrawer
+                ? 'bg-indigo/20 text-indigo border-indigo/40'
+                : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-indigo/40'
             }`}
             title="Add personal clinical note"
           >
@@ -423,27 +470,31 @@ export function QuestionPlayer({
           <button
             type="button"
             onClick={handleToggleBookmark}
-            className={`p-1.5 rounded hover:bg-surface transition-colors ${
-              isBookmarked ? 'text-indigo' : 'text-slate hover:text-ink'
+            className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border ${
+              isBookmarked
+                ? 'bg-rose-50 text-rose-600 border-rose-200'
+                : 'bg-surface text-slate border-border/40 hover:bg-canvas hover:text-ink hover:border-rose-200'
             }`}
             title="Bookmark question"
           >
-            <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-indigo text-indigo' : ''}`} />
+            <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-rose-600' : ''}`} />
+            <span className="hidden lg:inline text-[11px]">Save</span>
           </button>
 
           {/* Flag / Report */}
           <button
             type="button"
             onClick={() => setIsReportModalOpen(true)}
-            className="p-1.5 rounded hover:bg-surface transition-colors text-slate hover:text-rose-600"
+            className="px-2.5 py-1 rounded transition-all flex items-center gap-1.5 text-xs font-medium border bg-surface text-slate border-border/40 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
             title="Report question error"
           >
             <Flag className="w-4 h-4" />
+            <span className="hidden lg:inline">Report</span>
           </button>
 
           {/* Question Timer */}
-          <div className="flex items-center gap-1 font-mono text-slate bg-canvas px-2 py-1 rounded border border-border">
-            <Clock className="w-3.5 h-3.5" />
+          <div className="px-2.5 py-1 rounded flex items-center gap-1.5 text-xs font-mono font-bold text-teal bg-teal/10 border border-teal/30">
+            <Clock className="w-4 h-4" />
             <span>{Math.floor(secondsElapsed / 60)}:{(secondsElapsed % 60).toString().padStart(2, '0')}</span>
           </div>
         </div>
@@ -465,16 +516,27 @@ export function QuestionPlayer({
       {/* Personal Notes Drawer (Collapsible) */}
       {showNotesDrawer && (
         <Card className="p-4 bg-surface border-indigo/40 ring-1 ring-indigo/20 shadow-md space-y-3 animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-bold text-ink">
-              <FileEdit className="w-4 h-4 text-indigo" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-ink flex-1">
+              <FileEdit className="w-4 h-4 text-indigo shrink-0" />
               <span>Personal Clinical Notes for {question.publicId}</span>
             </div>
-            {noteSavedFeedback && (
-              <span className="text-[11px] text-teal font-semibold flex items-center gap-1 animate-pulse">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Saved to your account
-              </span>
-            )}
+            <div className="flex items-center gap-2 shrink-0">
+              {noteSavedFeedback && (
+                <span className="text-[11px] text-teal font-semibold flex items-center gap-1 animate-pulse whitespace-nowrap">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Saved
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setShowNotesDrawer(false)}
+                className="p-1 rounded hover:bg-canvas/50 transition-colors text-slate hover:text-ink"
+                title="Close notes"
+                aria-label="Close notes drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <textarea
             rows={3}
@@ -483,7 +545,15 @@ export function QuestionPlayer({
             placeholder="Add personal clinical mnemonics, calculation shortcuts, or learning reminders for this question..."
             className="w-full text-xs p-3 rounded-lg border border-border bg-canvas text-ink placeholder:text-slate/60 focus:ring-1 focus:ring-indigo focus:border-indigo"
           />
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowNotesDrawer(false)}
+              className="text-xs flex items-center gap-1.5"
+            >
+              Cancel
+            </Button>
             <Button
               variant="primary"
               size="sm"
@@ -516,7 +586,7 @@ export function QuestionPlayer({
       </Card>
 
       {/* 2. Answer Options */}
-      {!hideOptions ? (
+      {!hideOptions && !isSubmitted ? (
         <div className="space-y-3" role="radiogroup" aria-label="Answer options">
           {question.options.map((opt) => {
             const isSelected = selectedOptionId === opt.id;
@@ -576,16 +646,6 @@ export function QuestionPlayer({
                     </div>
                   )}
                 </div>
-
-                {/* Per-Option Distractor Rationale (Shown after submission) */}
-                {showResults && opt.rationale && (
-                  <div className="mt-3 pt-3 border-t border-border/40 text-xs leading-relaxed text-slate">
-                    <strong className="text-ink font-semibold">
-                      {opt.isCorrect ? 'Why this is correct:' : `Option ${opt.label} Rationale:`}{' '}
-                    </strong>
-                    {opt.rationale}
-                  </div>
-                )}
               </div>
             );
           })}
@@ -635,7 +695,7 @@ export function QuestionPlayer({
           <Button
             variant="primary"
             size="md"
-            disabled={!selectedOptionId}
+            disabled={selectedOptionId === null || selectedOptionId === undefined || selectedOptionId === ''}
             onClick={handleSubmit}
             className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-xs px-6 font-bold shadow-sm"
           >

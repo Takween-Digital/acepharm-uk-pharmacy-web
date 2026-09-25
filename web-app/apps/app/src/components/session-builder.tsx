@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button, Badge, Card } from '@acepharm/ui';
 import { apiClient } from '@/lib/api-client';
 import { QUESTION_INVENTORY } from '@acepharm/preferences';
@@ -56,6 +57,7 @@ export function SessionBuilder() {
         const res = await fetch(`${API_URL}/api/v1/curriculum/tree`);
         const searchParams = new URLSearchParams(window.location.search);
         const preselectedCat = searchParams.get('categoryId');
+        const topicId = searchParams.get('topicId');
         const countParam = searchParams.get('count');
         const modeParam = searchParams.get('mode');
 
@@ -64,6 +66,11 @@ export function SessionBuilder() {
         }
         if (modeParam === 'diagnostic') {
           setStatusFilter('unattempted');
+        }
+        if (modeParam === 'drill' && topicId) {
+          // For drill mode, pre-select the topic and set appropriate parameters
+          setSelectedSubtopicIds([topicId]);
+          setQuestionCount(10); // Default to 10 questions for drill
         }
 
         if (res.ok) {

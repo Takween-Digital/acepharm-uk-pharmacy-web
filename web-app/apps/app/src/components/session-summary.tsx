@@ -1,17 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Badge, Card } from '@acepharm/ui';
-import { 
-  Trophy, 
-  CheckCircle2, 
-  XCircle, 
-  Clock, 
-  Flame, 
-  ArrowRight, 
-  RotateCcw, 
-  Target, 
-  BookOpen, 
+import {
+  Trophy,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Flame,
+  ArrowRight,
+  RotateCcw,
+  Target,
+  BookOpen,
   BarChart3,
   ChevronRight,
   Sparkles,
@@ -49,9 +50,48 @@ interface SessionSummaryProps {
   };
   reviewGrid?: ReviewGridItem[];
   weakTopics?: WeakTopicItem[];
+  sessionId?: string;
   onReviewQuestion?: (questionId: string) => void;
   onJumpToWeakTopic?: (subtopicId: string) => void;
   onNewSession?: () => void;
+}
+
+export function calculateSessionStats(reviewGrid: ReviewGridItem[]) {
+  if (!reviewGrid || reviewGrid.length === 0) {
+    return {
+      score: {
+        totalQuestions: 0,
+        questionsAnswered: 0,
+        correctCount: 0,
+        accuracyPercentage: 0,
+      },
+      timing: {
+        totalTimeSeconds: 0,
+        averageTimePerQuestionSeconds: 0,
+      },
+    };
+  }
+
+  const totalQuestions = reviewGrid.length;
+  const questionsAnswered = reviewGrid.length;
+  const correctCount = reviewGrid.filter((item) => item.isCorrect).length;
+  const accuracyPercentage = Math.round((correctCount / totalQuestions) * 100);
+
+  const totalTimeSeconds = reviewGrid.reduce((sum, item) => sum + item.timeTakenSeconds, 0);
+  const averageTimePerQuestionSeconds = Math.round(totalTimeSeconds / questionsAnswered);
+
+  return {
+    score: {
+      totalQuestions,
+      questionsAnswered,
+      correctCount,
+      accuracyPercentage,
+    },
+    timing: {
+      totalTimeSeconds,
+      averageTimePerQuestionSeconds,
+    },
+  };
 }
 
 const DEFAULT_REVIEW_GRID: ReviewGridItem[] = [
@@ -92,22 +132,49 @@ const DEFAULT_WEAK_TOPICS: WeakTopicItem[] = [
 ];
 
 export function SessionSummary({
-  score = {
-    totalQuestions: 10,
-    questionsAnswered: 10,
-    correctCount: 7,
-    accuracyPercentage: 70,
-  },
-  timing = {
-    totalTimeSeconds: 452,
-    averageTimePerQuestionSeconds: 45,
-  },
-  reviewGrid = DEFAULT_REVIEW_GRID,
-  weakTopics = DEFAULT_WEAK_TOPICS,
+  score: propScore,
+  timing: propTiming,
+  reviewGrid: propReviewGrid,
+  weakTopics: propWeakTopics,
+  sessionId,
   onReviewQuestion,
-  onJumpToWeakTopic,
+  onJumpToWeakTopic: propOnJumpToWeakTopic,
   onNewSession,
 }: SessionSummaryProps) {
+  const router = useRouter();
+
+  // Load session data from session storage if available
+  const sessionData = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const stored = sessionStorage.getItem('acepharm_session_results');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  // Use provided props, then fall back to session data, then use calculated stats
+  const reviewGrid: ReviewGridItem[] = propReviewGrid || sessionData?.reviewGrid || DEFAULT_REVIEW_GRID;
+  const weakTopics: WeakTopicItem[] = propWeakTopics || sessionData?.weakTopics || DEFAULT_WEAK_TOPICS;
+
+  // Calculate stats from actual review grid data
+  const calculatedStats = useMemo(() => calculateSessionStats(reviewGrid), [reviewGrid]);
+
+  // Use provided score/timing, or calculated stats, but never use hardcoded defaults
+  const score = propScore || calculatedStats.score;
+  const timing = propTiming || calculatedStats.timing;
+
+  // Default implementation for weak topic drill navigation
+  const handleJumpToWeakTopic = (subtopicId: string) => {
+    if (propOnJumpToWeakTopic) {
+      propOnJumpToWeakTopic(subtopicId);
+    } else {
+      // Navigate to practice drill page for the selected topic
+      router.push(`/session/new?mode=drill&topicId=${encodeURIComponent(subtopicId)}`);
+    }
+  };
+
   const formatTime = (secs: number) => {
     const mins = Math.floor(secs / 60);
     const remainder = secs % 60;
@@ -302,7 +369,7 @@ export function SessionSummary({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onJumpToWeakTopic?.(topic.subtopicId)}
+                  onClick={() => handleJumpToWeakTopic(topic.subtopicId)}
                   className="text-xs flex items-center justify-center gap-1.5 self-start sm:self-auto shrink-0 font-semibold text-indigo hover:text-indigo-deep"
                 >
                   <Zap className="w-3.5 h-3.5" /> Drill This Topic <ChevronRight className="w-3.5 h-3.5" />
