@@ -8,6 +8,7 @@ import { FloatingHighlightMenu } from '@/components/floating-highlight-menu';
 import { FreeTierUpgradeModal } from '@/components/free-tier-upgrade-modal';
 import { GphcCalculator } from '@/components/gphc-calculator';
 import { ClinicalReferenceModal } from '@/components/clinical-reference-modal';
+import { ProductTour } from '@/components/product-tour';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -157,6 +158,7 @@ export function QuestionPlayer({
   const [allNotes, setAllNotes] = useState<Array<{ questionId: string; questionPublicId: string; content: string; savedAt: string }>>([]);
   const [isBookmarksOpen, setIsBookmarksOpen] = useState(false);
   const [allBookmarks, setAllBookmarks] = useState<Array<{ questionId: string; questionPublicId: string; difficulty: string }>>([]);
+  const [isTourOpen, setIsTourOpen] = useState(false);
 
   // Fetch all bookmarked questions
   const fetchAllBookmarks = () => {
@@ -228,6 +230,17 @@ export function QuestionPlayer({
 
     setAllNotes(notes);
   };
+
+  // Show product tour on first question for first-time users
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (currentQuestionIndex === 1) {
+      const tourCompleted = localStorage.getItem('acepharm_tour_completed');
+      if (!tourCompleted) {
+        setIsTourOpen(true);
+      }
+    }
+  }, [currentQuestionIndex]);
 
   // Auto-save & resume state from SessionStorage for network resilience and reload recovery
   useEffect(() => {
@@ -735,6 +748,7 @@ export function QuestionPlayer({
               <div
                 key={opt.id}
                 role="radio"
+                data-option-id={opt.id}
                 aria-checked={isSelected}
                 aria-label={`Option ${opt.label}: ${opt.content}`}
                 tabIndex={isSubmitted ? -1 : 0}
@@ -1135,6 +1149,15 @@ export function QuestionPlayer({
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
         questionsAnswered={30}
+      />
+
+      {/* Product Tour Modal */}
+      <ProductTour
+        isOpen={isTourOpen}
+        onClose={() => setIsTourOpen(false)}
+        onComplete={() => {
+          // Tour completed - user can now practice
+        }}
       />
     </div>
   );
