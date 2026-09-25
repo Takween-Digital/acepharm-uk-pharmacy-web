@@ -21,16 +21,16 @@ import { useAuth } from '@/lib/auth-context';
 import { apiClient } from '@/lib/api-client';
 import { getAccessToken } from '@/lib/auth-client';
 import { QUESTION_INVENTORY } from '@acepharm/preferences';
-import { 
-  Play, 
-  Target, 
-  Flame, 
-  RotateCcw, 
-  BookOpen, 
-  Layers, 
-  TrendingUp, 
-  Sparkles, 
-  ShieldCheck, 
+import {
+  Play,
+  Target,
+  Flame,
+  RotateCcw,
+  BookOpen,
+  Layers,
+  TrendingUp,
+  Sparkles,
+  ShieldCheck,
   ArrowRight,
   Stethoscope,
   BarChart3,
@@ -38,7 +38,8 @@ import {
   FileSpreadsheet,
   CreditCard,
   LogOut,
-  UserCheck
+  UserCheck,
+  AlertCircle
 } from 'lucide-react';
 
 interface CategoryItem {
