@@ -8,10 +8,10 @@ export const protectedRoutes = ['/dashboard', '/progress', '/session'];
 
 export function useAuthGuard() {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
 
   const requireAuth = (pathname: string) => {
-    if (isLoading) return;
+    if (loading) return;
 
     const isProtected = protectedRoutes.some(route => pathname.startsWith(route));
     const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith(route));
