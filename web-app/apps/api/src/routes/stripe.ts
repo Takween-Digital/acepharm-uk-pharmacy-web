@@ -301,6 +301,65 @@ stripeRoutes.post('/checkout', requireAuth, async (c) => {
   }
 });
 
+// 2b. Get Latest Invoice PDF
+stripeRoutes.get('/invoice/latest', requireAuth, async (c) => {
+  const user = c.get('user');
+  const db = drizzle(c.env.DB);
+  const stripeSecretKey = c.env.STRIPE_SECRET_KEY;
+
+  if (!stripeSecretKey) {
+    return c.json({ error: 'Stripe configuration missing' }, 500);
+  }
+
+  const [sub] = await db
+    .select()
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, user.id))
+    .limit(1);
+
+  if (!sub?.stripeCustomerId) {
+    return c.json({ error: 'No billing customer found' }, 404);
+  }
+
+  try {
+    const params = new URLSearchParams();
+    params.append('customer', sub.stripeCustomerId);
+    params.append('limit', '1');
+    params.append('status', 'paid');
+
+    const invoicesRes = await fetch('https://api.stripe.com/v1/invoices', {
+      headers: {
+        Authorization: `Bearer ${stripeSecretKey}`,
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (!invoicesRes.ok) {
+      console.error('Failed to fetch invoices:', await invoicesRes.text());
+      return c.json({ error: 'Failed to fetch invoices' }, 502);
+    }
+
+    const invoicesData = await invoicesRes.json<{
+      data: Array<{ id: string; invoice_pdf?: string; number?: string; created?: number }>;
+    }>();
+
+    const latestInvoice = invoicesData.data?.[0];
+    if (!latestInvoice) {
+      return c.json({ error: 'No invoices found' }, 404);
+    }
+
+    return c.json({
+      invoiceId: latestInvoice.id,
+      invoiceNumber: latestInvoice.number || 'INV-' + latestInvoice.id,
+      pdfUrl: latestInvoice.invoice_pdf || null,
+      createdAt: latestInvoice.created ? new Date(latestInvoice.created * 1000).toISOString() : null,
+    });
+  } catch (err: any) {
+    console.error('Error fetching invoice:', err);
+    return c.json({ error: 'Failed to fetch invoice' }, 502);
+  }
+});
+
 // 3. Create Stripe Customer Billing Portal Session
 stripeRoutes.post('/customer-portal', requireAuth, async (c) => {
   const user = c.get('user');

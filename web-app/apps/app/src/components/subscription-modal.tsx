@@ -31,6 +31,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 }) => {
   const { user, profile } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<'monthly' | 'yearly' | null>(null);
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [lastFailedPlan, setLastFailedPlan] = useState<'monthly' | 'yearly' | null>(null);
 
@@ -103,6 +104,30 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       setFeedback({ message: 'Unable to process downgrade. Please try again.', type: 'error' });
     } finally {
       setLoadingPlan(null);
+    }
+  };
+
+  const handleDownloadInvoice = async () => {
+    setLoadingInvoice(true);
+    try {
+      const token = getAccessToken();
+      const res = await fetch(`${API_URL}/api/v1/stripe/invoice/latest`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        signal: AbortSignal.timeout(10000),
+      });
+
+      const data = await res.json();
+      if (data?.pdfUrl) {
+        window.open(data.pdfUrl, '_blank');
+      } else {
+        setFeedback({ message: 'Invoice not available. Please try again.', type: 'error' });
+      }
+    } catch (err) {
+      setFeedback({ message: 'Failed to download invoice. Please try again.', type: 'error' });
+    } finally {
+      setLoadingInvoice(false);
     }
   };
 
@@ -196,9 +221,15 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate">VAT Invoices & Receipts:</span>
-                <span className="text-indigo font-semibold flex items-center gap-1 cursor-pointer hover:underline">
-                  <Receipt className="w-3.5 h-3.5" /> Download Latest (INV-2026-08)
-                </span>
+                <button
+                  type="button"
+                  onClick={handleDownloadInvoice}
+                  disabled={loadingInvoice}
+                  className="text-indigo font-semibold flex items-center gap-1 cursor-pointer hover:underline disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                >
+                  <Receipt className="w-3.5 h-3.5" />
+                  {loadingInvoice ? 'Loading...' : 'Download Latest'}
+                </button>
               </div>
             </>
           )}
