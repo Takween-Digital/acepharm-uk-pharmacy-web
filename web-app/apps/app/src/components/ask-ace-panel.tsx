@@ -176,46 +176,60 @@ export function AskAcePanel({ questionId, questionPublicId, isCalculation, highl
     : QUICK_PROMPTS;
 
   return (
-    <div ref={panelRef} className="border border-indigo/30 bg-indigo/[0.02] rounded-card shadow-sm overflow-hidden transition-all duration-200">
-      {/* 1. Header / Collapsed Bar */}
-      <div 
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-4 flex items-center justify-between cursor-pointer hover:bg-indigo/[0.04] select-none border-b border-transparent group"
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-indigo/10 flex items-center justify-center text-indigo">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-ink flex items-center gap-1.5">
-                Ask Ace
-                <Badge variant="info" className="text-[10px] py-0 px-1.5 font-bold uppercase tracking-wider">
-                  Grounded AI Tutor
-                </Badge>
-              </h3>
-            </div>
-            <p className="text-xs text-slate">
-              Need clarity on this question? Ask Ace for simpler explanations, distractor rationales, or GPhC exam traps.
-            </p>
-          </div>
-        </div>
+    <>
+      {/* Floating Toggle Button (visible when drawer is closed) */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="fixed right-4 bottom-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-indigo text-white font-semibold text-sm shadow-lg hover:bg-indigo-deep hover:shadow-xl transition-all animate-pulse"
+          title="Open Ask Ace AI assistant"
+        >
+          <Sparkles className="w-5 h-5" />
+          Ask Ace
+        </button>
+      )}
 
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-slate group-hover:text-ink text-xs flex items-center gap-1"
-          >
-            {isOpen ? 'Collapse' : 'Ask Ace'}
-            {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </Button>
-        </div>
-      </div>
-
-      {/* 2. Expanded Drawer */}
+      {/* Floating Right-Side Drawer */}
       {isOpen && (
-        <div className="p-4 sm:p-5 border-t border-border bg-canvas/40 space-y-4">
+        <>
+          {/* Backdrop to close drawer */}
+          <div
+            className="fixed inset-0 z-30 bg-black/20 backdrop-blur-xs md:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+
+          {/* Drawer Panel */}
+          <div
+            ref={panelRef}
+            className="fixed right-0 top-0 bottom-0 z-40 w-full sm:w-96 max-w-full bg-surface border-l border-border shadow-2xl overflow-hidden flex flex-col transition-all duration-200 animate-in slide-in-from-right"
+          >
+            {/* 1. Header / Toggle Bar */}
+            <div className="p-4 sm:p-5 flex items-center justify-between border-b border-border bg-indigo/5 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-indigo/10 flex items-center justify-center text-indigo">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-ink flex items-center gap-1.5">
+                    Ask Ace
+                    <Badge variant="info" className="text-[10px] py-0 px-1.5 font-bold uppercase tracking-wider">
+                      Grounded AI Tutor
+                    </Badge>
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-2 rounded-lg hover:bg-canvas text-slate hover:text-ink transition-colors"
+                title="Close Ask Ace drawer"
+              >
+                <ChevronDown className="w-5 h-5 rotate-90" />
+              </button>
+            </div>
+
+            {/* 2. Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
           {/* Quick-Prompt Chips */}
           <div className="space-y-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate">
@@ -321,8 +335,10 @@ export function AskAcePanel({ questionId, questionPublicId, isCalculation, highl
               )}
             </Button>
           </form>
-        </div>
+            </div>
+          </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
