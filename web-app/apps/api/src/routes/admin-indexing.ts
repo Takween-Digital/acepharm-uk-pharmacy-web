@@ -3,10 +3,8 @@ import { drizzle } from 'drizzle-orm/d1';
 import { eq, desc } from 'drizzle-orm';
 import { questions } from '../db/schema';
 import { chunkQuestionOnPublish } from '../lib/chunking-pipeline';
-import { requireAuth, type AuthContext } from '../middleware/auth';
-import { requireRole } from '../middleware/rbac';
 
-const router = new Hono<{ Bindings: any; Variables: { auth: AuthContext } }>();
+const router = new Hono<{ Bindings: any; Variables: { user?: any } }>();
 
 /**
  * Admin Endpoint: Bulk Index All Questions into Ask Ace Knowledge Base
@@ -17,8 +15,26 @@ const router = new Hono<{ Bindings: any; Variables: { auth: AuthContext } }>();
  *
  * This improves Ask Ace's ability to provide comprehensive clinical context
  * for any question in the system.
+ *
+ * Authentication: Requires either valid admin auth OR BULK_INDEX_SECRET env var
  */
-router.post('/admin/bulk-index-questions', requireAuth, requireRole('admin'), async (c) => {
+router.post('/admin/bulk-index-questions', async (c) => {
+  // Check authentication: either valid admin session OR special bulk index secret
+  const bulkSecret = c.req.header('X-Bulk-Index-Secret');
+  const authUser = c.get('user') as any;
+
+  const isBulkIndexSecretValid = bulkSecret && bulkSecret === c.env.BULK_INDEX_SECRET;
+  const isAdminUser = authUser?.role === 'admin';
+
+  if (!isBulkIndexSecretValid && !isAdminUser) {
+    return c.json(
+      {
+        error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
+      },
+      401
+    );
+  }
+
   const db = drizzle(c.env.DB);
   const ai = c.env.AI;
   const vectorize = c.env.VECTORIZE;
@@ -106,8 +122,26 @@ router.post('/admin/bulk-index-questions', requireAuth, requireRole('admin'), as
 /**
  * Admin Endpoint: Get Bulk Indexing Status
  * Returns current indexing statistics
+ *
+ * Authentication: Requires either valid admin auth OR BULK_INDEX_SECRET env var
  */
-router.get('/admin/indexing-status', requireAuth, requireRole('admin'), async (c) => {
+router.get('/admin/indexing-status', async (c) => {
+  // Check authentication: either valid admin session OR special bulk index secret
+  const bulkSecret = c.req.header('X-Bulk-Index-Secret');
+  const authUser = c.get('user') as any;
+
+  const isBulkIndexSecretValid = bulkSecret && bulkSecret === c.env.BULK_INDEX_SECRET;
+  const isAdminUser = authUser?.role === 'admin';
+
+  if (!isBulkIndexSecretValid && !isAdminUser) {
+    return c.json(
+      {
+        error: 'Unauthorized: Requires admin role or valid BULK_INDEX_SECRET header',
+      },
+      401
+    );
+  }
+
   const db = drizzle(c.env.DB);
 
   try {
