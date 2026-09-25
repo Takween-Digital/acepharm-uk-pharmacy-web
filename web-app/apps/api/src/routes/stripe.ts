@@ -124,13 +124,84 @@ stripeRoutes.get('/subscription', requireAuth, async (c) => {
   });
 });
 
-// 2. Create Stripe Checkout Session
+// 2. Create Stripe Checkout Session with retry & caching
+async function createStripeCheckoutWithRetry(
+  params: URLSearchParams,
+  stripeSecretKey: string,
+  cache?: any,
+  userId?: string,
+  plan?: string
+): Promise<{ id: string; url: string }> {
+  const maxRetries = 3;
+  const baseDelay = 500;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+      const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stripeSecretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!stripeRes.ok) {
+        const errorText = await stripeRes.text();
+        console.error(`Stripe Checkout creation failed (attempt ${attempt + 1}):`, errorText);
+
+        if (attempt < maxRetries - 1) {
+          const delay = baseDelay * Math.pow(2, attempt);
+          await new Promise((r) => setTimeout(r, delay));
+          continue;
+        }
+
+        throw new Error(`Stripe API error: ${errorText}`);
+      }
+
+      const sessionData = await stripeRes.json<{ id: string; url: string }>();
+
+      // Cache successful session in KV for 5 minutes to avoid race conditions
+      if (cache && userId && plan) {
+        try {
+          await cache.put(
+            `checkout_session:${userId}:${plan}`,
+            JSON.stringify(sessionData),
+            { expirationTtl: 300 }
+          );
+        } catch (kvErr) {
+          console.warn('Failed to cache checkout session:', kvErr);
+        }
+      }
+
+      return sessionData;
+    } catch (err: any) {
+      console.error(`Stripe API network error (attempt ${attempt + 1}):`, err);
+
+      if (attempt < maxRetries - 1) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        await new Promise((r) => setTimeout(r, delay));
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  throw new Error('Checkout session creation failed after retries');
+}
+
 stripeRoutes.post('/checkout', requireAuth, async (c) => {
   const user = c.get('user');
   const db = drizzle(c.env.DB);
-  const body = await c.req.json<{ 
-    plan: 'monthly' | 'yearly'; 
-    successUrl?: string; 
+  const body = await c.req.json<{
+    plan: 'monthly' | 'yearly';
+    successUrl?: string;
     cancelUrl?: string;
     allowPromotionCodes?: boolean;
     promotionCode?: string;
@@ -143,6 +214,26 @@ stripeRoutes.post('/checkout', requireAuth, async (c) => {
   if (!stripeSecretKey) {
     console.error('STRIPE_SECRET_KEY is not configured in environment');
     return c.json({ error: 'Stripe configuration missing. Please contact support.' }, 500);
+  }
+
+  // Check cache first
+  if (c.env.CACHE) {
+    try {
+      const cached = await c.env.CACHE.get(`checkout_session:${user.id}:${body.plan}`);
+      if (cached) {
+        const sessionData = JSON.parse(cached);
+        return c.json({
+          sessionId: sessionData.id,
+          url: sessionData.url,
+          plan: selectedPlan.id,
+          amountPence: selectedPlan.unitAmountPence,
+          currency: selectedPlan.currency,
+          cached: true,
+        });
+      }
+    } catch (kvErr) {
+      console.warn('Cache lookup failed:', kvErr);
+    }
   }
 
   const origin = c.req.header('origin') || 'https://app.acepharmexams.co.uk';
@@ -188,22 +279,13 @@ stripeRoutes.post('/checkout', requireAuth, async (c) => {
   }
 
   try {
-    const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${stripeSecretKey}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params.toString(),
-    });
-
-    if (!stripeRes.ok) {
-      const errorText = await stripeRes.text();
-      console.error('Stripe Checkout creation failed:', errorText);
-      return c.json({ error: 'Failed to create Stripe Checkout session', details: errorText }, 502);
-    }
-
-    const sessionData = await stripeRes.json<{ id: string; url: string }>();
+    const sessionData = await createStripeCheckoutWithRetry(
+      params,
+      stripeSecretKey,
+      c.env.CACHE,
+      user.id,
+      body.plan
+    );
 
     return c.json({
       sessionId: sessionData.id,
@@ -213,8 +295,9 @@ stripeRoutes.post('/checkout', requireAuth, async (c) => {
       currency: selectedPlan.currency,
     });
   } catch (err: any) {
-    console.error('Stripe API network error:', err);
-    return c.json({ error: 'Payment gateway unavailable. Please try again.' }, 502);
+    const errorMsg = err?.message || 'Payment gateway unavailable. Please try again.';
+    console.error('Checkout session creation failed:', errorMsg);
+    return c.json({ error: errorMsg, retryable: true }, 502);
   }
 });
 

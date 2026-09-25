@@ -31,7 +31,8 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 }) => {
   const { user, profile } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<'monthly' | 'yearly' | null>(null);
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [lastFailedPlan, setLastFailedPlan] = useState<'monthly' | 'yearly' | null>(null);
 
   if (!isOpen) return null;
 
@@ -58,11 +59,17 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
       const data = await res.json();
       if (data?.url) {
         window.location.href = data.url;
+      } else if (!res.ok) {
+        setLastFailedPlan(plan);
+        const errorMsg = data?.error || 'Unable to start checkout session.';
+        setFeedback({ message: `${errorMsg} ${data?.retryable ? 'Please try again.' : ''}`, type: 'error' });
       } else {
-        setFeedback('Unable to start checkout session. Please try again.');
+        setLastFailedPlan(plan);
+        setFeedback({ message: 'Unable to start checkout session. Please try again.', type: 'error' });
       }
     } catch (err) {
-      setFeedback('Unable to process membership change. Please try again.');
+      setLastFailedPlan(plan);
+      setFeedback({ message: 'Unable to process membership change. Please try again.', type: 'error' });
     } finally {
       setLoadingPlan(null);
     }
@@ -83,15 +90,17 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
       const data = await res.json();
       if (data?.success) {
-        setFeedback('Successfully switched to Free Explorer Plan!');
+        setFeedback({ message: 'Successfully switched to Free Explorer Plan!', type: 'success' });
         setTimeout(() => {
           window.location.reload();
         }, 1200);
       } else {
-        setFeedback(data?.message || 'Unable to downgrade plan. Please try again.');
+        setLastFailedPlan('monthly');
+        setFeedback({ message: data?.message || 'Unable to downgrade plan. Please try again.', type: 'error' });
       }
     } catch (err) {
-      setFeedback('Unable to process downgrade. Please try again.');
+      setLastFailedPlan('monthly');
+      setFeedback({ message: 'Unable to process downgrade. Please try again.', type: 'error' });
     } finally {
       setLoadingPlan(null);
     }
@@ -120,9 +129,26 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         </div>
 
         {feedback && (
-          <div className="mb-4 p-3 rounded-lg bg-teal-wash border border-teal/20 text-teal text-xs font-semibold flex items-center gap-2">
-            <Check className="w-4 h-4" />
-            <span>{feedback}</span>
+          <div className={`mb-4 p-3 rounded-lg flex items-center gap-2 text-xs font-semibold ${
+            feedback.type === 'error'
+              ? 'bg-danger-wash border border-danger-border text-danger'
+              : 'bg-teal-wash border border-teal/20 text-teal'
+          }`}>
+            {feedback.type === 'error' ? (
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            ) : (
+              <Check className="w-4 h-4 flex-shrink-0" />
+            )}
+            <span className="flex-1">{feedback.message}</span>
+            {feedback.type === 'error' && lastFailedPlan && (
+              <button
+                type="button"
+                onClick={() => handleCheckout(lastFailedPlan)}
+                className="ml-2 px-2 py-1 rounded-md bg-danger/10 hover:bg-danger/20 font-semibold transition-colors text-xs whitespace-nowrap"
+              >
+                Retry
+              </button>
+            )}
           </div>
         )}
 
