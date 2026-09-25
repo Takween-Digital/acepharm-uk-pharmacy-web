@@ -37,7 +37,8 @@ import {
   Volume2,
   AlertCircle
 } from 'lucide-react';
-import { SessionStorageHelper, usePreferences } from '@acepharm/preferences';
+import { SessionStorageHelper, usePreferences, AuthStorage } from '@acepharm/preferences';
+import { useAuth } from '@/lib/auth-context';
 
 export interface Option {
   id: string;
@@ -478,6 +479,21 @@ export function QuestionPlayer({
     }
   };
 
+  const { user } = useAuth();
+
+  const handleExit = () => {
+    if (typeof window === 'undefined') return;
+    // Check if user has a valid JWT token
+    const token = AuthStorage.getToken();
+    if (token && user) {
+      // Authenticated user - redirect to dashboard
+      window.location.href = '/';
+    } else {
+      // Not authenticated - redirect to login
+      window.location.href = '/auth/login';
+    }
+  };
+
   const selectedOption = question.options.find((o) => o.id === selectedOptionId);
   const isUserCorrect = selectedOption?.isCorrect ?? false;
 
@@ -494,14 +510,15 @@ export function QuestionPlayer({
       {/* Top Session Progress Bar with Back/Exit button */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 pb-2 border-b border-border text-xs">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <a
-            href="/"
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-slate hover:text-ink px-2 py-1 rounded-btn bg-canvas border border-border hover:border-slate transition-colors shadow-2xs"
-            title="Exit to Dashboard"
+          <button
+            type="button"
+            onClick={handleExit}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-indigo hover:bg-indigo-deep px-3 py-2 rounded-lg border border-indigo hover:border-indigo-deep transition-all shadow-sm hover:shadow-md"
+            title="Exit practice session and return to dashboard"
           >
-            <ArrowRight className="w-3 h-3 rotate-180 text-indigo" />
-            <span>Exit</span>
-          </a>
+            <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+            <span>Exit Session</span>
+          </button>
           <span className="font-bold text-ink font-mono text-sm">
             Question {currentQuestionIndex} <span className="text-slate font-normal">/ {totalQuestions}</span>
           </span>
