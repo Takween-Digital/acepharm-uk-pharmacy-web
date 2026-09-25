@@ -68,6 +68,35 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     }
   };
 
+  const handleDowngradeToFree = async () => {
+    setLoadingPlan('monthly');
+    setFeedback(null);
+    try {
+      const token = getAccessToken();
+      const res = await fetch(`${API_URL}/api/v1/stripe/downgrade`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (data?.success) {
+        setFeedback('Successfully switched to Free Explorer Plan!');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      } else {
+        setFeedback(data?.message || 'Unable to downgrade plan. Please try again.');
+      }
+    } catch (err) {
+      setFeedback('Unable to process downgrade. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-ink/70 backdrop-blur-xs animate-in fade-in duration-200">
       <Card className="max-w-xl w-full p-5 sm:p-8 bg-surface border-border shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
@@ -165,14 +194,11 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             <Button
               variant="outline"
               size="sm"
-              disabled={!profile?.isPro}
-              onClick={() => {
-                setFeedback('Switched to Free Explorer Plan (30 Qs/mo).');
-                setTimeout(() => onClose(), 1200);
-              }}
+              disabled={!profile?.isPro || loadingPlan === 'monthly'}
+              onClick={handleDowngradeToFree}
               className="w-full text-xs font-semibold"
             >
-              {!profile?.isPro ? 'Current Plan' : 'Downgrade to Free'}
+              {loadingPlan === 'monthly' ? 'Processing...' : (!profile?.isPro ? 'Current Plan' : 'Downgrade to Free')}
             </Button>
           </div>
 

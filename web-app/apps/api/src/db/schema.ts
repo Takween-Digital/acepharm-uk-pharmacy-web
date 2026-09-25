@@ -585,7 +585,7 @@ export const subscriptions = sqliteTable('subscriptions', {
   }).notNull().default('explorer'),
   status: text('status', {
     enum: ['active', 'past_due', 'canceled', 'unpaid', 'incomplete', 'incomplete_expired', 'trialing'],
-  }).notNull().default('inactive'),
+  }).notNull().default('active'),
   currentPeriodStart: integer('current_period_start', { mode: 'timestamp' }),
   currentPeriodEnd: integer('current_period_end', { mode: 'timestamp' }),
   cancelAtPeriodEnd: integer('cancel_at_period_end', { mode: 'boolean' }).notNull().default(false),

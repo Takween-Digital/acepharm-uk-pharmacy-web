@@ -322,6 +322,82 @@ stripeRoutes.post('/cancel', requireAuth, async (c) => {
   });
 });
 
+// 4b. Downgrade to Free Plan Endpoint
+stripeRoutes.post('/downgrade', requireAuth, async (c) => {
+  const user = c.get('user');
+  const db = drizzle(c.env.DB);
+  const stripeSecretKey = c.env.STRIPE_SECRET_KEY;
+
+  const [sub] = await db
+    .select()
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, user.id))
+    .limit(1);
+
+  if (!sub) {
+    return c.json({
+      success: true,
+      message: 'Already on Free Explorer plan',
+      plan: 'explorer',
+    });
+  }
+
+  // Already on free plan
+  if (sub.plan === 'explorer') {
+    return c.json({
+      success: true,
+      message: 'Already on Free Explorer plan',
+      plan: 'explorer',
+    });
+  }
+
+  const now = new Date();
+
+  // Cancel Stripe subscription if it exists
+  if (sub.stripeSubscriptionId && stripeSecretKey) {
+    try {
+      const params = new URLSearchParams();
+      params.append('cancel_at_period_end', 'true');
+
+      const cancelRes = await fetch(
+        `https://api.stripe.com/v1/subscriptions/${sub.stripeSubscriptionId}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${stripeSecretKey}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: params.toString(),
+        }
+      );
+
+      if (!cancelRes.ok) {
+        console.warn('Stripe subscription cancellation failed:', await cancelRes.text());
+      }
+    } catch (err) {
+      console.error('Error canceling Stripe subscription:', err);
+    }
+  }
+
+  // Update subscription to free plan
+  await db
+    .update(subscriptions)
+    .set({
+      plan: 'explorer',
+      status: 'active',
+      cancelAtPeriodEnd: false,
+      canceledAt: null,
+      updatedAt: now,
+    })
+    .where(eq(subscriptions.id, sub.id));
+
+  return c.json({
+    success: true,
+    message: 'Successfully switched to Free Explorer plan',
+    plan: 'explorer',
+  });
+});
+
 // 5. Webhook handler with signature verification & idempotent event handling
 // Handles all 5 required events:
 // 1. checkout.session.completed
