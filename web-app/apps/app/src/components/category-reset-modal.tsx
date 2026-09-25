@@ -27,7 +27,7 @@ export function CategoryResetModal({
 
   if (!isOpen) return null;
 
-  const isConfirmed = confirmationInput.trim() === 'RESET';
+  const isConfirmed = confirmationInput.trim().toUpperCase() === 'RESET';
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
