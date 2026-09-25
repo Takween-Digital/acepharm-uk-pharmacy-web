@@ -34,18 +34,13 @@ export const SITE_NAVIGATION: SiteNavigationConfig = {
   ],
   productDropdown: [
     { href: '/features', label: 'All Features Overview', shortLabel: 'Features' },
-    { href: '/question-bank', label: 'Question Bank', shortLabel: 'Question Bank' },
-    { href: '/calculations', label: 'Calculations Coach', shortLabel: 'Calculations Coach' },
-    { href: '/ace', label: 'Ace AI Tutor', shortLabel: 'Ace AI Tutor' },
     { href: '/question-bank#modes', label: 'Mock Exams', shortLabel: 'Mock Exams' },
-    { href: '/pricing', label: 'Pricing', shortLabel: 'Pricing' },
   ],
   resourcesDropdown: [
+    { href: '/blog', label: 'Revision Guides & Blog', shortLabel: 'Revision Guides' },
     { href: '/blog?tag=guidelines', label: 'Clinical Guidelines Index' },
     { href: '/blog?tag=bnf', label: 'BNF High-Yield Guide' },
-    { href: '/calculations#topics', label: 'Calculation Formula Sheet' },
     { href: '/blog?tag=blueprint', label: 'GPhC Exam Blueprint Guide' },
-    { href: '/blog', label: 'Revision Guides & Blog', shortLabel: 'Revision Guides' },
     { href: '/faq', label: 'Student FAQ' },
   ],
   footerProduct: [

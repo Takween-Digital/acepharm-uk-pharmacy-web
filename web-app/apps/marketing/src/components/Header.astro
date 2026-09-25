@@ -9,7 +9,7 @@ interface Props {
 const { currentPath = Astro.url.pathname } = Astro.props;
 ---
 
-<header class="border-b border-border bg-surface/90 backdrop-blur-md sticky top-0 z-50 transition-all">
+<header class="border-b border-border/40 bg-white/40 dark:bg-slate-950/40 backdrop-blur-md sticky top-0 z-50 transition-all supports-[backdrop-filter]:bg-white/30 dark:supports-[backdrop-filter]:bg-slate-950/30">
   <div class="max-w-container-max mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
     {/* Brand Logo */}
     <a href="/" class="flex items-center gap-2.5 group">
@@ -21,8 +21,18 @@ const { currentPath = Astro.url.pathname } = Astro.props;
     
     {/* Desktop Navigation */}
     <nav class="hidden xl:flex items-center gap-1 text-sm font-medium text-slate">
+      {/* Home Link */}
+      <a
+        href="/"
+        class={`px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors ${
+          currentPath === '/' ? 'text-indigo font-bold bg-indigo-wash' : ''
+        }`}
+      >
+        Home
+      </a>
+
       {/* Product Dropdown */}
-      <div class="relative group">
+      <div class="relative group" onmouseenter="this.setAttribute('data-open', 'true')" onmouseleave="this.removeAttribute('data-open')">
         <a
           href="/features"
           class={`px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors flex items-center gap-1 ${
@@ -38,9 +48,7 @@ const { currentPath = Astro.url.pathname } = Astro.props;
           {SITE_NAVIGATION.productDropdown.map((item) => (
             <a
               href={item.href}
-              class={`block px-3 py-2 text-xs rounded-lg transition-colors ${
-                item.href === '/features' ? 'font-semibold text-ink hover:bg-canvas' : 'text-slate hover:text-ink hover:bg-canvas'
-              }`}
+              class={`block px-3 py-2 text-xs rounded-lg transition-colors text-slate hover:text-ink hover:bg-canvas`}
             >
               {item.label}
             </a>
@@ -61,7 +69,7 @@ const { currentPath = Astro.url.pathname } = Astro.props;
       ))}
       
       {/* Resources Dropdown Group */}
-      <div class="relative group">
+      <div class="relative group" onmouseenter="this.setAttribute('data-open', 'true')" onmouseleave="this.removeAttribute('data-open')">
         <button
           type="button"
           class="px-3 py-2 rounded-btn hover:text-ink hover:bg-canvas transition-colors flex items-center gap-1 text-slate font-medium"
@@ -75,9 +83,7 @@ const { currentPath = Astro.url.pathname } = Astro.props;
           {SITE_NAVIGATION.resourcesDropdown.map((item) => (
             <a
               href={item.href}
-              class={`block px-3 py-2 text-xs rounded-lg transition-colors ${
-                item.href === '/blog' ? 'font-semibold text-ink hover:bg-canvas' : 'text-slate hover:text-ink hover:bg-canvas'
-              }`}
+              class="block px-3 py-2 text-xs text-slate rounded-lg transition-colors hover:text-ink hover:bg-canvas"
             >
               {item.label}
             </a>
