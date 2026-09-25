@@ -133,9 +133,9 @@ export const PricingToggle: React.FC = () => {
           isAnnual ? 'border-indigo ring-2 ring-indigo/20' : 'border-border'
         }`}>
           <div>
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold text-ink">AcePharm Yearly</h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold">Most popular</span>
+            <div className="flex justify-between items-center gap-2">
+              <h3 className="text-lg font-bold text-ink whitespace-nowrap">AcePharm Yearly</h3>
+              <span className="px-2.5 py-0.5 rounded-full bg-teal-light text-teal text-xs font-bold whitespace-nowrap shrink-0">Most popular</span>
             </div>
             <div className="mt-4 flex items-baseline gap-1">
               <span className="text-4xl font-extrabold text-ink">£49.99</span>
