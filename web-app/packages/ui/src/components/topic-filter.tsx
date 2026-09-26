@@ -18,6 +18,19 @@ interface TopicFilterProps {
 export const TopicFilter: React.FC<TopicFilterProps> = ({ categories, articles }) => {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('All');
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tag = params.get('tag') || params.get('category');
+      if (tag) {
+        const found = categories.find((c) => c.toLowerCase() === tag.toLowerCase() || c.toLowerCase().includes(tag.toLowerCase()));
+        if (found) {
+          setSelectedCategory(found);
+        }
+      }
+    }
+  }, [categories]);
+
   const filteredArticles = selectedCategory === 'All'
     ? articles
     : articles.filter((a) => a.category.toLowerCase() === selectedCategory.toLowerCase());

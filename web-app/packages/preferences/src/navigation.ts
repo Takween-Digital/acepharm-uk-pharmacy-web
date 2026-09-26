@@ -54,7 +54,6 @@ export const SITE_NAVIGATION: SiteNavigationConfig = {
     { href: '/faq', label: 'Student FAQ' },
   ],
   company: [
-    { href: '/about', label: 'About AcePharm' },
     { href: '/editorial-standards', label: 'Editorial Standards' },
     { href: '/contact', label: 'Contact' },
   ],
