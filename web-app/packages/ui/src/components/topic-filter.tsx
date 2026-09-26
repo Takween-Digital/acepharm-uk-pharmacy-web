@@ -17,37 +17,58 @@ interface TopicFilterProps {
 
 export const TopicFilter: React.FC<TopicFilterProps> = ({ categories, articles }) => {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('All');
+  const [activeKeyword, setActiveKeyword] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const tag = params.get('tag') || params.get('category');
-      if (tag) {
-        const found = categories.find((c) => c.toLowerCase() === tag.toLowerCase() || c.toLowerCase().includes(tag.toLowerCase()));
+      const rawParam = params.get('category') || params.get('tag');
+      if (rawParam) {
+        const normalized = rawParam.toLowerCase().replace(/-/g, ' ').trim();
+        // Check direct or partial category match (e.g. "clinical revision" matches "Clinical Revision")
+        const found = categories.find((c) => {
+          const catNorm = c.toLowerCase().trim();
+          return catNorm === normalized || catNorm.includes(normalized) || normalized.includes(catNorm);
+        });
+
         if (found) {
           setSelectedCategory(found);
+        } else {
+          // If it is a keyword tag like 'guidelines' or 'bnf', set active keyword
+          setActiveKeyword(rawParam);
         }
       }
     }
   }, [categories]);
 
-  const filteredArticles = selectedCategory === 'All'
-    ? articles
-    : articles.filter((a) => a.category.toLowerCase() === selectedCategory.toLowerCase());
+  const filteredArticles = articles.filter((a) => {
+    if (activeKeyword) {
+      const kw = activeKeyword.toLowerCase().trim();
+      const inTitle = a.title.toLowerCase().includes(kw);
+      const inExcerpt = a.excerpt.toLowerCase().includes(kw);
+      const inCategory = a.category.toLowerCase().includes(kw);
+      return inTitle || inExcerpt || inCategory;
+    }
+    if (selectedCategory === 'All') return true;
+    return a.category.toLowerCase() === selectedCategory.toLowerCase();
+  });
 
   const allCategories = ['All', ...categories];
 
   return (
     <div>
       {/* Category Pills */}
-      <div className="flex flex-wrap justify-center gap-2 mb-12">
+      <div className="flex flex-wrap justify-center items-center gap-2 mb-8">
         {allCategories.map((cat) => {
-          const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+          const isSelected = !activeKeyword && selectedCategory.toLowerCase() === cat.toLowerCase();
           return (
             <button
               key={cat}
               type="button"
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => {
+                setActiveKeyword(null);
+                setSelectedCategory(cat);
+              }}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all shadow-xs ${
                 isSelected
                   ? 'bg-indigo text-white shadow-sm'
@@ -59,6 +80,22 @@ export const TopicFilter: React.FC<TopicFilterProps> = ({ categories, articles }
           );
         })}
       </div>
+
+      {/* Active Keyword Notice Banner */}
+      {activeKeyword && (
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <span className="text-xs text-slate">
+            Filtered by topic keyword: <strong className="text-indigo font-bold capitalize">"{activeKeyword}"</strong>
+          </span>
+          <button
+            type="button"
+            onClick={() => setActiveKeyword(null)}
+            className="text-xs font-bold text-slate hover:text-indigo underline cursor-pointer"
+          >
+            Clear filter
+          </button>
+        </div>
+      )}
 
       {/* Filtered Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

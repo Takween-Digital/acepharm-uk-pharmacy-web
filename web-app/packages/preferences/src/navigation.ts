@@ -37,10 +37,10 @@ export const SITE_NAVIGATION: SiteNavigationConfig = {
     { href: '/question-bank#modes', label: 'Mock Exams', shortLabel: 'Mock Exams' },
   ],
   resourcesDropdown: [
-    { href: '/blog', label: 'Revision Guides & Blog', shortLabel: 'Revision Guides' },
-    { href: '/blog?tag=guidelines', label: 'Clinical Guidelines Index' },
-    { href: '/blog?tag=bnf', label: 'BNF High-Yield Guide' },
-    { href: '/blog?tag=blueprint', label: 'GPhC Exam Blueprint Guide' },
+    { href: '/blog', label: 'All Revision Guides & Blog', shortLabel: 'Revision Guides' },
+    { href: '/blog?category=clinical-revision', label: 'Clinical Guidelines Index' },
+    { href: '/blog/asthma-bts-sign-vs-nice-guideline-comparison', label: 'BNF High-Yield Guide (NICE & BNF 87/88)' },
+    { href: '/blog/gphc-calculations-essential-methods', label: 'GPhC Calculations Blueprint' },
     { href: '/faq', label: 'Student FAQ' },
   ],
   footerProduct: [
