@@ -8,6 +8,7 @@
     "dev:app": "pnpm --filter @acepharm/app dev",
     "dev:api": "pnpm --filter @acepharm/api dev",
     "build": "pnpm --recursive build",
+    "build:marketing": "pnpm install --frozen-lockfile && pnpm --filter @acepharm/marketing build",
     "lint": "pnpm --recursive lint",
     "test": "pnpm --recursive --if-present test",
     "typecheck": "pnpm --recursive typecheck",
